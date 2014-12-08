@@ -1,0 +1,10 @@
+﻿## Interface: 60000
+## X-Min-Interface: 60000
+## Title:Stat Weight Score
+## SavedVariables: StatWeightScore_Settings
+## LoadOnDemand: 0
+## DefaultState: enabled
+## Author: Necros
+
+StatWeightScore.lua
+
