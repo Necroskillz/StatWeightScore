@@ -301,6 +301,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
 
     -- Use: Increases your <stat> by <value> for <dur> sec. (<cd> Min Cooldown)
     -- Use: Increases <stat> by <value> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
+    -- Use: Grants <value> <stat> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
     -- Equip: Your attacks have a chance to grant <value> <stat> for <dur> sec.  (Approximately <procs> procs per minute)
     -- Equip: Each time your attacks hit, you have a chance to gain <value> <stat> for <dur> sec. (<chance>% chance, <cd> sec cooldown)
 
@@ -368,6 +369,10 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
                         end
 
                         match, len, stat, value, duration, cd = line:find("^use: increases y?o?u?r? ?([%l ]-) by (%d+) for (%d+) sec%. %(([%d%l ]-) cooldown%)$");
+
+                        if(not match) then
+                            match, len, value, stat , duration, cd = line:find("^use: grants (%d+) ([%l ]-) for (%d+) sec%. %(([%d%l ]-) cooldown%)$");
+                        end
 
                         if(match) then
                             statInfo = StatWeightScore.GetStatInfoByDisplayName(stat);
