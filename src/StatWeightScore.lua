@@ -34,7 +34,7 @@ StatWeightScore.SlotMap = {
     INVTYPE_HOLDABLE = {17},
     INVTYPE_RANGED = {18},
     INVTYPE_THROWN = {18},
-    INVTYPE_RANGEDRIGHT = {18},
+    INVTYPE_RANGEDRIGHT = {16},
     INVTYPE_RELIC = {18},
     INVTYPE_TABARD = {19},
 };
