@@ -418,7 +418,9 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
     local _, link = tooltip:GetItem();
 
     if IsEquippableItem(link) then
-        local loc = select(9, GetItemInfo(link));
+        local itemName, _, _, _, _, _, _, _, loc = GetItemInfo(link);
+        local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
+
         local score = StatWeightScore.CalculateItemScore(link, loc, tooltip);
         local diff = 0;
 
@@ -428,27 +430,34 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
         end
 
         if(compare) then
-            local isEquiped = false;
+            local isEquipped = false;
 
-            local minEquipedScore = -1;
+            local minEquippedScore = -1;
 
             for _, slot in pairs(slots) do
-                local equipedLink = GetInventoryItemLink("player", slot);
-                if(equipedLink) then
-                    if(link == equipedLink) then
-                        isEquiped = true;
+                local equippedLink = GetInventoryItemLink("player", slot);
+                if(equippedLink) then
+                    if(link == equippedLink) then
+                        isEquipped = true;
                         break;
                     end
-                    local equipedScore = StatWeightScore.CalculateItemScore(equipedLink, loc, StatWeightScore.ScanTooltip(equipedLink));
-                    if(equipedScore.Score < minEquipedScore or minEquipedScore == -1) then
-                        minEquipedScore = equipedScore.Score;
+
+                    local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink));
+
+                    if(uniqueFamily == -1 and maxUniqueEquipped == 1 and itemName == GetItemInfo(equippedLink)) then
+                        minEquippedScore = equippedScore.Score;
+                        break;
+                    end
+
+                    if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
+                        minEquippedScore = equippedScore.Score;
                     end
                 end
             end
 
 
-            if(minEquipedScore ~= -1 and not isEquiped) then
-                diff = score.Score - minEquipedScore;
+            if(minEquippedScore ~= -1 and not isEquipped) then
+                diff = score.Score - minEquippedScore;
             end
         end
 
