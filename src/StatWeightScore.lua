@@ -422,8 +422,12 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
         local score = StatWeightScore.CalculateItemScore(link, loc, tooltip);
         local diff = 0;
 
+        local slots = StatWeightScore.SlotMap[loc];
+        if(not slots) then
+            return;
+        end
+
         if(compare) then
-            local slots = StatWeightScore.SlotMap[loc];
             local isEquiped = false;
 
             local minEquipedScore = -1;
