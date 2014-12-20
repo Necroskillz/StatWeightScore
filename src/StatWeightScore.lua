@@ -32,9 +32,9 @@ StatWeightScore.SlotMap = {
     INVTYPE_WEAPONMAINHAND = {16},
     INVTYPE_WEAPONOFFHAND = {17},
     INVTYPE_HOLDABLE = {17},
-    INVTYPE_RANGED = {18},
+    INVTYPE_RANGED = {16,18},
     INVTYPE_THROWN = {18},
-    INVTYPE_RANGEDRIGHT = {16},
+    INVTYPE_RANGEDRIGHT = {16,18},
     INVTYPE_RELIC = {18},
     INVTYPE_TABARD = {19},
 };
@@ -436,7 +436,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                 local equipedLink = GetInventoryItemLink("player", slot);
                 if(equipedLink) then
                     if(link == equipedLink) then
-                        isEquiped = true
+                        isEquiped = true;
                         break;
                     end
                     local equipedScore = StatWeightScore.CalculateItemScore(equipedLink, loc, StatWeightScore.ScanTooltip(equipedLink));
