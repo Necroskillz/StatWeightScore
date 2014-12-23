@@ -416,6 +416,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
     end
 
     local _, link = tooltip:GetItem();
+    local id = StatWeightScore.GetItemID(link);
 
     if IsEquippableItem(link) then
         local itemName, _, _, _, _, _, _, _, loc = GetItemInfo(link);
@@ -429,15 +430,16 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
             return;
         end
 
+        local isEquipped = false;
         if(compare) then
-            local isEquipped = false;
 
             local minEquippedScore = -1;
 
             for _, slot in pairs(slots) do
                 local equippedLink = GetInventoryItemLink("player", slot);
-                if(equippedLink) then
-                    if(link == equippedLink) then
+                local equippedId = StatWeightScore.GetItemID(equippedLink);
+                if(equippedId) then
+                    if(id == equippedId) then
                         isEquipped = true;
                         break;
                     end
@@ -474,6 +476,18 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
         end
         tooltip:AddLine(" ");
     end
+end
+
+function StatWeightScore.GetItemID(itemLink)
+    if(not itemLink) then
+        return nil;
+    end
+
+    local _, _, _, _, id, _, _, _, _, _, _, _, _, _ =
+    string.find(itemLink,
+        "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?");
+
+    return id;
 end
 
 function StatWeightScore.FormatScore(score, diff)
