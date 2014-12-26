@@ -1,4 +1,4 @@
 package-as: StatWeightScore
 
 move-folders:
-	src: StatWeightScore
+	StatWeightScore/src: StatWeightScore
