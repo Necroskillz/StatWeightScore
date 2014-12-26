@@ -402,74 +402,75 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
 
         for _, spec in ipairs(StatWeightScore.Weights) do
             count = count + 1;
-            local score = StatWeightScore.CalculateItemScore(link, loc, tooltip, spec.Weights);
-            local diff = 0;
+            if(spec.Enabled) then
+                local score = StatWeightScore.CalculateItemScore(link, loc, tooltip, spec.Weights);
+                local diff = 0;
 
-            local slots = StatWeightScore.SlotMap[loc];
-            if(not slots) then
-                return;
-            end
+                local slots = StatWeightScore.SlotMap[loc];
+                if(not slots) then
+                    return;
+                end
 
-            local isEquipped = false;
+                local isEquipped = false;
 
-            if(compare) then
-                local minEquippedScore = -1;
+                if(compare) then
+                    local minEquippedScore = -1;
 
-                for _, slot in pairs(slots) do
-                    local equippedLink = GetInventoryItemLink("player", slot);
-                    local equippedId = StatWeightScore.GetItemID(equippedLink);
-                    if(equippedId) then
-                        local equippedItemLevel = select(4, GetItemInfo(equippedLink));
-                        if(id == equippedId and itemLevel == equippedItemLevel) then
-                            isEquipped = true;
-                            break;
+                    for _, slot in pairs(slots) do
+                        local equippedLink = GetInventoryItemLink("player", slot);
+                        local equippedId = StatWeightScore.GetItemID(equippedLink);
+                        if(equippedId) then
+                            local equippedItemLevel = select(4, GetItemInfo(equippedLink));
+                            if(id == equippedId and itemLevel == equippedItemLevel) then
+                                isEquipped = true;
+                                break;
+                            end
+
+                            local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec.Weights);
+
+                            if(uniqueFamily == -1 and maxUniqueEquipped == 1 and itemName == GetItemInfo(equippedLink)) then
+                                minEquippedScore = equippedScore.Score;
+                                break;
+                            end
+
+                            if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
+                                minEquippedScore = equippedScore.Score;
+                            end
                         end
+                    end
 
-                        local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec.Weights);
-
-                        if(uniqueFamily == -1 and maxUniqueEquipped == 1 and itemName == GetItemInfo(equippedLink)) then
-                            minEquippedScore = equippedScore.Score;
-                            break;
-                        end
-
-                        if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
-                            minEquippedScore = equippedScore.Score;
-                        end
+                    if(minEquippedScore ~= -1 and not isEquipped) then
+                        diff = score.Score - minEquippedScore;
                     end
                 end
 
-                if(minEquippedScore ~= -1 and not isEquipped) then
-                    diff = score.Score - minEquippedScore;
-                end
-            end
+                if(not blankLineHandled) then
+                    if((compare and StatWeightScore.Options["BlankLineMainAbove"]) or (not compare and StatWeightScore.Options["BlankLineRefAbove"])) then
+                        tooltip:AddLine(" ");
+                    end
 
-            if(not blankLineHandled) then
-                if((compare and StatWeightScore.Options["BlankLineMainAbove"]) or (not compare and StatWeightScore.Options["BlankLineRefAbove"])) then
+                    blankLineHandled = true;
+                end
+
+                tooltip:AddDoubleLine("Stat score ("..spec.Name..")", StatWeightScore.FormatScore(score.Score, diff));
+                if(score.Gem)then
+                    tooltip:AddDoubleLine("with gem", string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
+                end
+                if(score.Proc)then
+                    tooltip:AddDoubleLine("with proc average", string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
+                end
+                if(score.Use)then
+                    tooltip:AddDoubleLine("with use on cd avg", string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
+                end
+
+                if(count == maxCount and blankLineHandled) then
+                    if((compare and StatWeightScore.Options["BlankLineMainBelow"]) or (not compare and StatWeightScore.Options["BlankLineRefBelow"])) then
+                        tooltip:AddLine(" ");
+                    end
+                else
                     tooltip:AddLine(" ");
                 end
-
-                blankLineHandled = true;
             end
-
-            tooltip:AddDoubleLine("Stat score ("..spec.Name..")", StatWeightScore.FormatScore(score.Score, diff));
-            if(score.Gem)then
-                tooltip:AddDoubleLine("with gem", string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
-            end
-            if(score.Proc)then
-                tooltip:AddDoubleLine("with proc average", string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
-            end
-            if(score.Use)then
-                tooltip:AddDoubleLine("with use on cd avg", string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
-            end
-
-            if(count == maxCount and blankLineHandled) then
-                if((compare and StatWeightScore.Options["BlankLineMainBelow"]) or (not compare and StatWeightScore.Options["BlankLineRefBelow"])) then
-                    tooltip:AddLine(" ");
-                end
-            else
-                tooltip:AddLine(" ");
-            end
-
         end
     end
 end
