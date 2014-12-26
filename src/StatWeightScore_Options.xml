@@ -1,0 +1,323 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+
+    <Frame name="StatWeightScore_Options_WeightRowTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="240" y="30" />
+        </Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parent_Stat" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent">
+                            <Offset>
+                                <AbsDimension x="15" y="0" />
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <EditBox name="$parent_Weight" inherits="InputBoxTemplate" autoFocus="false">
+                <Anchors>
+                    <Anchor relativeTo="$parent" relativePoint="LEFT" point="LEFT">
+                        <Offset>
+                            <AbsDimension x="150" y="0" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Size>
+                    <AbsDimension x="60" y="25" />
+                </Size>
+                <Scripts>
+                    <OnEditFocusLost>
+                        StatWeightScore.UpdateStatWeight(self:GetParent().stat, self:GetText());
+                        self:HighlightText(0, 0);
+                    </OnEditFocusLost>
+                    <OnEnterPressed>
+                        self:ClearFocus();
+                        self:HighlightText(0, 0);
+                    </OnEnterPressed>
+                </Scripts>
+            </EditBox>
+        </Frames>
+    </Frame>
+
+    <Frame name="StatWeightScore_Options">
+        <Scripts>
+            <OnLoad>
+                StatWeightScore_Options_OnLoad(self);
+            </OnLoad>
+        </Scripts>
+        <Frames>
+            <Frame name="$parent_General">
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                    </Anchor>
+                </Anchors>
+                <Size>
+                    <AbsDimension x="600" y="90" />
+                </Size>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <FontString name="$parent_Title" inherits="GameFontNormalLarge">
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="10" y="-10" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <CheckButton name="$parent_EnableTooltip" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="15" y="-30" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
+                    <Button name="$parent_EnchantLevel" inherits="UIDropDownMenuTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="70" y="-55" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <FontString name="$parentLabel" inherits="GameFontNormal">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeTo="$parent">
+                                            <Offset>
+                                                <AbsDimension x="-50" y="0" />
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <CheckButton name="$parent_BlankLineMainAbove" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="185" y="-30" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
+                    <CheckButton name="$parent_BlankLineMainBelow" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="185" y="-55" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
+                    <CheckButton name="$parent_BlankLineRefAbove" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="375" y="-30" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
+                    <CheckButton name="$parent_BlankLineRefBelow" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="375" y="-55" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
+                </Frames>
+            </Frame>
+            <Frame name="$parent_Weights">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parent_General">
+                    </Anchor>
+                </Anchors>
+                <Size>
+                    <AbsDimension x="600" y="400" />
+                </Size>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <FontString name="$parent_Title" inherits="GameFontNormal">
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="10" y="-10" />
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button name="$parent_Spec" inherits="UIDropDownMenuTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="80" y="-30" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <FontString name="$parentLabel" inherits="GameFontNormal">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeTo="$parent">
+                                            <Offset>
+                                                <AbsDimension x="-65" y="0" />
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <EditBox name="$parent_NewSpecName" inherits="InputBoxTemplate" autoFocus="false">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="255" y="-32" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="100" y="25" />
+                        </Size>
+                    </EditBox>
+                    <Button name="$parent_CreateNewSpec" inherits="UIPanelButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="370" y="-32" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="100" y="25" />
+                        </Size>
+                        <Scripts>
+                            <OnClick>
+                                StatWeightScore.CreateNewSpec();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="$parent_DuplicateSpec" inherits="UIPanelButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="480" y="-32" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="100" y="25" />
+                        </Size>
+                        <Scripts>
+                            <OnClick>
+                                StatWeightScore.DuplicateSpec();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <EditBox name="$parent_RenameSpecName" inherits="InputBoxTemplate" autoFocus="false">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="20" y="-57" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="100" y="25" />
+                        </Size>
+                    </EditBox>
+                    <Button name="$parent_RenameSpec" inherits="UIPanelButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="130" y="-57" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="100" y="25" />
+                        </Size>
+                        <Scripts>
+                            <OnClick>
+                                StatWeightScore.RenameSpec();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <CheckButton name="$parent_Enabled" inherits="OptionsCheckButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="10" y="-85" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                StatWeightScore.SetSpecEnabled();
+                            </OnClick>
+                        </Scripts>
+                    </CheckButton>
+                    <Frame name="$parent_StatWeights">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-120" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="600" y="210" />
+                        </Size>
+                    </Frame>
+                    <Button name="$parent_Stats"  inherits="UIDropDownMenuTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="$parent_StatWeights" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="15" y="-20" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="$parent_DeleteSpec" inherits="UIPanelButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativeTo="$parent_StatWeights" relativePoint="BOTTOMRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-20" y="-20" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="100" y="25" />
+                        </Size>
+                        <Scripts>
+                            <OnClick>
+                                StatWeightScore.DeleteSpec();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

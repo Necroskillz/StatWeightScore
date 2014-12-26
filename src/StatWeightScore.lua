@@ -40,26 +40,14 @@ StatWeightScore.SlotMap = {
 };
 
 StatWeightScore.Gem = {
-    [1] = 35;
-    [2] = 50;
-};
-
-StatWeightScore.WeightPresets = {
-    ["HUNTER"] = {
-        DisplayName = "Hunter";
-        Specs = {
-            ["Marksmanship"] = {
-                ["dps"] = 14.63;
-                ["agi"] = 5.44;
-                ["ap"] = 4.89;
-                ["crit"] = 2.53;
-                ["multistrike"] = 2.48;
-                ["versatility"] = 2.26;
-                ["mastery"] = 2.12;
-                ["haste"] = 1.81;
-            };
-        };
-    };
+    [1] = {
+        Value = 35,
+        Name = "+35 gems"
+    },
+    [2] = {
+        Value = 50,
+        Name = "+50 gems";
+    }
 };
 
 StatWeightScore.Cache = {};
@@ -74,7 +62,7 @@ function StatWeightScore.Initialize()
     SLASH_SWS1 = "/sws";
 
     SlashCmdList["SWS"] = function(args)
-
+        InterfaceOptionsFrame_OpenToCategory("Stat Weight Score");
     end
 
     ItemRefTooltip:HookScript("OnTooltipSetItem", StatWeightScore.AddToPrimaryTooltip);
@@ -120,6 +108,10 @@ function StatWeightScore.EnsureOptions(profile)
 
     set("EnableTooltip", true);
     set("EnchantLevel", 1);
+    set("BlankLineMainAbove", true);
+    set("BlankLineMainBelow", true);
+    set("BlankLineRefAbove", true);
+    set("BlankLineRefBelow", true);
 
     return profile.Options;
 end
@@ -147,20 +139,7 @@ function StatWeightScore.LoadProfile()
 
     StatWeightScore.Options = StatWeightScore.EnsureOptions(profile);
 
-    if(not profile.Weights) then
-        -- TODO: confirm dialog?
-
-        local class = select(2, UnitClass("player"));
-        local currentSpec = GetSpecialization();
-        if(currentSpec) then
-            local spec = select(2, GetSpecializationInfo(currentSpec));
-
-            StatWeightScore.SetPresetFor(class, spec);
-            StatWeightScore.SaveProfile();
-        end
-    end
-
-    StatWeightScore.Weights = profile.Weights;
+    StatWeightScore.Weights = profile.Weights or {};
 end
 
 function StatWeightScore.PopulateStatRepository()
@@ -201,10 +180,6 @@ function StatWeightScore.PopulateStatRepository()
     addAlias("socket", "EMPTY_SOCKET_PRISMATIC");
 end
 
-function StatWeightScore.SetPresetFor(class, spec)
-    StatWeightScore.Weights = StatWeightScore.WeightPresets[class].Specs[spec];
-end
-
 function StatWeightScore.GetStatInfo(alias)
     return StatWeightScore.StatRepository[StatWeightScore.StatAliasMap[alias]];
 end
@@ -217,7 +192,7 @@ function StatWeightScore.GetStatInfoByDisplayName(displayName)
     end
 end
 
-function StatWeightScore.GetBestGemStat()
+function StatWeightScore.GetBestGemStat(weights)
     local cacheKey = "BestGemStat";
 
     if(StatWeightScore.Cache[cacheKey]) then
@@ -227,7 +202,7 @@ function StatWeightScore.GetBestGemStat()
     local bestStat;
     local bestStatWeight = 0;
 
-    for stat, weight in pairs(StatWeightScore.Weights) do
+    for stat, weight in pairs(weights) do
         local statInfo = StatWeightScore.GetStatInfo(stat);
         if(statInfo.Gem) then
             if(weight > bestStatWeight) then
@@ -245,9 +220,9 @@ function StatWeightScore.GetBestGemStat()
     return StatWeightScore.Cache[cacheKey];
 end
 
-function StatWeightScore.CalculateItemScore(link, loc, tooltip)
+function StatWeightScore.CalculateItemScore(link, loc, tooltip, weights)
     local stats = GetItemStats(link);
-    local secondaryStat = StatWeightScore.GetBestGemStat();
+    local secondaryStat = StatWeightScore.GetBestGemStat(weights);
 
     local result = {
         Score = 0;
@@ -255,7 +230,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
 
     for stat, value in pairs(stats) do
         local alias = StatWeightScore.StatAliasMap[stat];
-        local weight = StatWeightScore.Weights[alias];
+        local weight = weights[alias];
         if(weight) then
             result.Score = result.Score + value * weight;
         end
@@ -275,7 +250,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
                 enchantLevel = 2
             end
 
-            for stat, weight in pairs(StatWeightScore.Weights) do
+            for stat, weight in pairs(weights) do
                 local statInfo = StatWeightScore.GetStatInfo(stat);
                 if(statInfo.Gem and string.find(gemName, statInfo.DisplayName)) then
                     gemStatWeight = weight;
@@ -289,7 +264,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
         end
 
         if(gemStat) then
-            local statValue = StatWeightScore.Gem[enchantLevel];
+            local statValue = StatWeightScore.Gem[enchantLevel].Value;
             result.Score = result.Score + statValue * gemStatWeight;
             result.Gem = {
                 Stat = gemStat.Alias;
@@ -328,7 +303,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
                         if(match) then
                             statInfo = StatWeightScore.GetStatInfoByDisplayName(stat);
                             if(statInfo) then
-                                weight = StatWeightScore.Weights[statInfo.Alias];
+                                weight = weights[statInfo.Alias];
 
                                 if(weight) then
                                     value = tonumber(value);
@@ -349,7 +324,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
                         if(match) then
                             statInfo = StatWeightScore.GetStatInfoByDisplayName(stat);
                             if(statInfo) then
-                                weight = StatWeightScore.Weights[statInfo.Alias];
+                                weight = weights[statInfo.Alias];
 
                                 if(weight) then
                                     value = tonumber(value);
@@ -377,7 +352,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip)
                         if(match) then
                             statInfo = StatWeightScore.GetStatInfoByDisplayName(stat);
                             if(statInfo) then
-                                weight = StatWeightScore.Weights[statInfo.Alias];
+                                weight = weights[statInfo.Alias];
 
                                 if(weight) then
                                     value = tonumber(value);
@@ -421,61 +396,81 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
     if IsEquippableItem(link) then
         local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
         local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
+        local blankLineHandled = false;
+        local count = 0;
+        local maxCount = #StatWeightScore.Weights;
 
-        local score = StatWeightScore.CalculateItemScore(link, loc, tooltip);
-        local diff = 0;
+        for _, spec in ipairs(StatWeightScore.Weights) do
+            count = count + 1;
+            local score = StatWeightScore.CalculateItemScore(link, loc, tooltip, spec.Weights);
+            local diff = 0;
 
-        local slots = StatWeightScore.SlotMap[loc];
-        if(not slots) then
-            return;
-        end
+            local slots = StatWeightScore.SlotMap[loc];
+            if(not slots) then
+                return;
+            end
 
-        local isEquipped = false;
-        if(compare) then
+            local isEquipped = false;
 
-            local minEquippedScore = -1;
+            if(compare) then
+                local minEquippedScore = -1;
 
-            for _, slot in pairs(slots) do
-                local equippedLink = GetInventoryItemLink("player", slot);
-                local equippedId = StatWeightScore.GetItemID(equippedLink);
-                local equippedItemLevel = select(4, GetItemInfo(equippedLink));
-                if(equippedId) then
-                    if(id == equippedId and itemLevel == equippedItemLevel) then
-                        isEquipped = true;
-                        break;
+                for _, slot in pairs(slots) do
+                    local equippedLink = GetInventoryItemLink("player", slot);
+                    local equippedId = StatWeightScore.GetItemID(equippedLink);
+                    if(equippedId) then
+                        local equippedItemLevel = select(4, GetItemInfo(equippedLink));
+                        if(id == equippedId and itemLevel == equippedItemLevel) then
+                            isEquipped = true;
+                            break;
+                        end
+
+                        local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec.Weights);
+
+                        if(uniqueFamily == -1 and maxUniqueEquipped == 1 and itemName == GetItemInfo(equippedLink)) then
+                            minEquippedScore = equippedScore.Score;
+                            break;
+                        end
+
+                        if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
+                            minEquippedScore = equippedScore.Score;
+                        end
                     end
+                end
 
-                    local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink));
-
-                    if(uniqueFamily == -1 and maxUniqueEquipped == 1 and itemName == GetItemInfo(equippedLink)) then
-                        minEquippedScore = equippedScore.Score;
-                        break;
-                    end
-
-                    if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
-                        minEquippedScore = equippedScore.Score;
-                    end
+                if(minEquippedScore ~= -1 and not isEquipped) then
+                    diff = score.Score - minEquippedScore;
                 end
             end
 
+            if(not blankLineHandled) then
+                if((compare and StatWeightScore.Options["BlankLineMainAbove"]) or (not compare and StatWeightScore.Options["BlankLineRefAbove"])) then
+                    tooltip:AddLine(" ");
+                end
 
-            if(minEquippedScore ~= -1 and not isEquipped) then
-                diff = score.Score - minEquippedScore;
+                blankLineHandled = true;
             end
-        end
 
-        tooltip:AddLine(" ");
-        tooltip:AddDoubleLine("Stat score", StatWeightScore.FormatScore(score.Score, diff));
-        if(score.Gem)then
-            tooltip:AddDoubleLine("with gem", string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
+            tooltip:AddDoubleLine("Stat score ("..spec.Name..")", StatWeightScore.FormatScore(score.Score, diff));
+            if(score.Gem)then
+                tooltip:AddDoubleLine("with gem", string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
+            end
+            if(score.Proc)then
+                tooltip:AddDoubleLine("with proc average", string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
+            end
+            if(score.Use)then
+                tooltip:AddDoubleLine("with use on cd avg", string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
+            end
+
+            if(count == maxCount and blankLineHandled) then
+                if((compare and StatWeightScore.Options["BlankLineMainBelow"]) or (not compare and StatWeightScore.Options["BlankLineRefBelow"])) then
+                    tooltip:AddLine(" ");
+                end
+            else
+                tooltip:AddLine(" ");
+            end
+
         end
-        if(score.Proc)then
-            tooltip:AddDoubleLine("with proc average", string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
-        end
-        if(score.Use)then
-            tooltip:AddDoubleLine("with use on cd avg", string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
-        end
-        tooltip:AddLine(" ");
     end
 end
 
@@ -522,11 +517,11 @@ function StatWeightScore.Print(text)
     end
 
     if(type(text) == "table") then
-        print("StatWeigtScore (table):")
+        print("StatWeightScore (table):")
         for i,v in pairs(text) do
-            print(i.." : "..v);
+            print(i.." : "..tostring(v));
         end
     else
-        print("StatWeigtScore: "..(text));
+        print("StatWeightScore: "..tostring(text));
     end
 end

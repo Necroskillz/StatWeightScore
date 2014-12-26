@@ -7,4 +7,5 @@
 ## Author: Necros
 
 StatWeightScore.lua
-
+StatWeightScore_Options.lua
+StatWeightScore_Options.xml
