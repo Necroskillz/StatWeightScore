@@ -419,7 +419,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
     local id = StatWeightScore.GetItemID(link);
 
     if IsEquippableItem(link) then
-        local itemName, _, _, _, _, _, _, _, loc = GetItemInfo(link);
+        local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
         local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
 
         local score = StatWeightScore.CalculateItemScore(link, loc, tooltip);
@@ -438,8 +438,9 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
             for _, slot in pairs(slots) do
                 local equippedLink = GetInventoryItemLink("player", slot);
                 local equippedId = StatWeightScore.GetItemID(equippedLink);
+                local equippedItemLevel = select(4, GetItemInfo(equippedLink));
                 if(equippedId) then
-                    if(id == equippedId) then
+                    if(id == equippedId and itemLevel == equippedItemLevel) then
                         isEquipped = true;
                         break;
                     end
