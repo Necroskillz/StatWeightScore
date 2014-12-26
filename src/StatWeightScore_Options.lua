@@ -113,7 +113,7 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
     StatWeightScore_Options_Weights_DeleteSpec:Enable();
     StatWeightScore_Options_Weights_Enabled:Enable();
 
-    local idx;
+    local idx = 0;
     for i, stat in pairs(StatWeightScore.SortedKeys(spec.Weights)) do
         idx = i;
         local weight = spec.Weights[stat];
