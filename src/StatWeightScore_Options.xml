@@ -87,7 +87,7 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="70" y="-55" />
+                                    <AbsDimension x="80" y="-55" />
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -97,7 +97,7 @@
                                     <Anchors>
                                         <Anchor point="LEFT" relativeTo="$parent">
                                             <Offset>
-                                                <AbsDimension x="-50" y="0" />
+                                                <AbsDimension x="-60" y="0" />
                                             </Offset>
                                         </Anchor>
                                     </Anchors>
@@ -109,7 +109,7 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="185" y="-30" />
+                                    <AbsDimension x="200" y="-30" />
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -118,7 +118,7 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="185" y="-55" />
+                                    <AbsDimension x="200" y="-55" />
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -127,7 +127,7 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="375" y="-30" />
+                                    <AbsDimension x="395" y="-30" />
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -136,7 +136,7 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="375" y="-55" />
+                                    <AbsDimension x="395" y="-55" />
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -170,7 +170,7 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="80" y="-30" />
+                                    <AbsDimension x="90" y="-30" />
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -180,7 +180,7 @@
                                     <Anchors>
                                         <Anchor point="LEFT" relativeTo="$parent">
                                             <Offset>
-                                                <AbsDimension x="-65" y="0" />
+                                                <AbsDimension x="-75" y="0" />
                                             </Offset>
                                         </Anchor>
                                     </Anchors>
@@ -209,7 +209,7 @@
                             </Anchor>
                         </Anchors>
                         <Size>
-                            <AbsDimension x="100" y="25" />
+                            <AbsDimension x="120" y="25" />
                         </Size>
                         <Scripts>
                             <OnClick>
@@ -221,12 +221,12 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="480" y="-32" />
+                                    <AbsDimension x="500" y="-32" />
                                 </Offset>
                             </Anchor>
                         </Anchors>
                         <Size>
-                            <AbsDimension x="100" y="25" />
+                            <AbsDimension x="120" y="25" />
                         </Size>
                         <Scripts>
                             <OnClick>

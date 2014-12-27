@@ -55,6 +55,7 @@ StatWeightScore.Cache = {};
 function StatWeightScore.OnEvent(_, event, arg1, arg2)
     if(event == "ADDON_LOADED" and arg1 == "StatWeightScore") then
         StatWeightScore.Initialize();
+        StatWeightScore.InitializeOptions();
     end
 end
 
@@ -63,6 +64,7 @@ function StatWeightScore.Initialize()
 
     SlashCmdList["SWS"] = function(args)
         InterfaceOptionsFrame_OpenToCategory("Stat Weight Score");
+        InterfaceOptionsFrame_OpenToCategory("Stat Weight Score"); -- bug in blizz interface options
     end
 
     ItemRefTooltip:HookScript("OnTooltipSetItem", StatWeightScore.AddToPrimaryTooltip);
@@ -82,6 +84,7 @@ function StatWeightScore.Initialize()
     scanningTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
     scanningTooltip:AddFontStrings(
         scanningTooltip:CreateFontString("$parentTextLeft1", nil, "GameTooltipText"),
+        scanningTooltip:CreateFontString("$parentTextLeft9", nil, "GameTooltipText"), -- wierd bug in GameTooltip requires this
         scanningTooltip:CreateFontString("$parentTextRight1", nil, "GameTooltipText"));
 
     StatWeightScore.Print("loaded. v"..StatWeightScore.Version.." by Necroskillz.");
@@ -286,7 +289,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, weights)
                 local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
 
                 if(tooltipText) then
-                    local line = tooltipText:GetText():lower():gsub(",", "");
+                    local line = (tooltipText:GetText() or ""):lower():gsub(",", "");
                     if(line:match("^equip:") or line:match("^use:")) then
                         local match, len, value, stat, duration, ppm, cd, chance, averageStatValue, statInfo, weight;
 

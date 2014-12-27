@@ -13,7 +13,7 @@ function StatWeightScore_Options_OnLoad(panel)
     StatWeightScore_Options_Weights_EnabledText:SetText("Enabled");
     UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Stats, "add/remove stat");
 
-    UIDropDownMenu_SetWidth(StatWeightScore_Options_General_EnchantLevel, 70);
+    UIDropDownMenu_SetWidth(StatWeightScore_Options_General_EnchantLevel, 80);
     UIDropDownMenu_Initialize(StatWeightScore_Options_General_EnchantLevel, function(frame)
         for i, gem in ipairs(StatWeightScore.Gem) do
             local info = UIDropDownMenu_CreateInfo();
@@ -36,10 +36,10 @@ end
 
 function StatWeightScore.InitializeOptions()
     StatWeightScore.SetupBoolOption("EnableTooltip", "Enabled", "Enables display of stat score in tooltips");
-    StatWeightScore.SetupBoolOption("BlankLineMainAbove", "Blank line above (Main tooltip)", "Displays blank line above stat score information in main tooltips");
-    StatWeightScore.SetupBoolOption("BlankLineMainBelow", "Blank line below (Main tooltip)", "Displays blank line below stat score information in main tooltips");
-    StatWeightScore.SetupBoolOption("BlankLineRefAbove", "Blank line above (Reference tooltip)", "Displays blank line above stat score information in reference tooltips (e.g. if you shift-hover on an item)");
-    StatWeightScore.SetupBoolOption("BlankLineRefBelow", "Blank line below (Reference tooltip)", "Displays blank line below stat score information in reference tooltips (e.g. if you shift-hover on an item)");
+    StatWeightScore.SetupBoolOption("BlankLineMainAbove", "Blank line above (Main)", "Displays blank line above stat score information in main tooltips");
+    StatWeightScore.SetupBoolOption("BlankLineMainBelow", "Blank line below (Main)", "Displays blank line below stat score information in main tooltips");
+    StatWeightScore.SetupBoolOption("BlankLineRefAbove", "Blank line above (Reference)", "Displays blank line above stat score information in reference tooltips (e.g. if you shift-hover on an item)");
+    StatWeightScore.SetupBoolOption("BlankLineRefBelow", "Blank line below (Reference)", "Displays blank line below stat score information in reference tooltips (e.g. if you shift-hover on an item)");
     StatWeightScore.SetupDropDownOption("EnchantLevel", "Gem level", "Which level of gems to use for empty sockets");
     StatWeightScore_Options_Weights_Enabled:SetChecked(false);
 
@@ -217,7 +217,7 @@ end
 
 function StatWeightScore.CreateNewSpec()
     local name = StatWeightScore_Options_Weights_NewSpecName:GetText();
-    if(not name) then
+    if(not name or string.len(name) == 0) then
         return;
     end
 
@@ -238,7 +238,7 @@ end
 function StatWeightScore.DuplicateSpec()
     local name = StatWeightScore_Options_Weights_NewSpecName:GetText();
     local index = StatWeightScore.Cache["CurrentSpecEditingIndex"];
-    if(not name or not index) then
+    if(not name or not index or string.len(name) == 0) then
         return;
     end
 
