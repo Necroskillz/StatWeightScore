@@ -138,7 +138,9 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
 
     if(not statChange) then
         UIDropDownMenu_Initialize(StatWeightScore_Options_Weights_Stats, function(frame)
-            for i, stat in ipairs(StatWeightScore.SortedKeys(StatWeightScore.StatRepository)) do
+            for i, stat in ipairs(StatWeightScore.SortedKeys(StatWeightScore.StatRepository, function(v1, v2)
+                return StatWeightScore.StatRepository[v1].DisplayName < StatWeightScore.StatRepository[v2].DisplayName;
+            end)) do
                 local info = UIDropDownMenu_CreateInfo();
                 local statInfo = StatWeightScore.StatRepository[stat];
                 local alias = StatWeightScore.StatAliasMap[stat];

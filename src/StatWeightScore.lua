@@ -172,6 +172,7 @@ function StatWeightScore.PopulateStatRepository()
     addStat("mastery", "ITEM_MOD_MASTERY_RATING_SHORT", { Gem = true });
 
     addStat("armor", "RESISTANCE0_NAME");
+    addStat("bonusarmor", "BONUS_ARMOR");
 
     addStat("ap", "ITEM_MOD_ATTACK_POWER_SHORT");
     addStat("crit", "ITEM_MOD_CRIT_RATING_SHORT", { Gem = true });
@@ -231,14 +232,6 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, weights)
         Score = 0;
     };
 
-    for stat, value in pairs(stats) do
-        local alias = StatWeightScore.StatAliasMap[stat];
-        local weight = weights[alias];
-        if(weight) then
-            result.Score = result.Score + value * weight;
-        end
-    end
-
     if(stats[StatWeightScore.StatAliasMap["socket"]]) then
         local _, gemLink = GetItemGem(link, 1);
         local enchantLevel;
@@ -276,21 +269,21 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, weights)
         end
     end
 
-
     -- Use: Increases your <stat> by <value> for <dur> sec. (<cd> Min Cooldown)
     -- Use: Increases <stat> by <value> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
     -- Use: Grants <value> <stat> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
     -- Equip: Your attacks have a chance to grant <value> <stat> for <dur> sec.  (Approximately <procs> procs per minute)
     -- Equip: Each time your attacks hit, you have a chance to gain <value> <stat> for <dur> sec. (<chance>% chance, <cd> sec cooldown)
+    -- +<value> Bonus Armor
 
-    if(getglobal(loc) == INVTYPE_TRINKET) then
+    if((getglobal(loc) == INVTYPE_TRINKET) or weights["bonusarmor"]) then
         if(tooltip) then
             for l = 1,tooltip:NumLines() do
                 local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
 
                 if(tooltipText) then
                     local line = (tooltipText:GetText() or ""):lower():gsub(",", "");
-                    if(line:match("^equip:") or line:match("^use:")) then
+                    if(line:match("^equip:") or line:match("^use:") or line:match("bonus armor")) then
                         local match, len, value, stat, duration, ppm, cd, chance, averageStatValue, statInfo, weight;
 
                         local addResult = function(type)
@@ -371,9 +364,25 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, weights)
                                 end
                             end
                         end
+
+                        match, len, value = line:find("^%+(%d+) bonus armor$");
+
+                        if(match) then
+                            local armorKey = StatWeightScore.StatAliasMap["armor"];
+                            stats[armorKey] = stats[armorKey] - value;
+                            stats[StatWeightScore.StatAliasMap["bonusarmor"]] = value;
+                        end
                     end
                 end
             end
+        end
+    end
+
+    for stat, value in pairs(stats) do
+        local alias = StatWeightScore.StatAliasMap[stat];
+        local weight = weights[alias];
+        if(weight) then
+            result.Score = result.Score + value * weight;
         end
     end
 
