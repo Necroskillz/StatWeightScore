@@ -237,7 +237,8 @@ end
 
 function StatWeightScore.DuplicateSpec()
     local name = StatWeightScore_Options_Weights_NewSpecName:GetText();
-    if(not name) then
+    local index = StatWeightScore.Cache["CurrentSpecEditingIndex"];
+    if(not name or not index) then
         return;
     end
 
@@ -249,7 +250,7 @@ function StatWeightScore.DuplicateSpec()
         Weights = {}
     };
 
-    local duplicateFromSpec = weights[StatWeightScore.Cache["CurrentSpecEditingIndex"]];
+    local duplicateFromSpec = weights[index];
 
     for stat, weight in pairs(duplicateFromSpec.Weights) do
         spec.Weights[stat] = weight;
