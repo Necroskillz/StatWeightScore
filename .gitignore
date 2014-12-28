@@ -1,2 +1,4 @@
 .idea
 *.iml
+src/libs/*
+!src/libs/*.xml

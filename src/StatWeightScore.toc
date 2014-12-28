@@ -4,7 +4,10 @@
 ## SavedVariables: StatWeightScore_Settings
 ## LoadOnDemand: 0
 ## DefaultState: enabled
-## Author: Necros
+## Author: Necroskillz
+
+libs\libs.xml
+localization\localization.xml
 
 StatWeightScore.lua
 StatWeightScore_Options.lua

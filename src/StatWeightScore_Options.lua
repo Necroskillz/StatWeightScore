@@ -1,17 +1,19 @@
+local L = LibStub("AceLocale-3.0"):GetLocale("StatWeightScore");
+
 function StatWeightScore_Options_OnLoad(panel)
     panel.name = "Stat Weight Score";
     panel.okay = StatWeightScore.SaveOptions;
     panel.cancel = StatWeightScore.InitializeOptions;
 
     StatWeightScore_Options_General_Title:SetText("Stat Weight Score v"..StatWeightScore.Version);
-    StatWeightScore_Options_Weights_Title:SetText("Stat Weights setup");
-    StatWeightScore_Options_Weights_SpecLabel:SetText("Specialization");
-    StatWeightScore_Options_Weights_CreateNewSpecText:SetText("Create new spec");
-    StatWeightScore_Options_Weights_DuplicateSpecText:SetText("Duplicate spec");
-    StatWeightScore_Options_Weights_RenameSpecText:SetText("Rename spec");
-    StatWeightScore_Options_Weights_DeleteSpecText:SetText("Delete spec");
-    StatWeightScore_Options_Weights_EnabledText:SetText("Enabled");
-    UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Stats, "add/remove stat");
+    StatWeightScore_Options_Weights_Title:SetText(L["Options_StatWeightsSetup"]);
+    StatWeightScore_Options_Weights_SpecLabel:SetText(L["Options_Specialization_Label"]);
+    StatWeightScore_Options_Weights_CreateNewSpecText:SetText(L["Options_CreateNewSpec"]);
+    StatWeightScore_Options_Weights_DuplicateSpecText:SetText(L["Options_DuplicateSpec"]);
+    StatWeightScore_Options_Weights_RenameSpecText:SetText(L["Options_RenameSpec"]);
+    StatWeightScore_Options_Weights_DeleteSpecText:SetText(L["Options_DeleteSpec"]);
+    StatWeightScore_Options_Weights_EnabledText:SetText(L["Options_Enabled"]);
+    UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Stats, L["Options_AddOrRemoveStat"]);
 
     UIDropDownMenu_SetWidth(StatWeightScore_Options_General_EnchantLevel, 80);
     UIDropDownMenu_Initialize(StatWeightScore_Options_General_EnchantLevel, function(frame)
@@ -35,12 +37,12 @@ function StatWeightScore.OnEnchantLevelSelected(self)
 end
 
 function StatWeightScore.InitializeOptions()
-    StatWeightScore.SetupBoolOption("EnableTooltip", "Enabled", "Enables display of stat score in tooltips");
-    StatWeightScore.SetupBoolOption("BlankLineMainAbove", "Blank line above (Main)", "Displays blank line above stat score information in main tooltips");
-    StatWeightScore.SetupBoolOption("BlankLineMainBelow", "Blank line below (Main)", "Displays blank line below stat score information in main tooltips");
-    StatWeightScore.SetupBoolOption("BlankLineRefAbove", "Blank line above (Reference)", "Displays blank line above stat score information in reference tooltips (e.g. if you shift-hover on an item)");
-    StatWeightScore.SetupBoolOption("BlankLineRefBelow", "Blank line below (Reference)", "Displays blank line below stat score information in reference tooltips (e.g. if you shift-hover on an item)");
-    StatWeightScore.SetupDropDownOption("EnchantLevel", "Gem level", "Which level of gems to use for empty sockets");
+    StatWeightScore.SetupBoolOption("EnableTooltip", L["Options_Enabled"], L["Options_EnabledGlobal_Tooltip"]);
+    StatWeightScore.SetupBoolOption("BlankLineMainAbove", L["Options_BlankLineMainAbove_Label"], L["Options_BlankLineMainAbove_Tooltip"]);
+    StatWeightScore.SetupBoolOption("BlankLineMainBelow", L["Options_BlankLineMainBelow_Label"], L["Options_BlankLineMainBelow_Tooltip"]);
+    StatWeightScore.SetupBoolOption("BlankLineRefAbove", L["Options_BlankLineRefAbove_Label"], L["Options_BlankLineRefAbove_Tooltip"]);
+    StatWeightScore.SetupBoolOption("BlankLineRefBelow", L["Options_BlankLineRefBelow_Label"], L["Options_BlankLineRefBelow_Tooltip"]);
+    StatWeightScore.SetupDropDownOption("EnchantLevel", L["Options_EnchantLevel_Label"], L["Options_EnchantLevel_Tooltip"]);
     StatWeightScore_Options_Weights_Enabled:SetChecked(false);
 
     local specEditingCache = {};
@@ -91,7 +93,7 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
     if(not spec) then
         StatWeightScore.Cache["CurrentSpecEditingIndex"] = nil;
         StatWeightScore_Options_Weights_RenameSpecName:SetText("");
-        UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Spec, "select spec");
+        UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Spec, L["Options_SelectSpec"]);
         UIDropDownMenu_DisableDropDown(StatWeightScore_Options_Weights_Stats);
         StatWeightScore_Options_Weights_RenameSpec:Disable();
         StatWeightScore_Options_Weights_RenameSpecName:Disable();

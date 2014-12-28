@@ -2,3 +2,7 @@ package-as: StatWeightScore
 
 move-folders:
 	StatWeightScore/src: StatWeightScore
+
+externals:
+	Libs/LibStub: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
+	Libs/AceLocale-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0

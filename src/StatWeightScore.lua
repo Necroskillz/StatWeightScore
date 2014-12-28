@@ -1,5 +1,5 @@
 StatWeightScore = {
-    Version = "0.2"
+    Version = "0.3"
 };
 
 StatWeightScore_Settings = nil;
@@ -9,6 +9,8 @@ StatWeightScore.Weights = nil;
 
 StatWeightScore.StatRepository = {};
 StatWeightScore.StatAliasMap = {};
+
+local L = LibStub("AceLocale-3.0"):GetLocale("StatWeightScore");
 
 StatWeightScore.SlotMap = {
     INVTYPE_AMMO = {0},
@@ -42,11 +44,11 @@ StatWeightScore.SlotMap = {
 StatWeightScore.Gem = {
     [1] = {
         Value = 35,
-        Name = "+35 gems"
+        Name = string.format(L["GemsDisplayFormat"], "+35");
     },
     [2] = {
         Value = 50,
-        Name = "+50 gems";
+        Name = string.format(L["GemsDisplayFormat"], "+50");
     }
 };
 
@@ -87,7 +89,7 @@ function StatWeightScore.Initialize()
         scanningTooltip:CreateFontString("$parentTextLeft9", nil, "GameTooltipText"), -- wierd bug in GameTooltip requires this
         scanningTooltip:CreateFontString("$parentTextRight1", nil, "GameTooltipText"));
 
-    StatWeightScore.Print("loaded. v"..StatWeightScore.Version.." by Necroskillz.");
+    StatWeightScore.Print(string.format(L["WelcomeMessage"], StatWeightScore.Version));
 end
 
 function StatWeightScore.ScanTooltip(link)
@@ -464,15 +466,15 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                     blankLineHandled = true;
                 end
 
-                tooltip:AddDoubleLine("Stat score ("..spec.Name..")", StatWeightScore.FormatScore(score.Score, diff));
+                tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", StatWeightScore.FormatScore(score.Score, diff));
                 if(score.Gem)then
-                    tooltip:AddDoubleLine("with gem", string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
+                    tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
                 end
                 if(score.Proc)then
-                    tooltip:AddDoubleLine("with proc average", string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
+                    tooltip:AddDoubleLine(L["TooltipMessage_WithProcAverage"], string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
                 end
                 if(score.Use)then
-                    tooltip:AddDoubleLine("with use on cd avg", string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
+                    tooltip:AddDoubleLine(L["TooltipMessage_WithUseAverage"], string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
                 end
 
                 if(count == maxCount and blankLineHandled) then
