@@ -83,18 +83,13 @@ function StatWeightScore.Initialize()
     StatWeightScore.LoadProfile();
 
     local scanningTooltip = CreateFrame("GameTooltip", "StatWeightScore_ScanningTooltip", nil, "GameTooltipTemplate");
-    scanningTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
-    scanningTooltip:AddFontStrings(
-        scanningTooltip:CreateFontString("$parentTextLeft1", nil, "GameTooltipText"),
-        scanningTooltip:CreateFontString("$parentTextLeft9", nil, "GameTooltipText"), -- wierd bug in GameTooltip requires this
-        scanningTooltip:CreateFontString("$parentTextRight1", nil, "GameTooltipText"));
 
     StatWeightScore.Print(string.format(L["WelcomeMessage"], StatWeightScore.Version));
 end
 
 function StatWeightScore.ScanTooltip(link)
-    local scanningTooltip = getglobal("StatWeightScore_ScanningTooltip");
-    scanningTooltip:ClearLines();
+    local scanningTooltip = StatWeightScore_ScanningTooltip;
+    scanningTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
     scanningTooltip:SetHyperlink(link);
 
     return scanningTooltip;
@@ -282,7 +277,6 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, weights)
         if(tooltip) then
             for l = 1,tooltip:NumLines() do
                 local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
-
                 if(tooltipText) then
                     local line = (tooltipText:GetText() or ""):lower():gsub(",", "");
                     if(line:match("^equip:") or line:match("^use:") or line:match("bonus armor")) then
