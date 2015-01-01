@@ -405,10 +405,9 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
     end
 
     local _, link = tooltip:GetItem();
-    local id = StatWeightScore.GetItemID(link);
 
     if IsEquippableItem(link) then
-        local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
+        local itemName, _, _, _, _, _, _, _, loc = GetItemInfo(link);
         local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
         local blankLineHandled = false;
         local count = 0;
@@ -425,21 +424,12 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                     return;
                 end
 
-                local isEquipped = false;
-
                 if(compare) then
                     local minEquippedScore = -1;
 
                     for _, slot in pairs(slots) do
                         local equippedLink = GetInventoryItemLink("player", slot);
-                        local equippedId = StatWeightScore.GetItemID(equippedLink);
-                        if(equippedId) then
-                            local equippedItemLevel = select(4, GetItemInfo(equippedLink));
-                            if(id == equippedId and itemLevel == equippedItemLevel) then
-                                isEquipped = true;
-                                break;
-                            end
-
+                        if(equippedLink) then
                             local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec.Weights);
 
                             if(uniqueFamily == -1 and maxUniqueEquipped == 1 and itemName == GetItemInfo(equippedLink)) then
@@ -453,7 +443,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                         end
                     end
 
-                    if(minEquippedScore ~= -1 and not isEquipped) then
+                    if(minEquippedScore ~= -1) then
                         diff = score.Score - minEquippedScore;
                     end
                 end
@@ -489,7 +479,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
     end
 end
 
-function StatWeightScore.GetItemID(itemLink)
+function StatWeightScore.GetItemLinkInfo(itemLink)
     if(not itemLink) then
         return nil;
     end
