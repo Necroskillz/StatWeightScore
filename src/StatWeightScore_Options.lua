@@ -1,4 +1,62 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("StatWeightScore");
+StatWeightScore.OptionRepository = {};
+local optionsInitialized;
+
+function StatWeightScore.RegisterOption(option, type, label, tooltip)
+    table.insert(StatWeightScore.OptionRepository, {
+        option = option,
+        type = type,
+        label = label,
+        tooltip = tooltip
+    });
+end
+
+function StatWeightScore.InitializeRegisteredOptions()
+    for _, o in pairs(StatWeightScore.OptionRepository) do
+        local textName;
+        if(o.type == "checkbox") then
+            textName = "Text";
+        elseif(o.type == "dropdown") then
+            textName = "Label";
+        end
+
+        local frame = getglobal("StatWeightScore_Options_General_"..o.option);
+        local text = getglobal(frame:GetName()..textName);
+
+        frame.tooltipText = o.tooltip;
+        text:SetText(o.label);
+    end
+end
+
+function StatWeightScore.FillRegisteredOptions()
+    for _, o in pairs(StatWeightScore.OptionRepository) do
+        local value = StatWeightScore.Options[o.option];
+        local frame = getglobal("StatWeightScore_Options_General_"..o.option);
+
+        if(o.type == "checkbox") then
+            frame:SetChecked(value);
+        elseif(o.type == "dropdown") then
+            local gem = StatWeightScore.Gem[value];
+            UIDropDownMenu_SetSelectedValue(frame, value);
+            UIDropDownMenu_SetText(frame, gem.Name);
+        end
+    end
+end
+
+function StatWeightScore.SaveRegisteredOptions()
+    for _, o in pairs(StatWeightScore.OptionRepository) do
+        local frame = getglobal("StatWeightScore_Options_General_"..o.option);
+        local value;
+
+        if(o.type == "checkbox") then
+            value = frame:GetChecked();
+        elseif(o.type == "dropdown") then
+            value = UIDropDownMenu_GetSelectedValue(frame);
+        end
+
+        StatWeightScore.Options[o.option] = value;
+    end
+end
 
 function StatWeightScore_Options_OnLoad(panel)
     panel.name = "Stat Weight Score";
@@ -14,6 +72,15 @@ function StatWeightScore_Options_OnLoad(panel)
     StatWeightScore_Options_Weights_DeleteSpecText:SetText(L["Options_DeleteSpec"]);
     StatWeightScore_Options_Weights_EnabledText:SetText(L["Options_Enabled"]);
     UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Stats, L["Options_AddOrRemoveStat"]);
+
+    StatWeightScore.RegisterOption("EnableTooltip", "checkbox", L["Options_Enabled"], L["Options_EnabledGlobal_Tooltip"]);
+    StatWeightScore.RegisterOption("BlankLineMainAbove", "checkbox", L["Options_BlankLineMainAbove_Label"], L["Options_BlankLineMainAbove_Tooltip"]);
+    StatWeightScore.RegisterOption("BlankLineMainBelow", "checkbox", L["Options_BlankLineMainBelow_Label"], L["Options_BlankLineMainBelow_Tooltip"]);
+    StatWeightScore.RegisterOption("BlankLineRefAbove", "checkbox", L["Options_BlankLineRefAbove_Label"], L["Options_BlankLineRefAbove_Tooltip"]);
+    StatWeightScore.RegisterOption("BlankLineRefBelow", "checkbox", L["Options_BlankLineRefBelow_Label"], L["Options_BlankLineRefBelow_Tooltip"]);
+    StatWeightScore.RegisterOption("EnchantLevel", "dropdown", L["Options_EnchantLevel_Label"], L["Options_EnchantLevel_Tooltip"]);
+
+    StatWeightScore.InitializeRegisteredOptions();
 
     UIDropDownMenu_SetWidth(StatWeightScore_Options_General_EnchantLevel, 80);
     UIDropDownMenu_Initialize(StatWeightScore_Options_General_EnchantLevel, function(frame)
@@ -37,12 +104,7 @@ function StatWeightScore.OnEnchantLevelSelected(self)
 end
 
 function StatWeightScore.InitializeOptions()
-    StatWeightScore.SetupBoolOption("EnableTooltip", L["Options_Enabled"], L["Options_EnabledGlobal_Tooltip"]);
-    StatWeightScore.SetupBoolOption("BlankLineMainAbove", L["Options_BlankLineMainAbove_Label"], L["Options_BlankLineMainAbove_Tooltip"]);
-    StatWeightScore.SetupBoolOption("BlankLineMainBelow", L["Options_BlankLineMainBelow_Label"], L["Options_BlankLineMainBelow_Tooltip"]);
-    StatWeightScore.SetupBoolOption("BlankLineRefAbove", L["Options_BlankLineRefAbove_Label"], L["Options_BlankLineRefAbove_Tooltip"]);
-    StatWeightScore.SetupBoolOption("BlankLineRefBelow", L["Options_BlankLineRefBelow_Label"], L["Options_BlankLineRefBelow_Tooltip"]);
-    StatWeightScore.SetupDropDownOption("EnchantLevel", L["Options_EnchantLevel_Label"], L["Options_EnchantLevel_Tooltip"]);
+    StatWeightScore.FillRegisteredOptions();
     StatWeightScore_Options_Weights_Enabled:SetChecked(false);
 
     local specEditingCache = {};
@@ -63,6 +125,7 @@ function StatWeightScore.InitializeOptions()
     StatWeightScore.Cache["SpecEditing"] = specEditingCache;
 
     StatWeightScore.BuildSpecDropDownFromCache(nil);
+    optionsInitialized = true;
 end
 
 function StatWeightScore.SortedKeys(t, sortFunction)
@@ -296,58 +359,6 @@ function StatWeightScore.SetSpecEnabled()
     weights[StatWeightScore.Cache["CurrentSpecEditingIndex"]].Enabled = StatWeightScore_Options_Weights_Enabled:GetChecked();
 end
 
-function StatWeightScore.SetupDropDownOption(option, label, tooltip)
-    local value = StatWeightScore.Options[option];
-    local gem = StatWeightScore.Gem[value];
-
-    StatWeightScore.SetupOption({
-        option = option,
-        valueSetter = function(frame)
-            UIDropDownMenu_SetSelectedValue(frame, value);
-            UIDropDownMenu_SetText(frame, gem.Name);
-        end,
-        label = label,
-        tooltip = tooltip,
-        textName = "Label"
-    });
-end
-
-function StatWeightScore.SetupBoolOption(option, label, tooltip)
-    local value = StatWeightScore.Options[option];
-
-    StatWeightScore.SetupOption({
-        option = option,
-        valueSetter = function(frame)
-            frame:SetChecked(value);
-        end,
-        label = label,
-        tooltip = tooltip,
-        textName = "Text"
-    });
-end
-
-function StatWeightScore.SetupOption(options)
-    local frame = getglobal("StatWeightScore_Options_General_"..options.option);
-    local text = getglobal(frame:GetName()..options.textName);
-
-    frame.tooltipText = options.tooltip;
-    text:SetText(options.label);
-    options.valueSetter(frame);
-end
-
-function StatWeightScore.SaveOption(option, value)
-    StatWeightScore.Options[option] = value;
-end
-
-function StatWeightScore.SaveBoolOption(option)
-    StatWeightScore.SaveOption(option, getglobal("StatWeightScore_Options_General_"..option):GetChecked());
-end
-
-function StatWeightScore.SaveDropDownOption(option)
-    local value = UIDropDownMenu_GetSelectedValue(getglobal("StatWeightScore_Options_General_"..option));
-    StatWeightScore.SaveOption(option, value);
-end
-
 function StatWeightScore.ClearInputsFocus()
     local i = 0;
     while(true) do
@@ -363,13 +374,7 @@ function StatWeightScore.ClearInputsFocus()
 end
 
 function StatWeightScore.SaveOptions()
-    StatWeightScore.SaveBoolOption("EnableTooltip");
-    StatWeightScore.SaveBoolOption("BlankLineMainAbove");
-    StatWeightScore.SaveBoolOption("BlankLineMainBelow");
-    StatWeightScore.SaveBoolOption("BlankLineRefAbove");
-    StatWeightScore.SaveBoolOption("BlankLineRefBelow");
-    StatWeightScore.SaveDropDownOption("EnchantLevel");
-
+    StatWeightScore.SaveRegisteredOptions();
     StatWeightScore.ClearInputsFocus();
 
     StatWeightScore.Weights = StatWeightScore.Cache["SpecEditing"];
