@@ -97,6 +97,10 @@ function StatWeightScore.Initialize()
     ShoppingTooltip1:HookScript("OnTooltipSetItem", StatWeightScore.AddToCompareTooltip);
     ShoppingTooltip2:HookScript("OnTooltipSetItem", StatWeightScore.AddToCompareTooltip);
 
+    if IsAddOnLoaded("AtlasLoot") then
+        AtlasLootTooltip:HookScript("OnTooltipSetItem", StatWeightScore.AddToPrimaryTooltip);
+    end
+
     StatWeightScore.PopulateStatRepository();
     StatWeightScore.LoadProfile();
 
