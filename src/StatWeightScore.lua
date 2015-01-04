@@ -52,6 +52,24 @@ StatWeightScore.Gem = {
     }
 };
 
+StatWeightScore.UniqueGroups = {
+    ["Solium Band of Endurance"] = 1,
+    ["Solium Band of Wisdom"] = 1,
+    ["Solium Band of Dexterity"] = 1,
+    ["Solium Band of Mending"] = 1,
+    ["Solium Band of Might"] = 1,
+    ["Timeless Solium Band of the Archmage"] = 1,
+    ["Timeless Solium Band of the Bulwark"] = 1,
+    ["Timeless Solium Band of Brutality"] = 1,
+    ["Timeless Solium Band of Lifegiving"] = 1,
+    ["Timeless Solium Band of the Assassin"] = 1,
+    ["Spellbound Solium Band of Fatal Strikes"] = 1,
+    ["Spellbound Solium Band of the Kirin-Tor"] = 1,
+    ["Spellbound Solium Band of Sorcerous Strength"] = 1,
+    ["Spellbound Solium Band of the Immortal Spirit"] = 1,
+    ["Spellbound Solium Band of Sorcerous Invincibility"] = 1,
+};
+
 StatWeightScore.Cache = {};
 
 function StatWeightScore.OnEvent(_, event, arg1, arg2)
@@ -426,7 +444,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                         if(equippedLink) then
                             local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec.Weights);
 
-                            if(uniqueFamily == -1 and maxUniqueEquipped == 1 and itemName == GetItemInfo(equippedLink)) then
+                            if(uniqueFamily == -1 and maxUniqueEquipped == 1 and StatWeightScore.AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
                                 minEquippedScore = equippedScore.Score;
                                 break;
                             end
@@ -471,6 +489,21 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
             end
         end
     end
+end
+
+function StatWeightScore.AreUniquelyExclusive(item1, item2)
+    if(item1 == item2) then
+        return true;
+    end
+
+    local item1Group = StatWeightScore.UniqueGroups[item1];
+    local item2Group = StatWeightScore.UniqueGroups[item2];
+
+    if(item1Group and item2Group and item1Group == item2Group) then
+        return true;
+    end
+
+    return false;
 end
 
 function StatWeightScore.GetItemLinkInfo(itemLink)
