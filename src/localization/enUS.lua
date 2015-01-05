@@ -26,3 +26,5 @@ L["Options_BlankLineRefBelow_Tooltip"] = "Displays blank line below stat score i
 L["Options_EnchantLevel_Label"] = "Gem level";
 L["Options_EnchantLevel_Tooltip"] = "Which level of gems to use for empty sockets";
 L["Options_SelectSpec"] = "select spec";
+L["Options_ForceGemStat_Label"] = "Gem stat";
+L["Options_ForceGemStat_Best"] = "Best stat";

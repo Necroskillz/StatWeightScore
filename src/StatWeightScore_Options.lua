@@ -1,6 +1,5 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("StatWeightScore");
 StatWeightScore.OptionRepository = {};
-local optionsInitialized;
 
 function StatWeightScore.RegisterOption(option, type, label, tooltip)
     table.insert(StatWeightScore.OptionRepository, {
@@ -66,6 +65,7 @@ function StatWeightScore_Options_OnLoad(panel)
     StatWeightScore_Options_General_Title:SetText("Stat Weight Score v"..StatWeightScore.Version);
     StatWeightScore_Options_Weights_Title:SetText(L["Options_StatWeightsSetup"]);
     StatWeightScore_Options_Weights_SpecLabel:SetText(L["Options_Specialization_Label"]);
+    StatWeightScore_Options_Weights_ForceGemStatLabel:SetText(L["Options_ForceGemStat_Label"]);
     StatWeightScore_Options_Weights_CreateNewSpecText:SetText(L["Options_CreateNewSpec"]);
     StatWeightScore_Options_Weights_DuplicateSpecText:SetText(L["Options_DuplicateSpec"]);
     StatWeightScore_Options_Weights_RenameSpecText:SetText(L["Options_RenameSpec"]);
@@ -113,6 +113,7 @@ function StatWeightScore.InitializeOptions()
         local specCache = {};
         specCache.Name = spec.Name;
         specCache.Enabled = spec.Enabled;
+        specCache.GemStat = spec.GemStat;
         specCache.Weights = {};
 
         for stat, weight in pairs(spec.Weights) do
@@ -125,7 +126,6 @@ function StatWeightScore.InitializeOptions()
     StatWeightScore.Cache["SpecEditing"] = specEditingCache;
 
     StatWeightScore.BuildSpecDropDownFromCache(nil);
-    optionsInitialized = true;
 end
 
 function StatWeightScore.SortedKeys(t, sortFunction)
@@ -158,6 +158,8 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
         StatWeightScore_Options_Weights_RenameSpecName:SetText("");
         UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Spec, L["Options_SelectSpec"]);
         UIDropDownMenu_DisableDropDown(StatWeightScore_Options_Weights_Stats);
+        UIDropDownMenu_DisableDropDown(StatWeightScore_Options_Weights_ForceGemStat);
+        UIDropDownMenu_SetText(StatWeightScore_Options_Weights_ForceGemStat, "");
         StatWeightScore_Options_Weights_RenameSpec:Disable();
         StatWeightScore_Options_Weights_RenameSpecName:Disable();
         StatWeightScore_Options_Weights_DeleteSpec:Disable();
@@ -173,6 +175,7 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
     StatWeightScore_Options_Weights_Enabled:SetChecked(spec.Enabled);
 
     UIDropDownMenu_EnableDropDown(StatWeightScore_Options_Weights_Stats);
+    UIDropDownMenu_EnableDropDown(StatWeightScore_Options_Weights_ForceGemStat);
     StatWeightScore_Options_Weights_RenameSpec:Enable();
     StatWeightScore_Options_Weights_RenameSpecName:Enable();
     StatWeightScore_Options_Weights_DeleteSpec:Enable();
@@ -201,6 +204,42 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
 
     StatWeightScore.HideStatFrames(idx);
 
+    if(not spec.Weights[spec.GemStat]) then
+        spec.GemStat = "best";
+    end
+
+    UIDropDownMenu_Initialize(StatWeightScore_Options_Weights_ForceGemStat, function(frame)
+        local info = UIDropDownMenu_CreateInfo();
+        info.text = L["Options_ForceGemStat_Best"];
+        info.value = "best";
+        info.func = StatWeightScore.OnForceGemStatSelected;
+        info.owner = frame;
+        info.checked = spec.GemStat == "best";
+
+        UIDropDownMenu_AddButton(info);
+
+        for i, stat in ipairs(StatWeightScore.SortedKeys(StatWeightScore.StatRepository, function(v1, v2)
+            return StatWeightScore.StatRepository[v1].DisplayName < StatWeightScore.StatRepository[v2].DisplayName;
+        end)) do
+            local statInfo = StatWeightScore.StatRepository[stat];
+            local alias = StatWeightScore.StatAliasMap[stat];
+
+            if(spec.Weights[alias] and statInfo.Gem) then
+                info = UIDropDownMenu_CreateInfo();
+
+                info.text = statInfo.DisplayName;
+                info.value = alias;
+                info.func = StatWeightScore.OnForceGemStatSelected;
+                info.owner = frame;
+                info.checked = spec.GemStat == alias;
+
+                UIDropDownMenu_AddButton(info);
+            end
+        end
+    end);
+
+    UIDropDownMenu_SetSelectedValue(StatWeightScore_Options_Weights_ForceGemStat, spec.GemStat);
+
     if(not statChange) then
         UIDropDownMenu_Initialize(StatWeightScore_Options_Weights_Stats, function(frame)
             for i, stat in ipairs(StatWeightScore.SortedKeys(StatWeightScore.StatRepository, function(v1, v2)
@@ -221,6 +260,16 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
             end
         end);
     end
+end
+
+function StatWeightScore.OnForceGemStatSelected(self)
+    local weights = StatWeightScore.Cache["SpecEditing"];
+    local index = StatWeightScore.Cache["CurrentSpecEditingIndex"];
+    local spec = weights[index];
+
+    spec.GemStat = self.value;
+
+    UIDropDownMenu_SetSelectedValue(self.owner, self.value);
 end
 
 function StatWeightScore.OnStatSelected(self, _, _, checked)
@@ -293,7 +342,8 @@ function StatWeightScore.CreateNewSpec()
     table.insert(weights, {
         Name = name,
         Enabled = true,
-        Weights = {}
+        Weights = {},
+        GemStat = "best"
     });
 
     StatWeightScore.BuildSpecDropDownFromCache(#weights);
@@ -314,7 +364,8 @@ function StatWeightScore.DuplicateSpec()
     local spec = {
         Name = name,
         Enabled = true,
-        Weights = {}
+        Weights = {},
+        GemStat = "best"
     };
 
     local duplicateFromSpec = weights[index];
@@ -380,5 +431,6 @@ function StatWeightScore.SaveOptions()
     StatWeightScore.Weights = StatWeightScore.Cache["SpecEditing"];
 
     StatWeightScore.SaveProfile();
+    StatWeightScore.Cache = {};
     StatWeightScore.InitializeOptions();
 end

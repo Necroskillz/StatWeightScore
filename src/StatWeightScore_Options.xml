@@ -263,7 +263,6 @@
                             </OnClick>
                         </Scripts>
                     </Button>
-
                     <CheckButton name="$parent_Enabled" inherits="OptionsCheckButtonTemplate">
                         <Anchors>
                             <Anchor point="TOPLEFT">
@@ -278,6 +277,28 @@
                             </OnClick>
                         </Scripts>
                     </CheckButton>
+                    <Button name="$parent_ForceGemStat" inherits="UIDropDownMenuTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="220" y="-85" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <FontString name="$parentLabel" inherits="GameFontNormal">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeTo="$parent">
+                                            <Offset>
+                                                <AbsDimension x="-75" y="0" />
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Button>
                     <Frame name="$parent_StatWeights">
                         <Anchors>
                             <Anchor point="TOPLEFT">

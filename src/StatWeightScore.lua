@@ -215,37 +215,35 @@ function StatWeightScore.GetStatInfoByDisplayName(displayName)
     end
 end
 
-function StatWeightScore.GetBestGemStat(weights)
-    local cacheKey = "BestGemStat";
-
-    if(StatWeightScore.Cache[cacheKey]) then
-        return StatWeightScore.Cache[cacheKey];
-    end
-
+function StatWeightScore.GetBestGemStat(spec)
     local bestStat;
     local bestStatWeight = 0;
 
-    for stat, weight in pairs(weights) do
-        local statInfo = StatWeightScore.GetStatInfo(stat);
-        if(statInfo.Gem) then
-            if(weight > bestStatWeight) then
-                bestStatWeight = weight;
-                bestStat = statInfo;
+    if(not spec.GemStat or spec.GemStat == "best") then
+        for stat, weight in pairs(spec.Weights) do
+            local statInfo = StatWeightScore.GetStatInfo(stat);
+            if(statInfo.Gem) then
+                if(weight > bestStatWeight) then
+                    bestStatWeight = weight;
+                    bestStat = statInfo;
+                end
             end
         end
+    else
+        bestStat = StatWeightScore.GetStatInfo(spec.GemStat);
+        bestStatWeight = spec.Weights[spec.GemStat];
     end
 
-    StatWeightScore.Cache[cacheKey] = {
+    return {
         Stat = bestStat;
         Weight = bestStatWeight;
     };
-
-    return StatWeightScore.Cache[cacheKey];
 end
 
-function StatWeightScore.CalculateItemScore(link, loc, tooltip, weights)
+function StatWeightScore.CalculateItemScore(link, loc, tooltip, spec)
+    local weights = spec.Weights;
     local stats = GetItemStats(link);
-    local secondaryStat = StatWeightScore.GetBestGemStat(weights);
+    local secondaryStat = StatWeightScore.GetBestGemStat(spec);
 
     local result = {
         Score = 0;
@@ -432,7 +430,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
         for _, spec in ipairs(StatWeightScore.Weights) do
             count = count + 1;
             if(spec.Enabled) then
-                local score = StatWeightScore.CalculateItemScore(link, loc, tooltip, spec.Weights);
+                local score = StatWeightScore.CalculateItemScore(link, loc, tooltip, spec);
                 local diff = 0;
 
                 local slots = StatWeightScore.SlotMap[loc];
@@ -446,7 +444,7 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                     for _, slot in pairs(slots) do
                         local equippedLink = GetInventoryItemLink("player", slot);
                         if(equippedLink) then
-                            local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec.Weights);
+                            local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec);
 
                             if(uniqueFamily == -1 and maxUniqueEquipped == 1 and StatWeightScore.AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
                                 minEquippedScore = equippedScore.Score;
