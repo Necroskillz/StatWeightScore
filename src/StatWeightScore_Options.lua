@@ -224,6 +224,11 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
         frame:SetPoint("TOPLEFT", math.floor(y / 210) * 240, (y % 210) * -1);
         frame:Show();
 
+        local statInfo = StatWeightScore.GetStatInfo(stat);
+        if(not statInfo) then
+            error("Your stat weight configuration contains an invalid stat. Please fix the stat name manualy in the config file, or delete this spec and create a new one");
+        end
+
         getglobal(frameName.."_Stat"):SetText(StatWeightScore.GetStatInfo(stat).DisplayName);
         getglobal(frameName.."_Weight"):SetText(weight);
     end
@@ -485,7 +490,9 @@ function StatWeightScore.Import()
     spec.Weights = {};
 
     for stat, weight in pairs(result) do
-        spec.Weights[stat] = weight;
+        if(StatWeightScore.GetStatInfo(stat)) then
+            spec.Weights[stat] = weight;
+        end
     end
 
     StatWeightScore_Options_Weights_Import:SetText("");
