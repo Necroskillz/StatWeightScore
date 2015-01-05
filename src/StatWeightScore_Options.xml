@@ -337,6 +337,57 @@
                             </OnClick>
                         </Scripts>
                     </Button>
+                    <Button name="$parent_ImportType"  inherits="UIDropDownMenuTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="$parent_StatWeights" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="-3" y="-75" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <FontString name="$parentLabel" inherits="GameFontNormal">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativeTo="$parent">
+                                            <Offset>
+                                                <AbsDimension x="15" y="20" />
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <EditBox name="$parent_Import" inherits="InputBoxTemplate" autoFocus="false">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="$parent_StatWeights" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="20" y="-105" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="300" y="25" />
+                        </Size>
+                    </EditBox>
+                    <Button name="$parent_ImportButton" inherits="UIPanelButtonTemplate">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="$parent_StatWeights" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="330" y="-105" />
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Size>
+                            <AbsDimension x="100" y="25" />
+                        </Size>
+                        <Scripts>
+                            <OnClick>
+                                StatWeightScore.Import();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
                 </Frames>
             </Frame>
         </Frames>

@@ -28,3 +28,5 @@ L["Options_EnchantLevel_Tooltip"] = "Which level of gems to use for empty socket
 L["Options_SelectSpec"] = "select spec";
 L["Options_ForceGemStat_Label"] = "Gem stat";
 L["Options_ForceGemStat_Best"] = "Best stat";
+L["Options_Import_Title"] = "Import weights";
+L["Options_Import"] = "Import";

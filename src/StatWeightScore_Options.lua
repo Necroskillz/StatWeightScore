@@ -1,5 +1,8 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("StatWeightScore");
 StatWeightScore.OptionRepository = {};
+StatWeightScore.ImportTypes = {
+    ["sim"] = "SimulationCraft xml"
+};
 
 function StatWeightScore.RegisterOption(option, type, label, tooltip)
     table.insert(StatWeightScore.OptionRepository, {
@@ -71,6 +74,8 @@ function StatWeightScore_Options_OnLoad(panel)
     StatWeightScore_Options_Weights_RenameSpecText:SetText(L["Options_RenameSpec"]);
     StatWeightScore_Options_Weights_DeleteSpecText:SetText(L["Options_DeleteSpec"]);
     StatWeightScore_Options_Weights_EnabledText:SetText(L["Options_Enabled"]);
+    StatWeightScore_Options_Weights_ImportTypeLabel:SetText(L["Options_Import_Title"]);
+    StatWeightScore_Options_Weights_ImportButtonText:SetText(L["Options_Import"]);
     UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Stats, L["Options_AddOrRemoveStat"]);
 
     StatWeightScore.RegisterOption("EnableTooltip", "checkbox", L["Options_Enabled"], L["Options_EnabledGlobal_Tooltip"]);
@@ -96,6 +101,18 @@ function StatWeightScore_Options_OnLoad(panel)
         end
     end);
 
+    UIDropDownMenu_Initialize(StatWeightScore_Options_Weights_ImportType, function(frame)
+        for i, type in pairs(StatWeightScore.ImportTypes) do
+            local info = UIDropDownMenu_CreateInfo();
+
+            info.text = type;
+            info.value = i;
+            info.owner = frame;
+
+            UIDropDownMenu_AddButton(info);
+        end
+    end);
+
     InterfaceOptions_AddCategory(panel);
 end
 
@@ -106,6 +123,9 @@ end
 function StatWeightScore.InitializeOptions()
     StatWeightScore.FillRegisteredOptions();
     StatWeightScore_Options_Weights_Enabled:SetChecked(false);
+
+    UIDropDownMenu_SetSelectedValue(StatWeightScore_Options_Weights_ImportType, "sim");
+    UIDropDownMenu_SetText(StatWeightScore_Options_Weights_ImportType, StatWeightScore.ImportTypes["sim"]);
 
     local specEditingCache = {};
 
@@ -159,11 +179,14 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
         UIDropDownMenu_SetText(StatWeightScore_Options_Weights_Spec, L["Options_SelectSpec"]);
         UIDropDownMenu_DisableDropDown(StatWeightScore_Options_Weights_Stats);
         UIDropDownMenu_DisableDropDown(StatWeightScore_Options_Weights_ForceGemStat);
+        UIDropDownMenu_DisableDropDown(StatWeightScore_Options_Weights_ImportType);
         UIDropDownMenu_SetText(StatWeightScore_Options_Weights_ForceGemStat, "");
         StatWeightScore_Options_Weights_RenameSpec:Disable();
         StatWeightScore_Options_Weights_RenameSpecName:Disable();
         StatWeightScore_Options_Weights_DeleteSpec:Disable();
         StatWeightScore_Options_Weights_Enabled:Disable();
+        StatWeightScore_Options_Weights_Import:Disable();
+        StatWeightScore_Options_Weights_ImportButton:Disable();
         StatWeightScore.HideStatFrames(0);
 
         return;
@@ -176,10 +199,13 @@ function StatWeightScore.SetupSpecWeightOptions(index, spec, statChange)
 
     UIDropDownMenu_EnableDropDown(StatWeightScore_Options_Weights_Stats);
     UIDropDownMenu_EnableDropDown(StatWeightScore_Options_Weights_ForceGemStat);
+    UIDropDownMenu_EnableDropDown(StatWeightScore_Options_Weights_ImportType);
     StatWeightScore_Options_Weights_RenameSpec:Enable();
     StatWeightScore_Options_Weights_RenameSpecName:Enable();
     StatWeightScore_Options_Weights_DeleteSpec:Enable();
     StatWeightScore_Options_Weights_Enabled:Enable();
+    StatWeightScore_Options_Weights_Import:Enable();
+    StatWeightScore_Options_Weights_ImportButton:Enable();
 
     local idx = 0;
     for i, stat in pairs(StatWeightScore.SortedKeys(spec.Weights)) do
@@ -433,4 +459,63 @@ function StatWeightScore.SaveOptions()
     StatWeightScore.SaveProfile();
     StatWeightScore.Cache = {};
     StatWeightScore.InitializeOptions();
+end
+
+function StatWeightScore.Import()
+    local type = UIDropDownMenu_GetSelectedValue(StatWeightScore_Options_Weights_ImportType);
+    local raw = StatWeightScore_Options_Weights_Import:GetText();
+    local result;
+
+    if(not raw or raw == "") then
+        return;
+    end
+
+    if(type == "sim") then
+        result = StatWeightScore.ImportSimulationCraftXML(raw);
+    end
+
+    if(not result) then
+        error("Import unsuccesfull");
+    end
+
+    local weights = StatWeightScore.Cache["SpecEditing"];
+    local index = StatWeightScore.Cache["CurrentSpecEditingIndex"];
+    local spec = weights[index];
+
+    spec.Weights = {};
+
+    for stat, weight in pairs(result) do
+        spec.Weights[stat] = weight;
+    end
+
+    StatWeightScore_Options_Weights_Import:SetText("");
+    StatWeightScore_Options_Weights_Import:ClearFocus();
+
+    StatWeightScore.SetupSpecWeightOptions(index, spec, true);
+end
+
+function StatWeightScore.ImportSimulationCraftXML(input)
+    local result = {};
+    local x = StatWeightScore.XML.Parse(input);
+
+    local root = x[1];
+    if(root.label ~= "weights") then
+        error("Couldn't find root element 'weights' in the xml");
+    end
+
+    local simulationCraftStatMap = {
+        ["Wdps"] = "dps",
+        ["Mult"] = "multistrike",
+        ["Vers"] = "versatility",
+    };
+
+    for _, e in ipairs(root) do
+        if(e.label == "stat") then
+            local statName = e.xarg.name;
+            local alias = simulationCraftStatMap[statName] or statName:lower();
+            result[alias] = tonumber(e.xarg.value);
+        end
+    end
+
+    return result;
 end

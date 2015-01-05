@@ -10,5 +10,6 @@ libs\libs.xml
 localization\localization.xml
 
 StatWeightScore.lua
+XmlParser.lua
 StatWeightScore_Options.lua
 StatWeightScore_Options.xml
