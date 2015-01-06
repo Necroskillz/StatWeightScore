@@ -1,5 +1,5 @@
 StatWeightScore = {
-    Version = "0.3"
+    Version = "0.4"
 };
 
 StatWeightScore_Settings = nil;
@@ -174,14 +174,15 @@ function StatWeightScore.PopulateStatRepository()
         options = options or {};
         addAlias(alias, key);
         StatWeightScore.StatRepository[key] = {
-            Key = key;
-            Alias = alias;
-            DisplayName = getglobal(key);
-            Gem = not not options.Gem;
+            Key = key,
+            Alias = alias,
+            DisplayName = options.DisplayName or getglobal(key),
+            Gem = not not options.Gem,
         };
     end
 
     addStat("dps", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT");
+    addStat("wohdps", "OFFHAND_DPS", { DisplayName = L["Offhand_DPS"]});
 
     addStat("agi", "ITEM_MOD_AGILITY_SHORT");
     addStat("int", "ITEM_MOD_INTELLECT_SHORT");
@@ -244,6 +245,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, spec)
     local weights = spec.Weights;
     local stats = GetItemStats(link);
     local secondaryStat = StatWeightScore.GetBestGemStat(spec);
+    local locStr = getglobal(loc);
 
     local result = {
         Score = 0;
@@ -293,7 +295,7 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, spec)
     -- Equip: Each time your attacks hit, you have a chance to gain <value> <stat> for <dur> sec. (<chance>% chance, <cd> sec cooldown)
     -- +<value> Bonus Armor
 
-    if((getglobal(loc) == INVTYPE_TRINKET) or weights["bonusarmor"]) then
+    if((locStr == INVTYPE_TRINKET) or weights["bonusarmor"]) then
         if(tooltip) then
             for l = 1,tooltip:NumLines() do
                 local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
@@ -394,10 +396,22 @@ function StatWeightScore.CalculateItemScore(link, loc, tooltip, spec)
         end
     end
 
+    if((locStr == INVTYPE_WEAPON) and weights["wohdps"]) then
+        result.Offhand = 0;
+    end
+
     for stat, value in pairs(stats) do
         local alias = StatWeightScore.StatAliasMap[stat];
         local weight = weights[alias];
         if(weight) then
+            if(result.Offhand ~= nil) then
+                if(alias == "dps") then
+                    result.Offhand = result.Offhand + value * weights["wohdps"];
+                else
+                    result.Offhand = result.Offhand + value * weight;
+                end
+            end
+
             result.Score = result.Score + value * weight;
         end
     end
@@ -426,25 +440,34 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
         local blankLineHandled = false;
         local count = 0;
         local maxCount = #StatWeightScore.Weights;
+        local locStr = getglobal(loc);
 
         for _, spec in ipairs(StatWeightScore.Weights) do
             count = count + 1;
             if(spec.Enabled) then
                 local score = StatWeightScore.CalculateItemScore(link, loc, tooltip, spec);
                 local diff = 0;
+                local offhandDiff = 0;
 
                 local slots = StatWeightScore.SlotMap[loc];
                 if(not slots) then
                     return;
                 end
 
-                if(compare) then
+                if(compare and not IsEquippedItem(link)) then
                     local minEquippedScore = -1;
+
+                    local scoreTable = {};
+                    local oneHand = false;
 
                     for _, slot in pairs(slots) do
                         local equippedLink = GetInventoryItemLink("player", slot);
                         if(equippedLink) then
+                            local equippedLoc = getglobal(select(9, GetItemInfo(equippedLink)));
+                            oneHand = oneHand or (equippedLoc == INVTYPE_WEAPON);
                             local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec);
+
+                            scoreTable[slot] = equippedScore;
 
                             if(uniqueFamily == -1 and maxUniqueEquipped == 1 and StatWeightScore.AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
                                 minEquippedScore = equippedScore.Score;
@@ -457,7 +480,28 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                         end
                     end
 
-                    if(minEquippedScore ~= -1) then
+                    if(locStr == INVTYPE_WEAPON) then
+                        if(oneHand) then
+                            local mainhandScore = scoreTable[16];
+
+                            if(not mainhandScore) then
+                                diff = score.Score;
+                            else
+                                diff = score.Score - scoreTable[16].Score;
+                            end
+
+                            local offhandScore = scoreTable[17];
+                            if(not offhandScore) then
+                                offhandDiff = (score.Offhand or score.Score);
+                            else
+                                offhandDiff = (score.Offhand or score.Score) - (offhandScore.Offhand or offhandScore.Score);
+                            end
+                        else
+                            diff = 0; -- uncomparable
+                        end
+                    elseif(oneHand) then
+                        diff = 0;
+                    elseif(minEquippedScore ~= -1) then
                         diff = score.Score - minEquippedScore;
                     end
                 end
@@ -471,6 +515,9 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                 end
 
                 tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", StatWeightScore.FormatScore(score.Score, diff));
+                if(score.Offhand ~= nil) then
+                    tooltip:AddDoubleLine(L["Offhand_Score"], StatWeightScore.FormatScore(score.Offhand, offhandDiff))
+                end
                 if(score.Gem)then
                     tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
                 end
@@ -534,7 +581,7 @@ function StatWeightScore.FormatScore(score, diff)
             sign = "+";
         end
 
-        str = str.." ("..color..string.format("%.2f ", diff)..string.format("%s%.f%%", sign, (score / (score - diff) - 1) * 100).."|r)";
+        str = str.." ("..color..string.format("%.2f ", diff)..((score == diff) and "+inf%" or string.format("%s%.f%%", sign, (score / (score - diff) - 1) * 100)).."|r)";
     end
 
     return str;

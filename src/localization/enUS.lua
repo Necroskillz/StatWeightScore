@@ -2,6 +2,8 @@ local L = LibStub("AceLocale-3.0"):NewLocale("StatWeightScore", "enUS", true);
 
 L["WelcomeMessage"] = "loaded. v%s by Necroskillz";
 L["GemsDisplayFormat"] = "%s gems";
+L["Offhand_DPS"] = "Offhand DPS";
+L["Offhand_Score"] = "Offhand score";
 L["TooltipMessage_StatScore"] = "Stat score";
 L["TooltipMessage_WithGem"] = "with gem";
 L["TooltipMessage_WithProcAverage"] = "with proc average";
