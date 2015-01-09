@@ -435,12 +435,17 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
     local _, link = tooltip:GetItem();
 
     if IsEquippableItem(link) then
-        local itemName, _, _, _, _, _, _, _, loc = GetItemInfo(link);
+        local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
+        local itemId, itemGem1 = StatWeightScore.GetItemLinkInfo(link);
         local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
         local blankLineHandled = false;
         local count = 0;
         local maxCount = #StatWeightScore.Weights;
         local locStr = getglobal(loc);
+
+        local isEquippedItem = function(comparedItemId, comparedItemLevel, comparedGem1)
+            return comparedItemId == itemId and comparedItemLevel == itemLevel and ((comparedGem1 and itemGem1) or (not comparedGem1 and not itemGem1));
+        end
 
         for _, spec in ipairs(StatWeightScore.Weights) do
             count = count + 1;
@@ -454,17 +459,21 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                     return;
                 end
 
-                if(compare and not IsEquippedItem(link)) then
+                if(compare) then
                     local minEquippedScore = -1;
 
                     local scoreTable = {};
                     local oneHand = false;
+                    local isEquipped = false;
 
                     for _, slot in pairs(slots) do
                         local equippedLink = GetInventoryItemLink("player", slot);
                         if(equippedLink) then
-                            local equippedLoc = getglobal(select(9, GetItemInfo(equippedLink)));
-                            oneHand = oneHand or (equippedLoc == INVTYPE_WEAPON);
+                            local equippedItemName, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
+                            local equippedLocStr = getglobal(equippedLoc);
+                            local equippedItemId, equippedItemGem1 = StatWeightScore.GetItemLinkInfo(link);
+                            oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON);
+
                             local equippedScore = StatWeightScore.CalculateItemScore(equippedLink, loc, StatWeightScore.ScanTooltip(equippedLink), spec);
 
                             scoreTable[slot] = equippedScore;
@@ -474,25 +483,31 @@ function StatWeightScore.AddToTooltip(tooltip, compare)
                                 break;
                             end
 
-                            if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
-                                minEquippedScore = equippedScore.Score;
+                            if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedItemGem1)) then
+                                if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
+                                    minEquippedScore = equippedScore.Score;
+                                end
+                            else
+                                isEquipped = true;
                             end
                         end
                     end
 
-                    if(locStr == INVTYPE_WEAPON) then
+                    if(isEquipped) then
+                        diff = 0
+                    elseif(locStr == INVTYPE_WEAPON) then
                         if(oneHand) then
-                            local mainhandScore = scoreTable[16];
+                            local mainhandScore =  scoreTable[16];
 
                             if(not mainhandScore) then
-                                diff = score.Score;
+                                diff = 0;
                             else
-                                diff = score.Score - scoreTable[16].Score;
+                                diff = score.Score - mainhandScore.Score;
                             end
 
                             local offhandScore = scoreTable[17];
                             if(not offhandScore) then
-                                offhandDiff = (score.Offhand or score.Score);
+                                offhandDiff = 0;
                             else
                                 offhandDiff = (score.Offhand or score.Score) - (offhandScore.Offhand or offhandScore.Score);
                             end
@@ -560,11 +575,11 @@ function StatWeightScore.GetItemLinkInfo(itemLink)
         return nil;
     end
 
-    local _, _, _, _, id, _, _, _, _, _, _, _, _, _ =
+    local _, _, _, _, id, _, gem1, _, _, _, _, _, _, _ =
     string.find(itemLink,
         "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?");
 
-    return id;
+    return id, gem1;
 end
 
 function StatWeightScore.FormatScore(score, diff)
