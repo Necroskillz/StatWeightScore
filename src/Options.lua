@@ -216,14 +216,16 @@ function OptionsModule:CreateOptionsForSpec(key)
             Enabled = {
                 type = "toggle",
                 name = L["Options_Enabled"],
+                desc = L["Options_EnabledSpec_Tooltip"],
                 order = 13
             },
             GemStat = {
                 type = "select",
-                name = L["Options_ForceGemStat_Label"],
+                name = L["Options_GemStat_Label"],
+                desc = L["Options_GemStat_Tooltip"],
                 values = function ()
                     local v = {};
-                    v["best"] = L["Options_ForceGemStat_Best"];
+                    v["best"] = L["Options_GemStat_Best"];
                     local stats = StatsModule:GetStats();
 
                     for _, statKey in ipairs(Utils.SortedKeys(stats, function (key1, key2)
@@ -253,7 +255,8 @@ function OptionsModule:CreateOptionsForSpec(key)
             },
             Stats = {
                 type = "multiselect",
-                name = L["Options_SelectStats"],
+                name = L["Options_SelectStats_Label"],
+                desc = L["Options_SelectStats_Tooltip"],
                 dialogControl = "Dropdown",
                 set = function(info, index, value)
                     if(value) then
@@ -298,7 +301,8 @@ function OptionsModule:CreateOptionsForSpec(key)
                 args = {
                     ImportType = {
                         type = "select",
-                        name = L["Options_Import_Type"],
+                        name = L["Options_ImportType_Label"],
+                        desc = L["Options_ImportType_Tooltip"],
                         get = function(info)
                             return self.ImportType;
                         end,
@@ -310,7 +314,8 @@ function OptionsModule:CreateOptionsForSpec(key)
                     },
                     Import = {
                         type = "input",
-                        name = L["Options_Import"],
+                        name = L["Options_Import_Label"],
+                        desc = L["Options_Import_Tooltip"],
                         multiline = true,
                         width = "full",
                         set = function(info, value)
