@@ -259,6 +259,9 @@ function OptionsModule:CreateOptionsForSpec(key)
                     if(value) then
                         spec.Weights[index] = 0;
                         self:CreateOptionsForStatWeight(spec, index);
+                    else
+                        spec.Weights[index] = nil;
+                        options[key].args.Weights.args[index] = nil;
                     end
                 end,
                 get = function(info, index)
