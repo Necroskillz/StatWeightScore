@@ -1,6 +1,7 @@
-StatWeightScore.XML = {};
+local SWS_ADDON_NAME, StatWeightScore = ...;
+local XmlModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Xml");
 
-local parseargs = function (s)
+local function parseargs(s)
     local arg = {}
     string.gsub(s, "([%-%w]+)=([\"'])(.-)%2", function (w, _, a)
         arg[w] = a
@@ -8,7 +9,7 @@ local parseargs = function (s)
     return arg
 end
 
-local collect = function (s)
+local function collect(s)
     local stack = {}
     local top = {}
     table.insert(stack, top)
@@ -49,6 +50,6 @@ local collect = function (s)
     return stack[1]
 end
 
-StatWeightScore.XML.Parse = function(s)
-    return collect(s);
+function XmlModule:Parse(input)
+    return collect(input);
 end

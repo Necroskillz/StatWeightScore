@@ -1,7 +1,7 @@
 ﻿## Interface: 60000
 ## X-Min-Interface: 60000
 ## Title:Stat Weight Score
-## SavedVariables: StatWeightScore_Settings
+## SavedVariables: StatWeightScoreDB, StatWeightScore_Settings
 ## LoadOnDemand: 0
 ## DefaultState: enabled
 ## Author: Necroskillz
@@ -10,6 +10,12 @@ libs\libs.xml
 localization\localization.xml
 
 StatWeightScore.lua
+Utils.lua
 XmlParser.lua
-StatWeightScore_Options.lua
-StatWeightScore_Options.xml
+Stats.lua
+Gems.lua
+ScanningTooltip.lua
+Score.lua
+Tooltip.lua
+Options.lua
+Options.xml
