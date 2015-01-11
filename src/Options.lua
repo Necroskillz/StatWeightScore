@@ -3,6 +3,8 @@ local OptionsModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Options");
 
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
+local AceDB = LibStub("AceDB-3.0");
+local AceDBOptions = LibStub("AceDBOptions-3.0");
 
 local XmlModule;
 local GemsModule;
@@ -144,14 +146,14 @@ function OptionsModule:OnInitialize()
 
     self.ImportType = "sim";
 
-    local db = LibStub("AceDB-3.0"):New(SWS_ADDON_NAME.."DB", self.Defaults);
+    local db = AceDB:New(SWS_ADDON_NAME.."DB", self.Defaults);
     StatWeightScore.db = db;
 
     self:MigrateLegacySettings();
 
     self:CreateOptions();
 
-    self.Options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(db);
+    self.Options.args.profiles = AceDBOptions:GetOptionsTable(db);
 
     for name, _ in pairs(db.profile.Specs) do
         self:CreateOptionsForSpec(name);
@@ -264,7 +266,10 @@ function OptionsModule:CreateOptionsForSpec(key)
                         self:CreateOptionsForStatWeight(spec, index);
                     else
                         spec.Weights[index] = nil;
-                        options[key].args.Weights.args[index] = nil;
+                        local section = options[key].args.Weights.args;
+                        local stat = section[index];
+                        section[index..stat.order] = nil;
+                        section[index] = nil;
                     end
                 end,
                 get = function(info, index)
