@@ -17,19 +17,20 @@ local ImportTypes = {
     ["sim"] = "SimulationCraft xml"
 };
 
-function OptionsModule:CreateOptions()
-    self.Defaults = {
-        profile = {
-            EnableTooltip = true,
-            EnchantLevel = 1,
-            BlankLineMainAbove = true,
-            BlankLineMainBelow = false,
-            BlankLineRefAbove = true,
-            BlankLineRefBelow = false,
-            Specs = {}
-        }
-    };
+OptionsModule.Defaults = {
+    profile = {
+        EnableTooltip = true,
+        EnchantLevel = 1,
+        BlankLineMainAbove = true,
+        BlankLineMainBelow = false,
+        BlankLineRefAbove = true,
+        BlankLineRefBelow = false,
+        Specs = {}
+    }
+};
 
+
+function OptionsModule:CreateOptions()
     self.Options = {
         type = "group",
         args = {
@@ -150,10 +151,6 @@ function OptionsModule:OnInitialize()
     StatWeightScore.db = db;
 
     self:MigrateLegacySettings();
-
-    if(not db.profile.Specs) then
-        db.profile.Specs = {}
-    end
 
     self:CreateOptions();
 
