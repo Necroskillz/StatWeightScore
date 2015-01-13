@@ -151,6 +151,10 @@ function OptionsModule:OnInitialize()
 
     self:MigrateLegacySettings();
 
+    if(not db.profile.Specs) then
+        db.profile.Specs = {}
+    end
+
     self:CreateOptions();
 
     self.Options.args.profiles = AceDBOptions:GetOptionsTable(db);
@@ -460,11 +464,14 @@ function OptionsModule:MigrateLegacySettings()
         db.BlankLineRefBelow = profile.Options.BlankLineRefBelow;
 
         db.Specs = {};
-        local order = 1;
-        for _, spec in pairs(profile.Weights) do
-            spec.Order = order;
-            order = order + 1;
-            db.Specs[spec.Name] = spec;
+
+        if(profile.Weights) then
+            local order = 1;
+            for _, spec in pairs(profile.Weights) do
+                spec.Order = order;
+                order = order + 1;
+                db.Specs[spec.Name] = spec;
+            end
         end
 
         StatWeightScore_Settings[realm][name] = nil;
