@@ -1,10 +1,12 @@
 ﻿## Interface: 60000
 ## X-Min-Interface: 60000
 ## Title:Stat Weight Score
+## Notes:Calculates a score of an item based on stat weights and the item's stats
+## Author: Necroskillz
 ## SavedVariables: StatWeightScoreDB, StatWeightScore_Settings
 ## LoadOnDemand: 0
 ## DefaultState: enabled
-## Author: Necroskillz
+## OptionalDeps: Ace3
 
 libs\libs.xml
 localization\localization.xml
