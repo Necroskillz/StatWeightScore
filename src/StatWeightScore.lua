@@ -9,8 +9,6 @@ end
 
 StatWeightScore.Version = version;
 
-StatWeightScore_Settings = nil; -- legacy
-
 local L = LibStub("AceLocale-3.0"):GetLocale(SWS_ADDON_NAME);
 
 StatWeightScore.L = L;

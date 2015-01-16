@@ -150,8 +150,6 @@ function OptionsModule:OnInitialize()
     local db = AceDB:New(SWS_ADDON_NAME.."DB", self.Defaults);
     StatWeightScore.db = db;
 
-    self:MigrateLegacySettings();
-
     self:CreateOptions();
 
     self.Options.args.profiles = AceDBOptions:GetOptionsTable(db);
@@ -439,38 +437,4 @@ function OptionsModule:ImportSimulationCraftXML(input)
     end
 
     return result;
-end
-
-function OptionsModule:MigrateLegacySettings()
-    if(StatWeightScore_Settings) then
-        local realm = GetRealmName();
-        local name = UnitName("player");
-
-        if(not StatWeightScore_Settings[realm] or not StatWeightScore_Settings[realm][name]) then
-            return
-        end
-
-        local profile = StatWeightScore_Settings[realm][name];
-
-        local db = StatWeightScore.db.profile;
-        db.EnableTooltip = profile.Options.EnableTooltip;
-        db.EnchantLevel = profile.Options.EnchantLevel;
-        db.BlankLineMainAbove = profile.Options.BlankLineMainAbove;
-        db.BlankLineMainBelow = profile.Options.BlankLineMainBelow;
-        db.BlankLineRefAbove = profile.Options.BlankLineRefAbove;
-        db.BlankLineRefBelow = profile.Options.BlankLineRefBelow;
-
-        db.Specs = {};
-
-        if(profile.Weights) then
-            local order = 1;
-            for _, spec in pairs(profile.Weights) do
-                spec.Order = order;
-                order = order + 1;
-                db.Specs[spec.Name] = spec;
-            end
-        end
-
-        StatWeightScore_Settings[realm][name] = nil;
-    end
 end
