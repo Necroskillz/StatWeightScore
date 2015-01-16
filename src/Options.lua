@@ -29,7 +29,6 @@ OptionsModule.Defaults = {
     }
 };
 
-
 function OptionsModule:CreateOptions()
     self.Options = {
         type = "group",
@@ -211,6 +210,8 @@ function OptionsModule:CreateOptionsForSpec(key)
                     options[value] = options[key];
                     options[key] = nil;
                     key = value;
+
+                    AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", key);
                 end,
                 order = 10
             },
@@ -386,6 +387,7 @@ function OptionsModule:CreateNewSpec()
     StatWeightScore.db.profile.Specs[spec.Name] = spec;
 
     self:CreateOptionsForSpec(spec.Name);
+    AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", spec.Name);
 end
 
 function OptionsModule:Import(spec, input)
