@@ -1,7 +1,13 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
 StatWeightScore = LibStub("AceAddon-3.0"):NewAddon(StatWeightScore, SWS_ADDON_NAME);
 
-StatWeightScore.Version = "0.5";
+local version = GetAddOnMetadata(SWS_ADDON_NAME, "Version");
+local versionReplacement = "@".."project-version".."@";
+if(version == versionReplacement) then
+    version = "DEV"
+end
+
+StatWeightScore.Version = version;
 
 StatWeightScore_Settings = nil; -- legacy
 

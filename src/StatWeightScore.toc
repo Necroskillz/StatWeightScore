@@ -3,6 +3,7 @@
 ## Title:Stat Weight Score
 ## Notes:Calculates a score of an item based on stat weights and the item's stats
 ## Author: Necroskillz
+## Version: @project-version@
 ## SavedVariables: StatWeightScoreDB, StatWeightScore_Settings
 ## LoadOnDemand: 0
 ## DefaultState: enabled
