@@ -50,9 +50,7 @@ function StatsModule:OnInitialize()
     AddAlias("socket", "EMPTY_SOCKET_PRISMATIC");
 
     local order = 10;
-    for _, statKey in ipairs(Utils.SortedKeys(StatRepository, function (key1, key2)
-        return StatRepository[key1].DisplayName < StatRepository[key2].DisplayName;
-    end)) do
+    for _, statKey in ipairs(Utils.OrderKeysBy(StatRepository, "DisplayName")) do
         StatRepository[statKey].Order = order;
         order = order + 10;
     end

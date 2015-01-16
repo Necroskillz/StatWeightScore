@@ -192,7 +192,7 @@ function OptionsModule:CreateOptionsForSpec(key)
             spec[info[#info]] = value;
         end,
         name = function () return spec.Name end,
-        order = spec.Order;
+        order = function () return spec.Order end,
         args = {
             Name = {
                 type = "input",
@@ -230,9 +230,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                     v["best"] = L["Options_GemStat_Best"];
                     local stats = StatsModule:GetStats();
 
-                    for _, statKey in ipairs(Utils.SortedKeys(stats, function (key1, key2)
-                        return stats[key1].Order < stats[key2].Order;
-                    end)) do
+                    for _, statKey in ipairs(Utils.OrderKeysBy(stats, "Order")) do
                         local stat = stats[statKey];
                         if(stat.Gem and spec.Weights[StatsModule:KeyToAlias(statKey)]) then
                             v[stat.Alias] = stat.DisplayName;
@@ -247,11 +245,10 @@ function OptionsModule:CreateOptionsForSpec(key)
                 type = "execute",
                 name = L["Options_DeleteSpec"],
                 confirm = function()
-                    return string.format(L["Options_DeleteSpec_Confirm"], db[key].Name);
+                    return string.format(L["Options_DeleteSpec_Confirm"], spec.Name);
                 end,
                 func = function()
-                    db[key] = nil;
-                    options[key] = nil;
+                    self:RemoveSpec(key);
                 end,
                 order = 20
             },
@@ -260,6 +257,9 @@ function OptionsModule:CreateOptionsForSpec(key)
                 name = L["Options_SelectStats_Label"],
                 desc = L["Options_SelectStats_Tooltip"],
                 dialogControl = "Dropdown",
+                get = function(info, index)
+                    return spec.Weights[index] ~= nil;
+                end,
                 set = function(info, index, value)
                     if(value) then
                         spec.Weights[index] = 0;
@@ -272,16 +272,11 @@ function OptionsModule:CreateOptionsForSpec(key)
                         section[index] = nil;
                     end
                 end,
-                get = function(info, index)
-                    return spec.Weights[index] ~= nil;
-                end,
                 values = function ()
                     local v = {};
                     local stats = StatsModule:GetStats();
 
-                    for _, statKey in ipairs(Utils.SortedKeys(stats, function (key1, key2)
-                        return stats[key1].Order < stats[key2].Order;
-                    end)) do
+                    for _, statKey in ipairs(Utils.OrderKeysBy(stats, "Order")) do
                         local stat = stats[statKey];
                         v[stat.Alias] = stat.DisplayName;
                     end
@@ -290,12 +285,42 @@ function OptionsModule:CreateOptionsForSpec(key)
                 end,
                 order = 25
             },
+            SpecOrder = {
+                type = "select",
+                name = L["Options_Order_Label"],
+                get = function(info)
+                    return spec.Order;
+                end,
+                set = function(info, value)
+                    local original = spec.Order;
+                    for _, specKey in ipairs(Utils.OrderKeysBy(db, "Order")) do
+                        local s = db[specKey];
+                        if(s == spec) then
+                            s.Order = value;
+                        elseif(s.Order >= value and s.Order < original) then
+                            s.Order = s.Order + 1;
+                        elseif(s.Order > original and s.Order <= value) then
+                            s.Order = s.Order - 1;
+                        end
+                    end
+                end,
+                values = function()
+                    local v = {};
+
+                    for _, specKey in ipairs(Utils.OrderKeysBy(db, "Order")) do
+                        local order = db[specKey].Order;
+                        v[order] = order;
+                    end
+
+                    return v;
+                end,
+                order = 27
+            },
             Weights = {
                 type = "group",
                 inline = true,
                 name = L["Options_Weights_Section"],
                 args = {
-
                 },
                 order = 30
             },
@@ -371,23 +396,51 @@ function OptionsModule:CreateOptionsForStatWeight(spec, alias)
 end
 
 function OptionsModule:CreateNewSpec()
-    local index = 1;
-    for _,_ in pairs(StatWeightScore.db.profile.Specs) do
-        index = index + 1;
+    local db = StatWeightScore.db.profile.Specs;
+    local order = 1;
+
+    local ordered = Utils.OrderKeysBy(db, "Order");
+
+    if(#ordered ~= 0) then
+        order = db[ordered[#ordered]].Order + 1;
+    end
+
+    local name;
+    local nameIndex = 1;
+    while(name == nil) do
+        local n = "New spec "..nameIndex;
+        if(not db[n]) then
+            name = n;
+        end
+        nameIndex = nameIndex + 1;
     end
 
     local spec = {
-        Name = "New spec "..index,
+        Name = name,
         Enabled = true,
         Weights = {},
         GemStat = "best",
-        Order = index;
+        Order = order;
     };
 
     StatWeightScore.db.profile.Specs[spec.Name] = spec;
 
     self:CreateOptionsForSpec(spec.Name);
     AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", spec.Name);
+end
+
+function OptionsModule:RemoveSpec(key)
+    local db = StatWeightScore.db.profile.Specs;
+    local options = self.Options.args.Weights.args;
+
+    options[key] = nil;
+    db[key] = nil;
+
+    local order = 1;
+    for _, specKey in ipairs(Utils.OrderKeysBy(db, "Order")) do
+        db[specKey].Order = order;
+        order = order + 1;
+    end
 end
 
 function OptionsModule:Import(spec, input)

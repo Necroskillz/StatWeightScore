@@ -41,3 +41,4 @@ L["Options_ImportType_Label"] = "Import from";
 L["Options_ImportType_Tooltip"] = "Choose import source type";
 L["Options_Import_Label"] = "Import";
 L["Options_Import_Tooltip"] = "Copy&paste import input";
+L["Options_Order_Label"] = "Order";

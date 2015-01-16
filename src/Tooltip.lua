@@ -156,9 +156,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
             return comparedItemId == itemId and comparedItemLevel == itemLevel and ((comparedGem1 ~= 0 and itemGem1 ~= 0) or (comparedGem1 == 0 and itemGem1 == 0));
         end
 
-        for _, specKey in ipairs(Utils.SortedKeys(db.Specs, function(key1, key2)
-            return db.Specs[key1].Order < db.Specs[key2].Order;
-        end)) do
+        for _, specKey in ipairs(Utils.OrderKeysBy(db.Specs, "Order")) do
             count = count + 1;
             local spec = db.Specs[specKey];
             if(spec.Enabled) then
