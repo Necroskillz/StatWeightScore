@@ -24,9 +24,9 @@ local updateResult = function(result, type, stat, averageStatValue, weight)
 end;
 
 local primaryStatIndex = {
-    [1] = "str",
-    [2] = "agi",
-    [4] = "int"
+    ["str"] = 1,
+    ["agi"] = 2,
+    ["int"] = 4
 };
 
 ScoreModule.Fx = {
@@ -99,18 +99,17 @@ ScoreModule.Fx = {
         local primaryStat;
         local primaryStatValue = 0;
 
-        for _, i in ipairs({1,2,4}) do
-            local value = UnitStat("player", i);
-            if(value > primaryStatValue) then
-                primaryStatValue = value;
-                primaryStat = i;
+        for _, alias in ipairs({"str","agi","int"}) do
+            local stat = StatsModule:GetStatInfo(alias);
+
+            if(stats[stat.Key]) then
+                primaryStatValue = UnitStat("player", primaryStatIndex[alias]);
+                primaryStat = alias;
+                break;
             end
         end
 
-        local statInfo = StatsModule:GetStatInfo(primaryStatIndex[primaryStat]);
-        if(not statInfo) then
-            return
-        end
+        local statInfo = StatsModule:GetStatInfo(primaryStat);
 
         args["stat"] = statInfo.DisplayName;
         args["value"] = primaryStatValue / 10;
