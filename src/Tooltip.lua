@@ -146,7 +146,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
         local blankLineHandled = false;
         local count = 0;
         local maxCount = 0;
-        for _, _ in ipairs(db.Specs) do
+        for _, _ in pairs(db.Specs) do
             maxCount = maxCount + 1;
         end
 
@@ -253,7 +253,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     tooltip:AddDoubleLine(L["TooltipMessage_WithUseAverage"], string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
                 end
 
-                if(count == maxCount and blankLineHandled) then
+                if(count == maxCount) then
                     if((compare and db.BlankLineMainBelow) or (not compare and db.BlankLineRefBelow)) then
                         tooltip:AddLine(" ");
                     end
