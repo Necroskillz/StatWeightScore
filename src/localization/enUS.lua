@@ -1,5 +1,8 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("StatWeightScore", "enUS", true);
 
+L["ThousandSeparator"] = ",";
+L["DecimalSeparator"] = "%.";
+
 L["WelcomeMessage"] = "loaded. v%s by Necroskillz";
 L["GemsDisplayFormat"] = "%s gems";
 L["Offhand_DPS"] = "Offhand DPS";
@@ -42,3 +45,67 @@ L["Options_ImportType_Tooltip"] = "Choose import source type";
 L["Options_Import_Label"] = "Import";
 L["Options_Import_Tooltip"] = "Copy&paste import input";
 L["Options_Order_Label"] = "Order";
+
+-- Use: Increases your <stat> by <value> for <dur> sec. (<cd> Min Cooldown)
+-- Use: Increases <stat> by <value> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
+-- Use: Grants <value> <stat> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
+-- Equip: Your attacks have a chance to grant <value> <stat> for <dur> sec.  (Approximately <procs> procs per minute)
+-- Equip: Each time your attacks hit, you have a chance to gain <value> <stat> for <dur> sec. (<chance>% chance, <cd> sec cooldown)
+-- Equip: Your attacks have a chance to grant you <value> <stat> for <dur> sec. (<chance>% chance, <cd> sec cooldown)
+-- Insignia of Conquest - Equip: When you deal damage you have a chance to gain <value> <stat> for <dur> sec.
+-- Solium Band - Equip: Your attacks have a chance to grant Archmage's Incandescence for <duration> sec.  (Approximately <procs> procs per minute)
+-- +<value> Bonus Armor
+
+L["Tooltip_Regex"] = {
+    PreCheck = {
+        "^equip:",
+        "^use:",
+        "bonus armor$"
+    },
+    Partial = {
+        ["cdmin"] = "(%d+) min",
+        ["cdsec"] = "(%d+) sec"
+    },
+    Matchers = {
+        {
+            Pattern = "^equip: your attacks have a chance to grant ([%d,%. ]+) ([%l ]-) for (%d+) sec%.  %(approximately ([%d%.]+) procs per minute%)$",
+            Fx = "rppm",
+            ArgOrder = { "value", "stat", "duration", "ppm" }
+        },
+        {
+            Pattern = "^equip: your attacks have a chance to grant archmage's incandescence for (%d+) sec%.  %(approximately ([%d%.]+) procs per minute%)$",
+            Fx = "soliumband",
+            ArgOrder = { "duration", "ppm" }
+        },
+        {
+            Pattern = "^equip: each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%l ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
+            Fx = "icd",
+            ArgOrder = { "value", "stat", "duration", "chance", "cd" }
+        },
+        {
+            Pattern = "^equip: your attacks have a chance to grant you ([%d,%. ]+) ([%l ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
+            Fx = "icd",
+            ArgOrder = { "value", "stat", "duration", "chance", "cd" }
+        },
+        {
+            Pattern = "^equip: when you deal damage you have a chance to gain ([%d,%. ]+) ([%l ]-) for (%d+) sec%.",
+            Fx = "insigniaofconquest",
+            ArgOrder = { "value", "stat", "duration" }
+        },
+        {
+            Pattern = "^use: increases y?o?u?r? ?([%l ]-) by ([%d,%. ]+) for (%d+) sec%. %(([%d%l ]-) cooldown%)$",
+            Fx = "use",
+            ArgOrder = { "stat", "value", "duration", "cd" }
+        },
+        {
+            Pattern = "^use: grants ([%d,%. ]+) ([%l ]-) for (%d+) sec%. %(([%d%l ]-) cooldown%)$",
+            Fx = "use",
+            ArgOrder = { "value", "stat", "duration", "cd" }
+        },
+        {
+            Pattern = "^%+(%d+) bonus armor$",
+            Fx = "bonusarmor",
+            ArgOrder = { "value" }
+        }
+    }
+};

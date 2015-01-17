@@ -1,6 +1,8 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
 local Utils = {};
 
+local L = StatWeightScore.L;
+
 StatWeightScore.Utils = Utils;
 
 Utils.SortedKeys = function(t, sortFunction)
@@ -12,13 +14,31 @@ Utils.SortedKeys = function(t, sortFunction)
 
     table.sort(keys, sortFunction);
     return keys;
-end
+end;
 
 Utils.OrderKeysBy = function(array, property)
     return Utils.SortedKeys(array, function(key1, key2)
         return array[key1][property] < array[key2][property];
     end)
-end
+end;
+
+Utils.ToNumber = function(s)
+    if(type(s) == "number") then
+        return s
+    end
+
+    s = s:gsub(L["ThousandSeparator"], ""):gsub(L["DecimalSeparator"], ".");
+
+    return tonumber(s);
+end;
+
+Utils.Pack = function(...)
+    if(... == nil) then
+        return nil
+    end
+
+    return { n = select("#", ...), ... };
+end;
 
 Utils.Print = function(text)
     if(text == nil) then
@@ -33,4 +53,4 @@ Utils.Print = function(text)
     else
         print(SWS_ADDON_NAME..": "..tostring(text));
     end
-end
+end;
