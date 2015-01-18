@@ -2,6 +2,12 @@ local SWS_ADDON_NAME, StatWeightScore = ...;
 local ImportExportModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."ImportExport");
 
 local XmlModule;
+local StatsModule;
+
+local Utils;
+
+ImportExportModule.ImportTypes = {};
+ImportExportModule.ExportTypes = {};
 
 local importers = {};
 local exporters = {};
@@ -54,7 +60,13 @@ local function importSimulationCraftXML(input)
         if(e.label == "stat") then
             local statName = e.xarg.name;
             local alias = simulationCraftStatMap[statName] or statName:lower();
-            result[alias] = tonumber(e.xarg.value);
+
+            if(StatsModule:GetStatInfo(alias)) then
+                result[alias] = tonumber(e.xarg.value);
+            else
+                error("Unknown stat "..statName);
+            end
+
         end
     end
 
@@ -64,11 +76,22 @@ end
 local function importAskMrRobotShare(input)
     local matches = input:gmatch("(%w+)%s+([%d%.]+)");
     local result = {};
+    local matched = false;
     local map = createAmrMaps();
 
     for stat, weight in matches do
-        local alias = map[stat] or stat:lower();
-        result[alias] = tonumber(weight);
+        matched = true;
+        local alias = map[stat];
+
+        if(StatsModule:GetStatInfo(alias)) then
+            result[alias] = tonumber(weight);
+        else
+            error("Unknown stat "..stat);
+        end
+    end
+
+    if(not matched) then
+        error("Found no stat to import")
     end
 
     return result;
@@ -78,9 +101,11 @@ local function exportAskMrRobotShare(spec)
     local result = "";
     local _, map = createAmrMaps();
 
-    for alias, weight in pairs(spec.Weights) do
+    for _, alias in ipairs(Utils.SortedKeys(spec.Weights, function (key1, key2)
+        return spec.Weights[key1] > spec.Weights[key2];
+    end)) do
         local stat = map[alias];
-        result = result..stat.." "..weight.."\n";
+        result = result..stat.." "..spec.Weights[alias].."\n";
     end
 
     return result;
@@ -88,11 +113,20 @@ end
 
 function ImportExportModule:OnInitialize()
     XmlModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Xml");
+    StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
+    Utils = StatWeightScore.Utils;
 
-    importers["sim"] = importSimulationCraftXML;
-    importers["amr"] = importAskMrRobotShare;
+    self:RegisterDefaultImportExport();
+end
 
-    exporters["amr"] = exportAskMrRobotShare;
+function ImportExportModule:RegisterImport(key, importTitle, importFunc)
+    self.ImportTypes[key] = importTitle;
+    importers[key] = importFunc;
+end
+
+function ImportExportModule:RegisterExport(key, exportTitle, exportFunc)
+    self.ExportTypes[key] = exportTitle;
+    exporters[key] = exportFunc;
 end
 
 function ImportExportModule:Import(importType, input)
@@ -101,4 +135,11 @@ end
 
 function ImportExportModule:Export(exportType, spec)
     return exporters[exportType](spec);
+end
+
+function ImportExportModule:RegisterDefaultImportExport()
+    self:RegisterImport("sim", "SimulationCraft xml", importSimulationCraftXML);
+    self:RegisterImport("amr", "Ask Mr. Robot share", importAskMrRobotShare);
+
+    self:RegisterExport("amr", "Ask Mr. Robot share", exportAskMrRobotShare);
 end

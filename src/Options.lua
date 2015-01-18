@@ -13,15 +13,6 @@ local StatsModule;
 local Utils;
 local L;
 
-local ImportTypes = {
-    ["sim"] = "SimulationCraft xml",
-    ["amr"] = "Ask Mr. Robot share"
-};
-
-local ExportTypes = {
-    ["amr"] = "Ask Mr. Robot share"
-};
-
 OptionsModule.Defaults = {
     profile = {
         EnableTooltip = true,
@@ -349,7 +340,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                         set = function(info, value)
                             self.ImportType = value;
                         end,
-                        values = ImportTypes,
+                        values = ImportExportModule.ImportTypes,
                         order = 10
                     },
                     Import = {
@@ -383,7 +374,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                             self.ExportType = value;
                             self.LastExport = nil;
                         end,
-                        values = ExportTypes,
+                        values = ImportExportModule.ExportTypes,
                         order = 10
                     },
                     ExportButton = {
@@ -511,9 +502,7 @@ function OptionsModule:Import(spec, input)
     self.Options.args.Weights.args[spec.Name].args.Weights.args = {};
 
     for stat, weight in pairs(result) do
-        if(StatsModule:GetStatInfo(stat)) then
-            spec.Weights[stat] = weight;
-            self:CreateOptionsForStatWeight(spec, stat);
-        end
+        spec.Weights[stat] = weight;
+        self:CreateOptionsForStatWeight(spec, stat);
     end
 end
