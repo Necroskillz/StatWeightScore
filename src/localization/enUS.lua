@@ -45,6 +45,11 @@ L["Options_ImportType_Tooltip"] = "Choose import source type";
 L["Options_Import_Label"] = "Import";
 L["Options_Import_Tooltip"] = "Copy&paste import input";
 L["Options_Order_Label"] = "Order";
+L["Options_Export_Title"] = "Export weights";
+L["Options_ExportType_Label"] = "Export to";
+L["Options_ExportType_Tooltip"] = "Choose export format";
+L["Options_Export"] = "Export";
+L["Options_Export_Label"] = "Export output";
 
 -- Use: Increases your <stat> by <value> for <dur> sec. (<cd> Min Cooldown)
 -- Use: Increases <stat> by <value> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)

@@ -6,7 +6,7 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local AceDB = LibStub("AceDB-3.0");
 local AceDBOptions = LibStub("AceDBOptions-3.0");
 
-local XmlModule;
+local ImportExportModule;
 local GemsModule;
 local StatsModule;
 
@@ -14,7 +14,12 @@ local Utils;
 local L;
 
 local ImportTypes = {
-    ["sim"] = "SimulationCraft xml"
+    ["sim"] = "SimulationCraft xml",
+    ["amr"] = "Ask Mr. Robot share"
+};
+
+local ExportTypes = {
+    ["amr"] = "Ask Mr. Robot share"
 };
 
 OptionsModule.Defaults = {
@@ -138,13 +143,14 @@ function OptionsModule:CreateOptions()
 end
 
 function OptionsModule:OnInitialize()
-    XmlModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Xml");
     GemsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Gems");
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
+    ImportExportModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ImportExport");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
     self.ImportType = "sim";
+    self.ExportType = "amr";
 
     local db = AceDB:New(SWS_ADDON_NAME.."DB", self.Defaults);
     StatWeightScore.db = db;
@@ -235,6 +241,10 @@ function OptionsModule:CreateOptionsForSpec(key)
                         if(stat.Gem and spec.Weights[StatsModule:KeyToAlias(statKey)]) then
                             v[stat.Alias] = stat.DisplayName;
                         end
+                    end
+
+                    if(not v[spec.GemStat]) then
+                        spec.GemStat = "best";
                     end
 
                     return v;
@@ -350,11 +360,54 @@ function OptionsModule:CreateOptionsForSpec(key)
                         width = "full",
                         set = function(info, value)
                             self:Import(spec, value)
+                            self.LastExport = nil;
                         end,
                         order = 20
                     }
                 },
                 order = 35
+            },
+            Export = {
+                type = "group",
+                name = L["Options_Export_Title"],
+                inline = true,
+                args = {
+                    ExportType = {
+                        type = "select",
+                        name = L["Options_ExportType_Label"],
+                        desc = L["Options_ExportType_Tooltip"],
+                        get = function(info)
+                            return self.ExportType;
+                        end,
+                        set = function(info, value)
+                            self.ExportType = value;
+                            self.LastExport = nil;
+                        end,
+                        values = ExportTypes,
+                        order = 10
+                    },
+                    ExportButton = {
+                        type = "execute",
+                        name = L["Options_Export"],
+                        func = function()
+                            self.LastExport = ImportExportModule:Export(self.ExportType, spec);
+                        end,
+                        order = 11
+                    },
+                    Export = {
+                        type = "input",
+                        name = L["Options_Export_Label"],
+                        multiline = true,
+                        width = "full",
+                        set = function(info, value)
+                        end,
+                        get = function(info)
+                            return self.LastExport;
+                        end,
+                        order = 20
+                    }
+                },
+                order = 40
             }
         }
     };
@@ -448,17 +501,14 @@ function OptionsModule:Import(spec, input)
         return;
     end
 
-    local result;
-
-    if(self.ImportType == "sim") then
-        result = self:ImportSimulationCraftXML(input);
-    end
+    local result = ImportExportModule:Import(self.ImportType, input);
 
     if(not result) then
         error("Import unsuccesfull");
     end
 
     spec.Weights = {};
+    self.Options.args.Weights.args[spec.Name].args.Weights.args = {};
 
     for stat, weight in pairs(result) do
         if(StatsModule:GetStatInfo(stat)) then
@@ -466,30 +516,4 @@ function OptionsModule:Import(spec, input)
             self:CreateOptionsForStatWeight(spec, stat);
         end
     end
-end
-
-function OptionsModule:ImportSimulationCraftXML(input)
-    local result = {};
-    local x = XmlModule:Parse(input);
-
-    local root = x[1];
-    if(root.label ~= "weights") then
-        error("Couldn't find root element 'weights' in the xml");
-    end
-
-    local simulationCraftStatMap = {
-        ["Wdps"] = "dps",
-        ["Mult"] = "multistrike",
-        ["Vers"] = "versatility",
-    };
-
-    for _, e in ipairs(root) do
-        if(e.label == "stat") then
-            local statName = e.xarg.name;
-            local alias = simulationCraftStatMap[statName] or statName:lower();
-            result[alias] = tonumber(e.xarg.value);
-        end
-    end
-
-    return result;
 end

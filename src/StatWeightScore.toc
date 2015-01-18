@@ -20,5 +20,5 @@ Gems.lua
 ScanningTooltip.lua
 Score.lua
 Tooltip.lua
+ImportExport.lua
 Options.lua
-Options.xml
