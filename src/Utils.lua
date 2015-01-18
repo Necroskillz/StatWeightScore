@@ -54,3 +54,16 @@ Utils.Print = function(text)
         print(SWS_ADDON_NAME..": "..tostring(text));
     end
 end;
+
+Utils.PrintError = function(err)
+    Utils.Print("|cffff0000"..err.."|r");
+end
+
+Utils.Try = function(tryFunc, catchFunc)
+    local ok, err_or_ret = pcall(tryFunc);
+    if(ok) then
+        return err_or_ret;
+    else
+        catchFunc(err_or_ret);
+    end
+end

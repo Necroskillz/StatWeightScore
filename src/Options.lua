@@ -492,10 +492,14 @@ function OptionsModule:Import(spec, input)
         return;
     end
 
-    local result = ImportExportModule:Import(self.ImportType, input);
+    local result = Utils.Try(function()
+        return ImportExportModule:Import(self.ImportType, input);
+    end, function(err)
+        Utils.PrintError("Import error: "..err);
+    end)
 
     if(not result) then
-        error("Import unsuccesfull");
+        return;
     end
 
     spec.Weights = {};
