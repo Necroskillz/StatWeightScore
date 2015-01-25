@@ -98,7 +98,7 @@ local function GetItemLinkInfo(itemLink)
     string.find(itemLink,
         "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?");
 
-    return id, gem1;
+    return id, tonumber(gem1);
 end
 
 function TooltipModule:OnInitialize()
