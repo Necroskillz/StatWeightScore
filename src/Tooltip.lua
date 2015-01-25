@@ -94,11 +94,11 @@ local function GetItemLinkInfo(itemLink)
         return nil;
     end
 
-    local _, _, _, _, id, _, gem1, _, _, _, _, _, _, _ =
+    local _, _, _, _, id, _, _, _, _, _, _, _, _, _ =
     string.find(itemLink,
         "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?");
 
-    return id, tonumber(gem1);
+    return id;
 end
 
 function TooltipModule:OnInitialize()
@@ -141,7 +141,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
     if IsEquippableItem(link) then
         local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
-        local itemId, itemGem1 = GetItemLinkInfo(link);
+        local itemId = GetItemLinkInfo(link);
         local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
         local blankLineHandled = false;
         local count = 0;
@@ -152,15 +152,20 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
         local locStr = getglobal(loc);
 
-        local isEquippedItem = function(comparedItemId, comparedItemLevel, comparedGem1)
-            return comparedItemId == itemId and comparedItemLevel == itemLevel and ((comparedGem1 ~= 0 and itemGem1 ~= 0) or (comparedGem1 == 0 and itemGem1 == 0));
-        end
 
         for _, specKey in ipairs(Utils.OrderKeysBy(db.Specs, "Order")) do
             count = count + 1;
             local spec = db.Specs[specKey];
             if(spec.Enabled) then
                 local score = ScoreModule:CalculateItemScore(link, loc, tooltip, spec);
+
+                local isEquippedItem = function(comparedItemId, comparedItemLevel, comparedScore)
+                    local scoreGem = score.Gem and score.Gem.Value..score.Gem.Stat or "";
+                    local comparedScoreGem = comparedScore.Gem and comparedScore.Gem.Value..comparedScore.Gem.Stat or "";
+
+                    return comparedItemId == itemId and comparedItemLevel == itemLevel and scoreGem == comparedScoreGem;
+                end
+
                 local diff = 0;
                 local offhandDiff = 0;
 
@@ -181,7 +186,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                         if(equippedLink) then
                             local equippedItemName, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
                             local equippedLocStr = getglobal(equippedLoc);
-                            local equippedItemId, equippedItemGem1 = GetItemLinkInfo(equippedLink);
+                            local equippedItemId = GetItemLinkInfo(equippedLink);
                             oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON);
 
                             local equippedScore = ScoreModule:CalculateItemScore(equippedLink, loc, ScanningTooltipModule:ScanTooltip(equippedLink), spec);
@@ -193,7 +198,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                                 break;
                             end
 
-                            if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedItemGem1)) then
+                            if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedScore)) then
                                 if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
                                     minEquippedScore = equippedScore.Score;
                                 end
