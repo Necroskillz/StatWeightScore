@@ -280,11 +280,29 @@ function OptionsModule:CreateOptionsForSpec(key)
                         self:CreateOptionsForStatWeight(spec, index);
                     else
                         spec.Weights[index] = nil;
-                        local section = options[key].args.Weights.args;
-                        local stat = section[index];
-                        section[index..stat.order] = nil;
-                        section[index] = nil;
+                        self:RemoveOptionsForStatWeight(spec, index);
                     end
+                end,
+                validate = function(options, index, value)
+                    local statInfo = StatsModule:GetStatInfo(index);
+
+                    if(statInfo.Primary and value) then
+                        local primary = {};
+                        table.insert(primary, statInfo)
+                        for stat, _ in pairs(spec.Weights) do
+                            local info = StatsModule:GetStatInfo(stat);
+                            if(info.Primary) then
+                                table.insert(primary, info);
+                            end
+                        end
+
+                        if(#primary > 1) then
+                            Utils.PrintError(L["Error_MultiplePrimaryStatsSelected"]); -- workaround a 6yo bug in Ace
+                            return L["Error_MultiplePrimaryStatsSelected"];
+                        end
+                    end
+
+                    return true;
                 end,
                 values = function ()
                     local v = {};
@@ -450,6 +468,15 @@ function OptionsModule:CreateOptionsForStatWeight(spec, alias)
         order = stat.Order + 1,
         width = "half"
     };
+end
+
+function OptionsModule:RemoveOptionsForStatWeight(spec, alias)
+    local options = self.Options.args.Weights.args[spec.Name].args.Weights.args;
+    local stat = options[alias];
+    if(stat) then
+        options[alias..stat.order] = nil;
+        options[alias] = nil;
+    end
 end
 
 function OptionsModule:CreateNewSpec()

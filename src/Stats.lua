@@ -20,6 +20,7 @@ local function AddStat(alias, key, options)
         Alias = alias,
         DisplayName = options.DisplayName or getglobal(key),
         Gem = not not options.Gem,
+        Primary = not not options.Primary
     };
 end
 
@@ -30,11 +31,11 @@ function StatsModule:OnInitialize()
     AddStat("dps", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT");
     AddStat("wohdps", "OFFHAND_DPS", { DisplayName = L["Offhand_DPS"]});
 
-    AddStat("agi", "ITEM_MOD_AGILITY_SHORT");
-    AddStat("int", "ITEM_MOD_INTELLECT_SHORT");
+    AddStat("agi", "ITEM_MOD_AGILITY_SHORT", { Primary = true });
+    AddStat("int", "ITEM_MOD_INTELLECT_SHORT", { Primary = true });
     AddStat("sta", "ITEM_MOD_STAMINA_SHORT", { Gem = true });
     AddStat("spi", "ITEM_MOD_SPIRIT_SHORT");
-    AddStat("str", "ITEM_MOD_STRENGTH_SHORT");
+    AddStat("str", "ITEM_MOD_STRENGTH_SHORT", { Primary = true });
     AddStat("mastery", "ITEM_MOD_MASTERY_RATING_SHORT", { Gem = true });
 
     AddStat("armor", "RESISTANCE0_NAME");

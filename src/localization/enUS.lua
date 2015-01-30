@@ -52,6 +52,7 @@ L["Options_ExportType_Label"] = "Export to";
 L["Options_ExportType_Tooltip"] = "Choose export format";
 L["Options_Export"] = "Export";
 L["Options_Export_Label"] = "Export output";
+L["Error_MultiplePrimaryStatsSelected"] = "You can only select one primary stat (agi, str or int)";
 
 -- Use: Increases your <stat> by <value> for <dur> sec. (<cd> Min Cooldown)
 -- Use: Increases <stat> by <value> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
