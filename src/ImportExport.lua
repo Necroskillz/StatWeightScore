@@ -9,10 +9,10 @@ local Utils;
 ImportExportModule.ImportTypes = {};
 ImportExportModule.ExportTypes = {};
 
-local importers = {};
-local exporters = {};
+local Importers = {};
+local Exporters = {};
 
-local function createAmrMaps()
+local function CreateAmrMaps()
     local askMrRobotStatMap = {};
     local reverseAskMrRobotStatMap = {};
 
@@ -41,7 +41,7 @@ local function createAmrMaps()
     return askMrRobotStatMap, reverseAskMrRobotStatMap;
 end
 
-local function importSimulationCraftXML(input)
+local function ImportSimulationCraftXML(input)
     local result = {};
     local x = XmlModule:Parse(input);
 
@@ -73,11 +73,11 @@ local function importSimulationCraftXML(input)
     return result;
 end
 
-local function importAskMrRobotShare(input)
+local function ImportAskMrRobotShare(input)
     local matches = input:gmatch("(%w+)%s+([%d%.]+)");
     local result = {};
     local matched = false;
-    local map = createAmrMaps();
+    local map = CreateAmrMaps();
 
     for stat, weight in matches do
         matched = true;
@@ -97,9 +97,9 @@ local function importAskMrRobotShare(input)
     return result;
 end
 
-local function exportAskMrRobotShare(spec)
+local function ExportAskMrRobotShare(spec)
     local result = "";
-    local _, map = createAmrMaps();
+    local _, map = CreateAmrMaps();
 
     for _, alias in ipairs(Utils.SortedKeys(spec.Weights, function (key1, key2)
         return spec.Weights[key1] > spec.Weights[key2];
@@ -121,25 +121,25 @@ end
 
 function ImportExportModule:RegisterImport(key, importTitle, importFunc)
     self.ImportTypes[key] = importTitle;
-    importers[key] = importFunc;
+    Importers[key] = importFunc;
 end
 
 function ImportExportModule:RegisterExport(key, exportTitle, exportFunc)
     self.ExportTypes[key] = exportTitle;
-    exporters[key] = exportFunc;
+    Exporters[key] = exportFunc;
 end
 
 function ImportExportModule:Import(importType, input)
-    return importers[importType](input);
+    return Importers[importType](input);
 end
 
 function ImportExportModule:Export(exportType, spec)
-    return exporters[exportType](spec);
+    return Exporters[exportType](spec);
 end
 
 function ImportExportModule:RegisterDefaultImportExport()
-    self:RegisterImport("sim", "SimulationCraft xml", importSimulationCraftXML);
-    self:RegisterImport("amr", "Ask Mr. Robot share", importAskMrRobotShare);
+    self:RegisterImport("sim", "SimulationCraft xml", ImportSimulationCraftXML);
+    self:RegisterImport("amr", "Ask Mr. Robot share", ImportAskMrRobotShare);
 
-    self:RegisterExport("amr", "Ask Mr. Robot share", exportAskMrRobotShare);
+    self:RegisterExport("amr", "Ask Mr. Robot share", ExportAskMrRobotShare);
 end

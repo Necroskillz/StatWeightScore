@@ -21,6 +21,7 @@ OptionsModule.Defaults = {
         BlankLineMainBelow = false,
         BlankLineRefAbove = true,
         BlankLineRefBelow = false,
+        EnableCmMode = true,
         Specs = {}
     }
 };
@@ -45,8 +46,20 @@ function OptionsModule:CreateOptions()
                         name = L["Options_Enabled"],
                         desc = L["Options_EnabledGlobal_Tooltip"],
                     },
-                    EnchantLevel = {
+
+                    EnableCmMode = {
+                        order = 15,
+                        type = "toggle",
+                        name = L["Options_EnableCmMode_Label"],
+                        desc = L["Options_EnableCmMode_Tooltip"],
+                    },
+                    NewLine1 = {
+                        type= 'description',
                         order = 20,
+                        name= '',
+                    },
+                    EnchantLevel = {
+                        order = 25,
                         type = "select",
                         name = L["Options_EnchantLevel_Label"],
                         desc = L["Options_EnchantLevel_Tooltip"],
@@ -92,7 +105,7 @@ function OptionsModule:CreateOptions()
                                 type = "toggle",
                                 name = L["Options_BlankLineRefBelow_Label"],
                                 desc = L["Options_BlankLineRefBelow_Tooltip"],
-                            },
+                            }
                         }
                     }
                 }

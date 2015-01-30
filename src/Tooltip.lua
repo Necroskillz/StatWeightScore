@@ -151,13 +151,30 @@ function TooltipModule:AddToTooltip(tooltip, compare)
         end
 
         local locStr = getglobal(loc);
+        local cmMode = db.EnableCmMode and select(3, GetInstanceInfo()) == 8;
 
+        local calculateScore = function(link, loc, spec, tooltip)
+            if(cmMode) then
+                if(not tooltip) then
+                    for i = 1,2 do
+                        local shoppingTooltip = getglobal("ShoppingTooltip"..i);
+                        if(select(2, shoppingTooltip:GetItem()) == link) then
+                            tooltip = shoppingTooltip;
+                            break;
+                        end
+                    end
+                end
+                return ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec);
+            else
+                return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec);
+            end
+        end
 
         for _, specKey in ipairs(Utils.OrderKeysBy(db.Specs, "Order")) do
             count = count + 1;
             local spec = db.Specs[specKey];
             if(spec.Enabled) then
-                local score = ScoreModule:CalculateItemScore(link, loc, tooltip, spec);
+                local score = calculateScore(link, loc, spec, tooltip);
 
                 local isEquippedItem = function(comparedItemId, comparedItemLevel, comparedScore)
                     local scoreGem = score.Gem and score.Gem.Value..score.Gem.Stat or "";
@@ -189,7 +206,10 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                             local equippedItemId = GetItemLinkInfo(equippedLink);
                             oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON);
 
-                            local equippedScore = ScoreModule:CalculateItemScore(equippedLink, loc, ScanningTooltipModule:ScanTooltip(equippedLink), spec);
+                            local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil);
+                            if(equippedScore == nil) then
+                                break
+                            end
 
                             scoreTable[slot] = equippedScore;
 

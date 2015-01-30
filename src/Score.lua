@@ -15,13 +15,43 @@ function ScoreModule:OnInitialize()
     self.Regex = L["Tooltip_Regex"];
 end
 
-local updateResult = function(result, type, stat, averageStatValue, weight)
+local function UpdateResult(result, type, stat, averageStatValue, weight)
     result.Score = result.Score + averageStatValue * weight
     result[type] = {
         AverageValue = averageStatValue;
         Stat = stat.DisplayName;
     };
-end;
+end
+
+local function GetStatsFromTooltip(tooltip)
+    local stats = {};
+
+    if(tooltip) then
+        for l = 1,tooltip:NumLines() do
+            local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
+            if(tooltipText) then
+                local line = (tooltipText:GetText() or "");
+
+                local value, stat = line:match("^%(?%+?([%d,%. ]+) ([%a ]+)%)?$");
+
+                if(value and stat) then
+                    local statInfo = StatsModule:GetStatInfoByDisplayName(stat);
+                    if(statInfo) then
+                        stats[statInfo.Key] = tonumber(value);
+                    end
+                end
+            end
+        end
+    end
+
+    --Utils.Print(stats);
+
+    return stats;
+end
+
+local function GetStatsFromLink(link)
+    return GetItemStats(link);
+end
 
 local primaryStatIndex = {
     ["str"] = 1,
@@ -44,7 +74,7 @@ ScoreModule.Fx = {
         local uptime = ppm * duration * (1 + haste / 100) / 60;
         local averageStatValue = uptime * value;
 
-        updateResult(result, "Proc", statInfo, averageStatValue, weights[statInfo.Alias]);
+        UpdateResult(result, "Proc", statInfo, averageStatValue, weights[statInfo.Alias]);
     end,
     ["icd"] = function(result, stats, weights, args)
         local statInfo = StatsModule:GetStatInfoByDisplayName(args["stat"]);
@@ -63,7 +93,7 @@ ScoreModule.Fx = {
         local uptime = duration / (cd + (1/chance) * assumedAttacksPerSecond);
         local averageStatValue = uptime * value;
 
-        updateResult(result, "Proc", statInfo, averageStatValue, weights[statInfo.Alias]);
+        UpdateResult(result, "Proc", statInfo, averageStatValue, weights[statInfo.Alias]);
         end,
     ["use"] = function(result, stats, weights, args)
         local statInfo = StatsModule:GetStatInfoByDisplayName(args["stat"]);
@@ -81,7 +111,7 @@ ScoreModule.Fx = {
         local uptime = duration / cooldown;
         local averageStatValue = uptime * value;
 
-        updateResult(result, "Use", statInfo, averageStatValue, weights[statInfo.Alias]);
+        UpdateResult(result, "Use", statInfo, averageStatValue, weights[statInfo.Alias]);
     end,
     ["bonusarmor"] = function(result, stats, weights, args)
         local armorKey = StatsModule:AliasToKey("armor");
@@ -119,8 +149,24 @@ ScoreModule.Fx = {
 };
 
 function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
+    return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
+        return GetStatsFromLink(link);
+    end, false, true);
+end
+
+function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
+    if(tooltip == nil) then
+        return nil
+    end
+
+    return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
+        return GetStatsFromTooltip(tooltip);
+    end, true, false);
+end
+
+function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreSocket, fixBonusArmor)
     local weights = spec.Weights;
-    local stats = GetItemStats(link);
+    local stats = getStatsFunc();
     local secondaryStat = StatsModule:GetBestGemStat(spec);
     local locStr = getglobal(loc);
     local db = StatWeightScore.db.profile;
@@ -129,40 +175,42 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
         Score = 0;
     };
 
-    if(stats[StatsModule:AliasToKey("socket")]) then
-        local _, gemLink = GetItemGem(link, 1);
-        local enchantLevel;
-        local gemStatWeight;
-        local gemStat;
-        if(gemLink) then
-            local gemName, _, gemQuality = GetItemInfo(gemLink);
+    if(not ignoreSocket) then
+        if(stats[StatsModule:AliasToKey("socket")]) then
+            local _, gemLink = GetItemGem(link, 1);
+            local enchantLevel;
+            local gemStatWeight;
+            local gemStat;
+            if(gemLink) then
+                local gemName, _, gemQuality = GetItemInfo(gemLink);
 
-            if(gemQuality == 2) then
-                enchantLevel = 1
-            elseif(gemQuality == 3) then
-                enchantLevel = 2
-            end
-
-            for stat, weight in pairs(weights) do
-                local statInfo = StatsModule:GetStatInfo(stat);
-                if(statInfo.Gem and string.find(gemName, statInfo.DisplayName)) then
-                    gemStatWeight = weight;
-                    gemStat = statInfo;
+                if(gemQuality == 2) then
+                    enchantLevel = 1
+                elseif(gemQuality == 3) then
+                    enchantLevel = 2
                 end
-            end
-        elseif(secondaryStat) then
-            enchantLevel = db.EnchantLevel;
-            gemStatWeight = secondaryStat.Weight;
-            gemStat = secondaryStat.Stat;
-        end
 
-        if(gemStat) then
-            local statValue = GemsModule:GetGemValue(enchantLevel);
-            result.Score = result.Score + statValue * gemStatWeight;
-            result.Gem = {
-                Stat = gemStat.Alias;
-                Value = statValue;
-            };
+                for stat, weight in pairs(weights) do
+                    local statInfo = StatsModule:GetStatInfo(stat);
+                    if(statInfo.Gem and string.find(gemName, statInfo.DisplayName)) then
+                        gemStatWeight = weight;
+                        gemStat = statInfo;
+                    end
+                end
+            elseif(secondaryStat) then
+                enchantLevel = db.EnchantLevel;
+                gemStatWeight = secondaryStat.Weight;
+                gemStat = secondaryStat.Stat;
+            end
+
+            if(gemStat) then
+                local statValue = GemsModule:GetGemValue(enchantLevel);
+                result.Score = result.Score + statValue * gemStatWeight;
+                result.Gem = {
+                    Stat = gemStat.Alias;
+                    Value = statValue;
+                };
+            end
         end
     end
 
@@ -171,7 +219,7 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
             for l = 1,tooltip:NumLines() do
                 local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
                 if(tooltipText) then
-                    local line = (tooltipText:GetText() or ""):lower();
+                    local line = (tooltipText:GetText() or "");
 
                     local precheck = false;
                     for _, preCheckPattern in ipairs(self.Regex.PreCheck) do
@@ -183,17 +231,20 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
 
                     if(precheck) then
                         for _, matcher in ipairs(self.Regex.Matchers) do
-                            local match =  Utils.Pack(line:match(matcher.Pattern));
+                            if(matcher.Fx == "bonusarmor" and not fixBonusArmor) then
+                            else
+                                local match =  Utils.Pack(line:match(matcher.Pattern));
 
-                            if(match) then
-                                local argOrder = matcher.ArgOrder;
-                                local args = {};
+                                if(match) then
+                                    local argOrder = matcher.ArgOrder;
+                                    local args = {};
 
-                                for i = 1, match.n do
-                                    args[argOrder[i]] = match[i];
+                                    for i = 1, match.n do
+                                        args[argOrder[i]] = match[i];
+                                    end
+
+                                    self.Fx[matcher.Fx](result, stats, weights, args);
                                 end
-
-                                self.Fx[matcher.Fx](result, stats, weights, args);
                             end
                         end
                     end

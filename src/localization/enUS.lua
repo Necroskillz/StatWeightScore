@@ -34,6 +34,8 @@ L["Options_BlankLineRefAbove_Label"] = "Blank line above (Reference)";
 L["Options_BlankLineRefAbove_Tooltip"] = "Displays blank line above stat score information in reference tooltips (e.g. if you shift-hover on an item)";
 L["Options_BlankLineRefBelow_Label"] = "Blank line below (Reference)";
 L["Options_BlankLineRefBelow_Tooltip"] = "Displays blank line below stat score information in reference tooltips (e.g. if you shift-hover on an item)";
+L["Options_EnableCmMode_Label"] = "Enable CM mode";
+L["Options_EnableCmMode_Tooltip"] = "When in challenge mode dugeon, reads stats directly from tooltip - those are the correct stats for CM. Comparison only works when shift key is held down when this option is enabled and you are inside a challenge mode dungeon.";
 L["Options_EnchantLevel_Label"] = "Gem level";
 L["Options_EnchantLevel_Tooltip"] = "Which level of gems to use for empty sockets";
 L["Options_GemStat_Label"] = "Gem stat";
@@ -63,52 +65,52 @@ L["Options_Export_Label"] = "Export output";
 
 L["Tooltip_Regex"] = {
     PreCheck = {
-        "^equip:",
-        "^use:",
-        "bonus armor$"
+        "^Equip:",
+        "^Use:",
+        BONUS_ARMOR.."$"
     },
     Partial = {
-        ["cdmin"] = "(%d+) min",
-        ["cdsec"] = "(%d+) sec"
+        ["cdmin"] = "(%d+) Min",
+        ["cdsec"] = "(%d+) Sec"
     },
     Matchers = {
         {
-            Pattern = "^equip: your attacks have a chance to grant ([%d,%. ]+) ([%l ]-) for (%d+) sec%.  %(approximately ([%d%.]+) procs per minute%)$",
+            Pattern = "^Equip: Your attacks have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$",
             Fx = "rppm",
             ArgOrder = { "value", "stat", "duration", "ppm" }
         },
         {
-            Pattern = "^equip: your attacks have a chance to grant archmage's incandescence for (%d+) sec%.  %(approximately ([%d%.]+) procs per minute%)$",
+            Pattern = "^Equip: Your attacks have a chance to grant Archmage's Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$",
             Fx = "soliumband",
             ArgOrder = { "duration", "ppm" }
         },
         {
-            Pattern = "^equip: each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%l ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
+            Pattern = "^Equip: Each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
             Fx = "icd",
             ArgOrder = { "value", "stat", "duration", "chance", "cd" }
         },
         {
-            Pattern = "^equip: your attacks have a chance to grant you ([%d,%. ]+) ([%l ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
+            Pattern = "^Equip: Your attacks have a chance to grant you ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
             Fx = "icd",
             ArgOrder = { "value", "stat", "duration", "chance", "cd" }
         },
         {
-            Pattern = "^equip: when you deal damage you have a chance to gain ([%d,%. ]+) ([%l ]-) for (%d+) sec%.",
+            Pattern = "^Equip: When you deal damage you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.",
             Fx = "insigniaofconquest",
             ArgOrder = { "value", "stat", "duration" }
         },
         {
-            Pattern = "^use: increases y?o?u?r? ?([%l ]-) by ([%d,%. ]+) for (%d+) sec%. %(([%d%l ]-) cooldown%)$",
+            Pattern = "^Use: Increases y?o?u?r? ?([%a ]-) by ([%d,%. ]+) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$",
             Fx = "use",
             ArgOrder = { "stat", "value", "duration", "cd" }
         },
         {
-            Pattern = "^use: grants ([%d,%. ]+) ([%l ]-) for (%d+) sec%. %(([%d%l ]-) cooldown%)$",
+            Pattern = "^Use: Grants ([%d,%. ]+) ([%a ]-) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$",
             Fx = "use",
             ArgOrder = { "value", "stat", "duration", "cd" }
         },
         {
-            Pattern = "^%+(%d+) bonus armor$",
+            Pattern = "^%+(%d+) "..BONUS_ARMOR.."$",
             Fx = "bonusarmor",
             ArgOrder = { "value" }
         }
