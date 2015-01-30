@@ -164,7 +164,7 @@ function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
     end, true, false);
 end
 
-function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreSocket, fixBonusArmor)
+function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreCm, fixBonusArmor)
     local weights = spec.Weights;
     local stats = getStatsFunc();
     local secondaryStat = StatsModule:GetBestGemStat(spec);
@@ -175,7 +175,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
         Score = 0;
     };
 
-    if(not ignoreSocket) then
+    if(not ignoreCm) then
         if(stats[StatsModule:AliasToKey("socket")]) then
             local _, gemLink = GetItemGem(link, 1);
             local enchantLevel;
@@ -214,7 +214,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
         end
     end
 
-    if(locStr == INVTYPE_TRINKET or locStr == INVTYPE_FINGER or weights["bonusarmor"]) then
+    if((ignoreCm and locStr == INVTYPE_TRINKET) or (not ignoreCm and (locStr == INVTYPE_TRINKET or locStr == INVTYPE_FINGER or weights["bonusarmor"]))) then
         if(tooltip) then
             for l = 1,tooltip:NumLines() do
                 local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
