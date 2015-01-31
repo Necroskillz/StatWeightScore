@@ -1,6 +1,7 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
-local OptionsModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Options", "AceEvent-3.0");
+local OptionsModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Options");
 
+local AceDB = LibStub("AceDB-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local AceDBOptions = LibStub("AceDBOptions-3.0");
@@ -157,15 +158,9 @@ function OptionsModule:OnInitialize()
     self.ImportType = "sim";
     self.ExportType = "amr";
 
-    local db = StatWeightScore.db;
-    db.RegisterCallback(self, "OnProfileChanged", "NotifyConfigChanged");
-    db.RegisterCallback(self, "OnProfileCopied", "NotifyConfigChanged");
-    db.RegisterCallback(self, "OnProfileReset", "NotifyConfigChanged");
-
-
     self:CreateOptions();
 
-    self.Options.args.profiles = AceDBOptions:GetOptionsTable(db);
+    self.Options.args.profiles = AceDBOptions:GetOptionsTable(StatWeightScore.db);
 
     for name, _ in pairs(SpecModule:GetSpecs()) do
         self:CreateOptionsForSpec(name);
@@ -179,6 +174,14 @@ function OptionsModule:OnInitialize()
     AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME)
     AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME.." Weights", L["Options_Weights_Section"], SWS_ADDON_NAME);
     AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME.." Profiles", "Profiles", SWS_ADDON_NAME);
+end
+
+function OptionsModule:InitializeDatabase()
+    local db = AceDB:New(SWS_ADDON_NAME.."DB", OptionsModule.Defaults);
+    StatWeightScore.db = db;
+    db.RegisterCallback(self, "OnProfileChanged", "NotifyConfigChanged");
+    db.RegisterCallback(self, "OnProfileCopied", "NotifyConfigChanged");
+    db.RegisterCallback(self, "OnProfileReset", "NotifyConfigChanged");
 end
 
 function OptionsModule:NotifyConfigChanged()

@@ -1,5 +1,5 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
-local SpecModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Spec", "AceEvent-3.0");
+local SpecModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Spec");
 
 local StatsModule;
 

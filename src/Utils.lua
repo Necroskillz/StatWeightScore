@@ -57,7 +57,7 @@ end;
 
 Utils.PrintError = function(err)
     Utils.Print("|cffff0000"..err.."|r");
-end
+end;
 
 Utils.Try = function(tryFunc, catchFunc)
     local ok, err_or_ret = pcall(tryFunc);
@@ -66,4 +66,4 @@ Utils.Try = function(tryFunc, catchFunc)
     else
         catchFunc(err_or_ret);
     end
-end
+end;
