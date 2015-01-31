@@ -1,13 +1,13 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
-local OptionsModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Options");
+local OptionsModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Options", "AceEvent-3.0");
 
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
-local AceDB = LibStub("AceDB-3.0");
 local AceDBOptions = LibStub("AceDBOptions-3.0");
 
 local ImportExportModule;
 local GemsModule;
+local SpecModule;
 local StatsModule;
 
 local Utils;
@@ -149,6 +149,7 @@ end
 function OptionsModule:OnInitialize()
     GemsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Gems");
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
+    SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     ImportExportModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ImportExport");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
@@ -156,14 +157,17 @@ function OptionsModule:OnInitialize()
     self.ImportType = "sim";
     self.ExportType = "amr";
 
-    local db = AceDB:New(SWS_ADDON_NAME.."DB", self.Defaults);
-    StatWeightScore.db = db;
+    local db = StatWeightScore.db;
+    db.RegisterCallback(self, "OnProfileChanged", "NotifyConfigChanged");
+    db.RegisterCallback(self, "OnProfileCopied", "NotifyConfigChanged");
+    db.RegisterCallback(self, "OnProfileReset", "NotifyConfigChanged");
+
 
     self:CreateOptions();
 
     self.Options.args.profiles = AceDBOptions:GetOptionsTable(db);
 
-    for name, _ in pairs(db.profile.Specs) do
+    for name, _ in pairs(SpecModule:GetSpecs()) do
         self:CreateOptionsForSpec(name);
     end
 
@@ -177,6 +181,10 @@ function OptionsModule:OnInitialize()
     AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME.." Profiles", "Profiles", SWS_ADDON_NAME);
 end
 
+function OptionsModule:NotifyConfigChanged()
+    self:SendMessage(SWS_ADDON_NAME.."ConfigChanged");
+end
+
 function OptionsModule:ToggleOptions(subcategory)
     local panel = SWS_ADDON_NAME;
     if(subcategory) then
@@ -188,7 +196,7 @@ function OptionsModule:ToggleOptions(subcategory)
 end
 
 function OptionsModule:CreateOptionsForSpec(key)
-    local db = StatWeightScore.db.profile.Specs;
+    local db = SpecModule:GetSpecs();
     local options = self.Options.args.Weights.args;
 
     local spec = db[key];
@@ -199,7 +207,12 @@ function OptionsModule:CreateOptionsForSpec(key)
             return spec[info[#info]];
         end,
         set = function(info, value)
-            spec[info[#info]] = value;
+            local field = info[#info];
+            spec[field] = value;
+
+            if(field == "Normalize") then
+                self:NotifyConfigChanged();
+            end
         end,
         name = function () return spec.Name end,
         order = function () return spec.Order end,
@@ -222,6 +235,8 @@ function OptionsModule:CreateOptionsForSpec(key)
                     key = value;
 
                     AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", key);
+
+                    self:NotifyConfigChanged();
                 end,
                 order = 10
             },
@@ -282,6 +297,8 @@ function OptionsModule:CreateOptionsForSpec(key)
                         spec.Weights[index] = nil;
                         self:RemoveOptionsForStatWeight(spec, index);
                     end
+
+                    self:NotifyConfigChanged();
                 end,
                 validate = function(options, index, value)
                     local statInfo = StatsModule:GetStatInfo(index);
@@ -356,6 +373,12 @@ function OptionsModule:CreateOptionsForSpec(key)
                 },
                 order = 30
             },
+            Normalize = {
+                type = "toggle",
+                name = L["Options_NormalizeWeights_Label"],
+                desc = L["Options_NormalizeWeights_Tooltip"],
+                order = 32
+            },
             Import = {
                 type = "group",
                 name = L["Options_Import_Title"],
@@ -370,6 +393,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                         end,
                         set = function(info, value)
                             self.ImportType = value;
+                            self:NotifyConfigChanged();
                         end,
                         values = ImportExportModule.ImportTypes,
                         order = 10
@@ -453,6 +477,7 @@ function OptionsModule:CreateOptionsForStatWeight(spec, alias)
         name = stat.DisplayName,
         set = function(info, value)
             spec.Weights[alias] = tonumber(value);
+            self:NotifyConfigChanged();
         end,
         get = function(info)
             return tostring(spec.Weights[alias]);
@@ -480,7 +505,7 @@ function OptionsModule:RemoveOptionsForStatWeight(spec, alias)
 end
 
 function OptionsModule:CreateNewSpec()
-    local db = StatWeightScore.db.profile.Specs;
+    local db = SpecModule:GetSpecs();
     local order = 1;
 
     local ordered = Utils.OrderKeysBy(db, "Order");
@@ -504,17 +529,18 @@ function OptionsModule:CreateNewSpec()
         Enabled = true,
         Weights = {},
         GemStat = "best",
-        Order = order;
+        Order = order,
+        Normalize = false
     };
 
-    StatWeightScore.db.profile.Specs[spec.Name] = spec;
+    SpecModule:SetSpec(spec);
 
     self:CreateOptionsForSpec(spec.Name);
     AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", spec.Name);
 end
 
 function OptionsModule:RemoveSpec(key)
-    local db = StatWeightScore.db.profile.Specs;
+    local db = SpecModule:GetSpecs();
     local options = self.Options.args.Weights.args;
 
     options[key] = nil;

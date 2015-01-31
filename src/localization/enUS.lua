@@ -52,6 +52,8 @@ L["Options_ExportType_Label"] = "Export to";
 L["Options_ExportType_Tooltip"] = "Choose export format";
 L["Options_Export"] = "Export";
 L["Options_Export_Label"] = "Export output";
+L["Options_NormalizeWeights_Label"] = "Normalize values";
+L["Options_NormalizeWeights_Tooltip"] = "Adjust values for calculation- so that primary stat is 1.0 and other stats are scaled to it";
 L["Error_MultiplePrimaryStatsSelected"] = "You can only select one primary stat (agi, str or int)";
 
 -- Use: Increases your <stat> by <value> for <dur> sec. (<cd> Min Cooldown)

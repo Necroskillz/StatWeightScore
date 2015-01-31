@@ -1,12 +1,14 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
 local ScoreModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Score");
 
+local SpecModule;
 local StatsModule;
 local GemsModule;
 
 local Utils;
 
 function ScoreModule:OnInitialize()
+    SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
     GemsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Gems");
     Utils = StatWeightScore.Utils;
@@ -165,7 +167,7 @@ function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
 end
 
 function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreCm, fixBonusArmor)
-    local weights = spec.Weights;
+    local weights = SpecModule:GetWeights(spec);
     local stats = getStatsFunc();
     local secondaryStat = StatsModule:GetBestGemStat(spec);
     local locStr = getglobal(loc);

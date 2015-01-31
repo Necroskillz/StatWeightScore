@@ -1,6 +1,7 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
 local TooltipModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Tooltip");
 
+local SpecModule;
 local ScoreModule;
 local ScanningTooltipModule;
 
@@ -102,6 +103,7 @@ local function GetItemLinkInfo(itemLink)
 end
 
 function TooltipModule:OnInitialize()
+    SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     ScoreModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Score");
     ScanningTooltipModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ScanningTooltip");
     L = StatWeightScore.L;
@@ -170,7 +172,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
             end
         end
 
-        for _, specKey in ipairs(Utils.OrderKeysBy(db.Specs, "Order")) do
+        for _, specKey in ipairs(Utils.OrderKeysBy(SpecModule:GetSpecs(), "Order")) do
             count = count + 1;
             local spec = db.Specs[specKey];
             if(spec.Enabled) then

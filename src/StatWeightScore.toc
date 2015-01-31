@@ -14,8 +14,9 @@ localization\localization.xml
 
 StatWeightScore.lua
 Utils.lua
-XmlParser.lua
 Stats.lua
+Spec.lua
+XmlParser.lua
 Gems.lua
 ScanningTooltip.lua
 Score.lua
