@@ -46,8 +46,6 @@ local function GetStatsFromTooltip(tooltip)
         end
     end
 
-    --Utils.Print(stats);
-
     return stats;
 end
 

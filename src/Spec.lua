@@ -35,31 +35,29 @@ function SpecModule:BuildWeightsCache()
     for name, spec in pairs(specs) do
         if(not spec.Normalize) then
             WeightsCache[name] = spec.Weights;
-            return;
-        end
+        else
+            local normalized = {};
+            local primaryStat, primaryWeight;
 
-        local normalized = {};
-        local primaryStat, primaryWeight;
+            for stat, weight in pairs(spec.Weights) do
+                local statInfo = StatsModule:GetStatInfo(stat);
+                if(statInfo.Primary) then
+                    primaryStat = stat;
+                    primaryWeight = weight;
+                    break;
+                end
+            end
 
-        for stat, weight in pairs(spec.Weights) do
-            local statInfo = StatsModule:GetStatInfo(stat);
-            if(statInfo.Primary) then
-                primaryStat = stat;
-                primaryWeight = weight;
-                break;
+            if(not primaryStat) then
+                WeightsCache[name] = spec.Weights;
+            else
+                for stat, weight in pairs(spec.Weights) do
+                    normalized[stat] = weight / primaryWeight;
+                end
+
+                WeightsCache[name] = normalized;
             end
         end
-
-        if(not primaryStat) then
-            WeightsCache[name] = spec.Weights;
-            return;
-        end
-
-        for stat, weight in pairs(spec.Weights) do
-            normalized[stat] = weight / primaryWeight;
-        end
-
-        WeightsCache[name] = normalized;
     end
 end
 
