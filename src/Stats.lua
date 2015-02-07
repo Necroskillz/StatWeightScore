@@ -1,6 +1,8 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
 local StatsModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Stats");
 
+local SpecModule;
+
 local L;
 local Utils;
 
@@ -25,6 +27,7 @@ local function AddStat(alias, key, options)
 end
 
 function StatsModule:OnInitialize()
+    SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
@@ -93,9 +96,10 @@ end
 function StatsModule:GetBestGemStat(spec)
     local bestStat;
     local bestStatWeight = 0;
+    local weights = SpecModule:GetWeights(spec);
 
     if(not spec.GemStat or spec.GemStat == "best") then
-        for stat, weight in pairs(spec.Weights) do
+        for stat, weight in pairs(weights) do
             local statInfo = self:GetStatInfo(stat);
             if(statInfo.Gem) then
                 if(weight > bestStatWeight) then
@@ -106,7 +110,7 @@ function StatsModule:GetBestGemStat(spec)
         end
     else
         bestStat = self:GetStatInfo(spec.GemStat);
-        bestStatWeight = spec.Weights[spec.GemStat];
+        bestStatWeight = weights[spec.GemStat];
     end
 
     return {
