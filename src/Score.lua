@@ -94,7 +94,7 @@ ScoreModule.Fx = {
         local averageStatValue = uptime * value;
 
         UpdateResult(result, "Proc", statInfo, averageStatValue, weights[statInfo.Alias]);
-        end,
+    end,
     ["use"] = function(result, stats, weights, args)
         local statInfo = StatsModule:GetStatInfoByDisplayName(args["stat"]);
         if(not statInfo or not weights[statInfo.Alias]) then
@@ -240,7 +240,13 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
                                     local args = {};
 
                                     for i = 1, match.n do
-                                        args[argOrder[i]] = match[i];
+                                        local argName = argOrder[i];
+                                        local argValue = match[i]
+                                        if(argName == "stat" and argValue == RESISTANCE0_NAME) then
+                                            -- armor procs actually add bonus armor
+                                            argValue = BONUS_ARMOR;
+                                        end
+                                        args[argName] = argValue;
                                     end
 
                                     self.Fx[matcher.Fx](result, stats, weights, args);
