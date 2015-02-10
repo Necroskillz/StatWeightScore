@@ -74,19 +74,85 @@ local function ImportSimulationCraftXML(input)
 end
 
 local function ImportAskMrRobotShare(input)
-    local matches = input:gmatch("(%w+)%s+([%d%.]+)");
-    local result = {};
+    local parsed = {};
+    local current, stage, f;
+    local count = 0;
+    local len = #input;
+
+    for c in input:gmatch(".") do
+        count = count + 1;
+        if(current == nil) then
+            current = {
+                Name = ""
+            };
+            stage = "name";
+        end
+
+        if(stage == "name") then
+            if(c == " ") then
+                if(parsed[current.Name]) then
+                    current = parsed[current.Name];
+                    stage = "capc"
+                else
+                    parsed[current.Name] = current;
+                    stage = "wait";
+                end
+            else
+                current.Name = current.Name..c;
+            end
+        elseif(stage == "wait") then
+            if(c == "<") then
+                current.Cap = "";
+                stage = "cap";
+            elseif(c:match("%d")) then
+                current.Value = c;
+                stage = "value";
+            end
+        elseif(stage == "cap") then
+            if(c == "%") then
+                current.Cap = tonumber(current.Cap);
+                stage = "wait";
+            else
+                current.Cap = current.Cap..c;
+            end
+        elseif(stage == "value" or stage == "valuepc") then
+            local field;
+            if(stage == "valuepc") then
+                field = "ValuePostCap";
+            else
+                field = "Value";
+            end
+
+            if(c == "\n" or count == len) then
+                current[field] = tonumber(current[field]);
+                current = nil;
+                stage = "name";
+            else
+                current[field] = current[field]..c;
+            end
+        elseif(stage == "capc") then
+            if(c == "+") then
+                f = true;
+            elseif(f and c:match("%d")) then
+                f = false;
+                current.ValuePostCap = c;
+                stage = "valuepc";
+            end
+        end
+    end
+
     local matched = false;
+    local result = {};
     local map = CreateAmrMaps();
 
-    for stat, weight in matches do
+    for _, stat in pairs(parsed) do
         matched = true;
-        local alias = map[stat];
+        local alias = map[stat.Name];
 
         if(StatsModule:GetStatInfo(alias)) then
-            result[alias] = tonumber(weight);
+            result[alias] = stat.Value;
         else
-            error("Unknown stat "..stat);
+            error("Unknown stat "..stat.Name);
         end
     end
 
