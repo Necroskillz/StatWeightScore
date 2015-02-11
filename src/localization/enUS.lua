@@ -56,6 +56,13 @@ L["Options_NormalizeWeights_Label"] = "Normalize values";
 L["Options_NormalizeWeights_Tooltip"] = "Adjust values for calculation- so that primary stat is 1.0 and other stats are scaled to it";
 L["Error_MultiplePrimaryStatsSelected"] = "You can only select one primary stat (agi, str or int)";
 
+L["Matcher_Precheck_Equip"] = "^Equip:";
+L["Matcher_Precheck_Use"] = "^Use:";
+L["Matcher_Precheck_BonusArmor"] = BONUS_ARMOR.."$";
+
+L["Matcher_Partial_CdMin"] = "(%d+) Min";
+L["Matcher_Partial_CdSec"] = "(%d+) Sec";
+
 -- Use: Increases your <stat> by <value> for <dur> sec. (<cd> Min Cooldown)
 -- Use: Increases <stat> by <value> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
 -- Use: Grants <value> <stat> for <dur> sec. (<cdm> Min <cds> Sec Cooldown)
@@ -65,57 +72,31 @@ L["Error_MultiplePrimaryStatsSelected"] = "You can only select one primary stat 
 -- Insignia of Conquest - Equip: When you deal damage you have a chance to gain <value> <stat> for <dur> sec.
 -- Solium Band - Equip: Your attacks have a chance to grant Archmage's Incandescence for <duration> sec.  (Approximately <procs> procs per minute)
 -- +<value> Bonus Armor
+-- Equip: Your (attacks/melee attacks/spells) have a chance to trigger <effect> for <dur> sec. While <effect> is active, you gain <value> <stat> every <tick> sec, stacking up to <maxstack> times.  (Approximately <procs> procs per minute)
 
-L["Tooltip_Regex"] = {
-    PreCheck = {
-        "^Equip:",
-        "^Use:",
-        BONUS_ARMOR.."$"
-    },
-    Partial = {
-        ["cdmin"] = "(%d+) Min",
-        ["cdsec"] = "(%d+) Sec"
-    },
-    Matchers = {
-        {
-            Pattern = "^Equip: Your attacks have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$",
-            Fx = "rppm",
-            ArgOrder = { "value", "stat", "duration", "ppm" }
-        },
-        {
-            Pattern = "^Equip: Your attacks have a chance to grant Archmage's Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$",
-            Fx = "soliumband",
-            ArgOrder = { "duration", "ppm" }
-        },
-        {
-            Pattern = "^Equip: Each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
-            Fx = "icd",
-            ArgOrder = { "value", "stat", "duration", "chance", "cd" }
-        },
-        {
-            Pattern = "^Equip: Your attacks have a chance to grant you ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$",
-            Fx = "icd",
-            ArgOrder = { "value", "stat", "duration", "chance", "cd" }
-        },
-        {
-            Pattern = "^Equip: When you deal damage you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.",
-            Fx = "insigniaofconquest",
-            ArgOrder = { "value", "stat", "duration" }
-        },
-        {
-            Pattern = "^Use: Increases y?o?u?r? ?([%a ]-) by ([%d,%. ]+) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$",
-            Fx = "use",
-            ArgOrder = { "stat", "value", "duration", "cd" }
-        },
-        {
-            Pattern = "^Use: Grants ([%d,%. ]+) ([%a ]-) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$",
-            Fx = "use",
-            ArgOrder = { "value", "stat", "duration", "cd" }
-        },
-        {
-            Pattern = "^%+(%d+) "..BONUS_ARMOR.."$",
-            Fx = "bonusarmor",
-            ArgOrder = { "value" }
-        }
-    }
-};
+L["Matcher_RPPM_Pattern"] = "^Equip: Your attacks have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
+L["Matcher_RPPM_ArgOrder"] = "value stat duration ppm";
+
+L["Matcher_SoliumBand_Pattern"] = "^Equip: Your attacks have a chance to grant Archmage's Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
+L["Matcher_SoliumBand_ArgOrder"] = "duration ppm";
+
+L["Matcher_ICD_Pattern"] = "^Equip: Each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$";
+L["Matcher_ICD_ArgOrder"] = "value stat duration chance cd";
+
+L["Matcher_ICD2_Pattern"] = "^Equip: Your attacks have a chance to grant you ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$";
+L["Matcher_ICD2_ArgOrder"] = "value stat duration chance cd";
+
+L["Matcher_InsigniaOfConquest_Pattern"] = "^Equip: When you deal damage you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.";
+L["Matcher_InsigniaOfConquest_ArgOrder"] = "value stat duration";
+
+L["Matcher_Use_Pattern"] = "^Use: Increases y?o?u?r? ?([%a ]-) by ([%d,%. ]+) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$";
+L["Matcher_Use_ArgOrder"] = "stat value duration cd";
+
+L["Matcher_Use2_Pattern"] = "^Use: Grants ([%d,%. ]+) ([%a ]-) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$";
+L["Matcher_Use2_ArgOrder"] = "value stat duration cd";
+
+L["Matcher_BonusArmor_Pattern"] = "^%+(%d+) "..BONUS_ARMOR.."$";
+L["Matcher_BonusArmor_ArgOrder"] = "value";
+
+L["Matcher_BlackhandTrinket_Pattern"] = "^Equip: Your [%a ]- have a chance to trigger [%a' ]- for (%d+) sec.  While [%a' ]- is active, you gain ([%d,%. ]+) ([%a ]-) every ([%d,%. ]+) sec, stacking up to ([%d,%. ]+) times%.  %(Approximately ([%d%.]+) procs per minute%)$";
+L["Matcher_BlackhandTrinket_ArgOrder"] = "duration value stat tick maxstack ppm";

@@ -6,15 +6,46 @@ local StatsModule;
 local GemsModule;
 
 local Utils;
+local L;
 
 function ScoreModule:OnInitialize()
     SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
     GemsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Gems");
     Utils = StatWeightScore.Utils;
-    local L = StatWeightScore.L;
+    L = StatWeightScore.L;
 
-    self.Regex = L["Tooltip_Regex"];
+    self.Matcher = {
+        PreCheck = {
+            L["Matcher_Precheck_Equip"],
+            L["Matcher_Precheck_Use"],
+            L["Matcher_Precheck_BonusArmor"]
+        },
+        Partial = {
+            ["cdmin"] = L["Matcher_Partial_CdMin"],
+            ["cdsec"] = L["Matcher_Partial_CdSec"]
+        },
+        Matchers = {
+        }
+    };
+
+    self:RegisterMatcher("RPPM", "rppm");
+    self:RegisterMatcher("SoliumBand", "soliumband");
+    self:RegisterMatcher("ICD", "icd");
+    self:RegisterMatcher("ICD2", "icd");
+    self:RegisterMatcher("InsigniaOfConquest", "insigniaofconquest");
+    self:RegisterMatcher("Use", "use");
+    self:RegisterMatcher("Use2", "use");
+    self:RegisterMatcher("BonusArmor", "bonusarmor");
+    self:RegisterMatcher("BlackhandTrinket", "blackhandtrinket");
+end
+
+function ScoreModule:RegisterMatcher(name, fx)
+    table.insert(self.Matcher.Matchers, {
+        Pattern = L["Matcher_"..name.."_Pattern"],
+        Fx = fx,
+        ArgOrder = Utils.SplitString(L["Matcher_"..name.."_ArgOrder"])
+    });
 end
 
 local function UpdateResult(result, type, stat, averageStatValue, weight)
@@ -104,8 +135,8 @@ ScoreModule.Fx = {
         local value = Utils.ToNumber(args["value"]);
         local duration = tonumber(args["duration"]);
         local cd = args["cd"]
-        local cdmin = tonumber(cd:match(ScoreModule.Regex.Partial["cdmin"]));
-        local cdsec = tonumber(cd:match(ScoreModule.Regex.Partial["cdsec"]) or 0);
+        local cdmin = tonumber(cd:match(ScoreModule.Matcher.Partial["cdmin"]));
+        local cdsec = tonumber(cd:match(ScoreModule.Matcher.Partial["cdsec"]) or 0);
         local cooldown = cdmin * 60 + cdsec;
 
         local uptime = duration / cooldown;
@@ -143,6 +174,28 @@ ScoreModule.Fx = {
 
         args["stat"] = statInfo.DisplayName;
         args["value"] = primaryStatValue / 10;
+
+        ScoreModule.Fx["rppm"](result, stats, weights, args);
+    end,
+    ["blackhandtrinket"] = function(result, stats, weights, args)
+        local overtimeValue = 0;
+        local currentTick = 0;
+
+        local duration = tonumber(args["duration"]);
+        local tick = Utils.ToNumber(args["tick"]);
+        local maxStack = tonumber(args["maxstack"]);
+        local tickValue = tonumber(args["value"]);
+
+        while(currentTick * tick < duration) do
+            currentTick = currentTick + 1;
+            if(currentTick < maxStack) then
+                overtimeValue = overtimeValue + currentTick * tickValue;
+            else
+                overtimeValue = overtimeValue + maxStack * tickValue;
+            end
+        end
+
+        args["value"] = overtimeValue / (duration / tick);
 
         ScoreModule.Fx["rppm"](result, stats, weights, args);
     end
@@ -222,7 +275,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
                     local line = (tooltipText:GetText() or "");
 
                     local precheck = false;
-                    for _, preCheckPattern in ipairs(self.Regex.PreCheck) do
+                    for _, preCheckPattern in ipairs(self.Matcher.PreCheck) do
                         if(line:match(preCheckPattern)) then
                             precheck = true;
                             break;
@@ -230,7 +283,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
                     end
 
                     if(precheck) then
-                        for _, matcher in ipairs(self.Regex.Matchers) do
+                        for _, matcher in ipairs(self.Matcher.Matchers) do
                             if(matcher.Fx == "bonusarmor" and not fixBonusArmor) then
                             else
                                 local match =  Utils.Pack(line:match(matcher.Pattern));
