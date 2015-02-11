@@ -26,6 +26,99 @@ local UniqueGroups = {
     ["Spellbound Solium Band of Sorcerous Invincibility"] = 1,
 };
 
+local TierMap = {
+    ["119322"] = { -- Shoulders of Iron Protector
+        ["HUNTER"] = "115547",
+        ["WARRIOR"] = "115581",
+        ["SHAMAN"] = "115576",
+        ["MONK"] = "115559"
+    },
+    ["119318"] = { -- Chest of Iron Protector
+        ["HUNTER"] = "115548",
+        ["WARRIOR"] = "115582",
+        ["SHAMAN"] = "115577",
+        ["MONK"] = "115558"
+    },
+    ["119321"] = { -- Helm of Iron Protector
+        ["HUNTER"] = "115545",
+        ["WARRIOR"] = "115584",
+        ["SHAMAN"] = "115579",
+        ["MONK"] = "115556"
+    },
+    ["119319"] = { -- Gauntlets of Iron Protector
+        ["HUNTER"] = "115549",
+        ["WARRIOR"] = "115583",
+        ["SHAMAN"] = "115578",
+        ["MONK"] = "115555"
+    },
+    ["119320"] = { -- Leggins of Iron Protector
+        ["HUNTER"] = "115546",
+        ["WARRIOR"] = "115580",
+        ["SHAMAN"] = "115575",
+        ["MONK"] = "115557"
+    },
+    ["119314"] = { -- Shoulders of Iron Vanquisher
+        ["ROGUE"] = "115574",
+        ["DEATHKNIGHT"] = "115536",
+        ["MAGE"] = "115551",
+        ["DRUID"] = "115544"
+    },
+    ["119315"] = { -- Chest of Iron Vanquisher
+        ["ROGUE"] = "115570",
+        ["DEATHKNIGHT"] = "115537",
+        ["MAGE"] = "115550",
+        ["DRUID"] = "115540"
+    },
+    ["119312"] = { -- Helm of Iron Vanquisher
+        ["ROGUE"] = "115572",
+        ["DEATHKNIGHT"] = "115539",
+        ["MAGE"] = "115553",
+        ["DRUID"] = "115542"
+    },
+    ["119311"] = { -- Gauntlets of Iron Vanquisher
+        ["ROGUE"] = "115571",
+        ["DEATHKNIGHT"] = "115538",
+        ["MAGE"] = "115552",
+        ["DRUID"] = "115541"
+    },
+    ["119313"] = { -- Leggins of Iron Vanquisher
+        ["ROGUE"] = "115573",
+        ["DEATHKNIGHT"] = "115535",
+        ["MAGE"] = "115554",
+        ["DRUID"] = "115543"
+    },
+    ["119309"] = { -- Shoulders of Iron Conqueror
+        ["PALADIN"] = "115566",
+        ["PRIEST"] = "115560",
+        ["WARLOCK"] = "115588"
+    },
+    ["119305"] = { -- Chest of Iron Conqueror
+        ["PALADIN"] = "115565",
+        ["PRIEST"] = "115561",
+        ["WARLOCK"] = "115589"
+    },
+    ["119308"] = { -- Helm of Iron Conqueror
+        ["PALADIN"] = "115568",
+        ["PRIEST"] = "115563",
+        ["WARLOCK"] = "115586"
+    },
+    ["119306"] = { -- Gauntlets of Iron Conqueror
+        ["PALADIN"] = "115567",
+        ["PRIEST"] = "115562",
+        ["WARLOCK"] = "115585"
+    },
+    ["119307"] = { -- Leggins of Iron Conqueror
+        ["PALADIN"] = "115569",
+        ["PRIEST"] = "115564",
+        ["WARLOCK"] = "115587"
+    }
+};
+
+local TierBonusMap = {
+    ["570"] = "566", -- heroic
+    ["569"] = "567" -- mythic
+}
+
 local SlotMap = {
     INVTYPE_AMMO = {0},
     INVTYPE_HEAD = {1},
@@ -95,11 +188,10 @@ local function GetItemLinkInfo(itemLink)
         return nil;
     end
 
-    local _, _, _, _, id, _, _, _, _, _, _, _, _, _ =
-    string.find(itemLink,
-        "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?");
+    local itemString = string.match(itemLink, "item[%-?%d:]+");
+    local _, itemId, enchantId, jewelId1, jewelId2, jewelId3, jewelId4, suffixId, uniqueId, linkLevel, reforgeId, _, _, bonus = strsplit(":", itemString)
 
-    return id;
+    return itemId, bonus;
 end
 
 function TooltipModule:OnInitialize()
@@ -140,10 +232,21 @@ function TooltipModule:AddToTooltip(tooltip, compare)
     end
 
     local _, link = tooltip:GetItem();
+    local itemId, bonus = GetItemLinkInfo(link);
+    local _, class = UnitClass("player");
+    local translatedTo;
+
+    if(TierMap[itemId] and TierMap[itemId][class]) then
+        itemId = TierMap[itemId][class];
+        translatedTo, link = GetItemInfo(itemId);
+
+        if(bonus) then
+            link = link:gsub(":0|h%[", ":1:"..TierBonusMap[bonus].."|[");
+        end
+    end
 
     if IsEquippableItem(link) then
         local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
-        local itemId = GetItemLinkInfo(link);
         local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
         local blankLineHandled = false;
         local count = 0;
@@ -261,6 +364,10 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 if(not blankLineHandled) then
                     if((compare and db.BlankLineMainAbove) or (not compare and db.BlankLineRefAbove)) then
                         tooltip:AddLine(" ");
+                    end
+
+                    if(translatedTo) then
+                        tooltip:AddLine(link);
                     end
 
                     blankLineHandled = true;

@@ -66,6 +66,6 @@ function SpecModule:GetWeights(spec)
         self:BuildWeightsCache();
     end
 
-    return WeightsCache[spec.Name];
+    return WeightsCache[spec.Name] or {};
 end
 
