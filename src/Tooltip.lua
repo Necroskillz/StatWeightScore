@@ -367,7 +367,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     end
 
                     if(translatedTo) then
-                        tooltip:AddLine(link);
+                        tooltip:AddLine("|c"..select(4, GetItemQualityColor(4)).."["..translatedTo.."]");
                     end
 
                     blankLineHandled = true;
