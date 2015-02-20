@@ -4,6 +4,7 @@ local ScoreModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Score");
 local SpecModule;
 local StatsModule;
 local GemsModule;
+local ScanningTooltipModule;
 
 local Utils;
 local L;
@@ -12,6 +13,7 @@ function ScoreModule:OnInitialize()
     SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
     GemsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Gems");
+    ScanningTooltipModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ScanningTooltip");
     Utils = StatWeightScore.Utils;
     L = StatWeightScore.L;
 
@@ -64,8 +66,15 @@ local function GetStatsFromTooltip(tooltip)
             local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);
             if(tooltipText) then
                 local line = (tooltipText:GetText() or "");
+                local value, stat;
 
-                local value, stat = line:match("^%(?%+?([%d,%. ]+) ([%a ]+)%)?$");
+                value, stat = line:match(L["Matcher_StatTooltipParser_Stat"]);
+                if(not value) then
+                    value, stat = line:match(L["Matcher_StatTooltipParser_Armor"]);
+                end
+                if(not value) then
+                    value, stat = line:match(L["Matcher_StatTooltipParser_DPS"]);
+                end
 
                 if(value and stat) then
                     local statInfo = StatsModule:GetStatInfoByDisplayName(stat);
@@ -234,7 +243,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
             local enchantLevel;
             local gemStatWeight;
             local gemStat;
-            if(gemLink) then
+            if(not db.ForceSelectedGemStat and gemLink) then
                 local gemName, _, gemQuality = GetItemInfo(gemLink);
 
                 if(gemQuality == 2) then
@@ -243,11 +252,13 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
                     enchantLevel = 2
                 end
 
-                for stat, weight in pairs(weights) do
-                    local statInfo = StatsModule:GetStatInfo(stat);
-                    if(statInfo.Gem and string.find(gemName, statInfo.DisplayName)) then
+                local gemStats = GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
+                for stat, value in pairs(gemStats) do
+                    local alias = StatsModule:KeyToAlias(stat);
+                    local weight = weights[alias];
+                    if(weight) then
+                        gemStat = StatsModule:GetStatInfo(alias);
                         gemStatWeight = weight;
-                        gemStat = statInfo;
                     end
                 end
             elseif(secondaryStat) then

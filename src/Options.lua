@@ -23,6 +23,7 @@ OptionsModule.Defaults = {
         BlankLineRefAbove = true,
         BlankLineRefBelow = false,
         EnableCmMode = true,
+        ForceSelectedGemStat = true,
         Specs = {}
     }
 };
@@ -47,7 +48,6 @@ function OptionsModule:CreateOptions()
                         name = L["Options_Enabled"],
                         desc = L["Options_EnabledGlobal_Tooltip"],
                     },
-
                     EnableCmMode = {
                         order = 15,
                         type = "toggle",
@@ -72,6 +72,12 @@ function OptionsModule:CreateOptions()
 
                             return v;
                         end,
+                    },
+                    ForceSelectedGemStat = {
+                        order = 27,
+                        type = "toggle",
+                        name = L["Options_ForceSelectedGemStat_Label"],
+                        desc = L["Options_ForceSelectedGemStat_Tooltip"],
                     },
                     Display = {
                         type = "group",

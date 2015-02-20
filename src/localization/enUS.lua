@@ -41,6 +41,8 @@ L["Options_EnchantLevel_Tooltip"] = "Which level of gems to use for empty socket
 L["Options_GemStat_Label"] = "Gem stat";
 L["Options_GemStat_Best"] = "Best stat";
 L["Options_GemStat_Tooltip"] = "Which of the selected stats to assume for empty gem slots. Best stat automatically chooses the best rated stat.";
+L["Options_ForceSelectedGemStat_Label"] = "Force selected gem stat/value";
+L["Options_ForceSelectedGemStat_Tooltip"] = "If an item has a gem inserted in a socket, do not use that gem for calculation, but instead use the best gem available based on Gem level and Gem stat in spec config";
 L["Options_Import_Title"] = "Import weights";
 L["Options_ImportType_Label"] = "Import from";
 L["Options_ImportType_Tooltip"] = "Choose import source type";
@@ -55,6 +57,11 @@ L["Options_Export_Label"] = "Export output";
 L["Options_NormalizeWeights_Label"] = "Normalize values";
 L["Options_NormalizeWeights_Tooltip"] = "Adjust values for calculation- so that primary stat is 1.0 and other stats are scaled to it";
 L["Error_MultiplePrimaryStatsSelected"] = "You can only select one primary stat (agi, str or int)";
+
+-- +<value> <stat>; <value> Armor; (<value> damage per second)
+L["Matcher_StatTooltipParser_Stat"] = "^%+(%d+) ([%a ]+)$";
+L["Matcher_StatTooltipParser_Armor"] = "^(%d+) ("..RESISTANCE0_NAME..")$";
+L["Matcher_StatTooltipParser_DPS"] = "^%(([%d,%. ]+) ([%a ]+)%)$";
 
 L["Matcher_Precheck_Equip"] = "^Equip:";
 L["Matcher_Precheck_Use"] = "^Use:";
@@ -95,7 +102,7 @@ L["Matcher_Use_ArgOrder"] = "stat value duration cd";
 L["Matcher_Use2_Pattern"] = "^Use: Grants ([%d,%. ]+) ([%a ]-) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$";
 L["Matcher_Use2_ArgOrder"] = "value stat duration cd";
 
-L["Matcher_BonusArmor_Pattern"] = "^%+(%d+) "..BONUS_ARMOR.."$";
+L["Matcher_BonusArmor_Pattern"] = "^%+(%d+) ?"..BONUS_ARMOR.."$";
 L["Matcher_BonusArmor_ArgOrder"] = "value";
 
 L["Matcher_BlackhandTrinket_Pattern"] = "^Equip: Your [%a ]- have a chance to trigger [%a' ]- for (%d+) sec.  While [%a' ]- is active, you gain ([%d,%. ]+) ([%a ]-) every ([%d,%. ]+) sec, stacking up to ([%d,%. ]+) times%.  %(Approximately ([%d%.]+) procs per minute%)$";
