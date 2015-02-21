@@ -243,32 +243,26 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
             local enchantLevel;
             local gemStatWeight;
             local gemStat;
+            local statValue;
+
             if(not db.ForceSelectedGemStat and gemLink) then
-                local gemName, _, gemQuality = GetItemInfo(gemLink);
-
-                if(gemQuality == 2) then
-                    enchantLevel = 1
-                elseif(gemQuality == 3) then
-                    enchantLevel = 2
-                end
-
                 local gemStats = GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
                 for stat, value in pairs(gemStats) do
                     local alias = StatsModule:KeyToAlias(stat);
                     local weight = weights[alias];
                     if(weight) then
+                        statValue = value;
                         gemStat = StatsModule:GetStatInfo(alias);
                         gemStatWeight = weight;
                     end
                 end
             elseif(secondaryStat) then
-                enchantLevel = db.EnchantLevel;
-                gemStatWeight = secondaryStat.Weight;
+                statValue = GemsModule:GetGemValue(db.EnchantLevel);
                 gemStat = secondaryStat.Stat;
+                gemStatWeight = secondaryStat.Weight;
             end
 
             if(gemStat) then
-                local statValue = GemsModule:GetGemValue(enchantLevel);
                 result.Score = result.Score + statValue * gemStatWeight;
                 result.Gem = {
                     Stat = gemStat.Alias;

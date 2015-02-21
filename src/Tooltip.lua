@@ -4,155 +4,21 @@ local TooltipModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Tooltip");
 local SpecModule;
 local ScoreModule;
 local ScanningTooltipModule;
+local ItemModule;
 
 local L;
 local Utils;
 
-local UniqueGroups = {
-    ["Solium Band of Endurance"] = 1,
-    ["Solium Band of Wisdom"] = 1,
-    ["Solium Band of Dexterity"] = 1,
-    ["Solium Band of Mending"] = 1,
-    ["Solium Band of Might"] = 1,
-    ["Timeless Solium Band of the Archmage"] = 1,
-    ["Timeless Solium Band of the Bulwark"] = 1,
-    ["Timeless Solium Band of Brutality"] = 1,
-    ["Timeless Solium Band of Lifegiving"] = 1,
-    ["Timeless Solium Band of the Assassin"] = 1,
-    ["Spellbound Solium Band of Fatal Strikes"] = 1,
-    ["Spellbound Solium Band of the Kirin-Tor"] = 1,
-    ["Spellbound Solium Band of Sorcerous Strength"] = 1,
-    ["Spellbound Solium Band of the Immortal Spirit"] = 1,
-    ["Spellbound Solium Band of Sorcerous Invincibility"] = 1,
-};
+local function FormatScore(score, diff, disabled)
+    local disabledColor = "";
+    if(disabled) then
+        disabledColor = "|cFFCCCCCC";
+    end
 
-local TierMap = {
-    ["119322"] = { -- Shoulders of Iron Protector
-        ["HUNTER"] = "115547",
-        ["WARRIOR"] = "115581",
-        ["SHAMAN"] = "115576",
-        ["MONK"] = "115559"
-    },
-    ["119318"] = { -- Chest of Iron Protector
-        ["HUNTER"] = "115548",
-        ["WARRIOR"] = "115582",
-        ["SHAMAN"] = "115577",
-        ["MONK"] = "115558"
-    },
-    ["119321"] = { -- Helm of Iron Protector
-        ["HUNTER"] = "115545",
-        ["WARRIOR"] = "115584",
-        ["SHAMAN"] = "115579",
-        ["MONK"] = "115556"
-    },
-    ["119319"] = { -- Gauntlets of Iron Protector
-        ["HUNTER"] = "115549",
-        ["WARRIOR"] = "115583",
-        ["SHAMAN"] = "115578",
-        ["MONK"] = "115555"
-    },
-    ["119320"] = { -- Leggins of Iron Protector
-        ["HUNTER"] = "115546",
-        ["WARRIOR"] = "115580",
-        ["SHAMAN"] = "115575",
-        ["MONK"] = "115557"
-    },
-    ["119314"] = { -- Shoulders of Iron Vanquisher
-        ["ROGUE"] = "115574",
-        ["DEATHKNIGHT"] = "115536",
-        ["MAGE"] = "115551",
-        ["DRUID"] = "115544"
-    },
-    ["119315"] = { -- Chest of Iron Vanquisher
-        ["ROGUE"] = "115570",
-        ["DEATHKNIGHT"] = "115537",
-        ["MAGE"] = "115550",
-        ["DRUID"] = "115540"
-    },
-    ["119312"] = { -- Helm of Iron Vanquisher
-        ["ROGUE"] = "115572",
-        ["DEATHKNIGHT"] = "115539",
-        ["MAGE"] = "115553",
-        ["DRUID"] = "115542"
-    },
-    ["119311"] = { -- Gauntlets of Iron Vanquisher
-        ["ROGUE"] = "115571",
-        ["DEATHKNIGHT"] = "115538",
-        ["MAGE"] = "115552",
-        ["DRUID"] = "115541"
-    },
-    ["119313"] = { -- Leggins of Iron Vanquisher
-        ["ROGUE"] = "115573",
-        ["DEATHKNIGHT"] = "115535",
-        ["MAGE"] = "115554",
-        ["DRUID"] = "115543"
-    },
-    ["119309"] = { -- Shoulders of Iron Conqueror
-        ["PALADIN"] = "115566",
-        ["PRIEST"] = "115560",
-        ["WARLOCK"] = "115588"
-    },
-    ["119305"] = { -- Chest of Iron Conqueror
-        ["PALADIN"] = "115565",
-        ["PRIEST"] = "115561",
-        ["WARLOCK"] = "115589"
-    },
-    ["119308"] = { -- Helm of Iron Conqueror
-        ["PALADIN"] = "115568",
-        ["PRIEST"] = "115563",
-        ["WARLOCK"] = "115586"
-    },
-    ["119306"] = { -- Gauntlets of Iron Conqueror
-        ["PALADIN"] = "115567",
-        ["PRIEST"] = "115562",
-        ["WARLOCK"] = "115585"
-    },
-    ["119307"] = { -- Leggins of Iron Conqueror
-        ["PALADIN"] = "115569",
-        ["PRIEST"] = "115564",
-        ["WARLOCK"] = "115587"
-    }
-};
-
-local TierBonusMap = {
-    ["570"] = "566", -- heroic
-    ["569"] = "567" -- mythic
-}
-
-local SlotMap = {
-    INVTYPE_AMMO = {0},
-    INVTYPE_HEAD = {1},
-    INVTYPE_NECK = {2},
-    INVTYPE_SHOULDER = {3},
-    INVTYPE_BODY = {4},
-    INVTYPE_CHEST = {5},
-    INVTYPE_ROBE = {5},
-    INVTYPE_WAIST = {6},
-    INVTYPE_LEGS = {7},
-    INVTYPE_FEET = {8},
-    INVTYPE_WRIST = {9},
-    INVTYPE_HAND = {10},
-    INVTYPE_FINGER = {11,12},
-    INVTYPE_TRINKET = {13,14},
-    INVTYPE_CLOAK = {15},
-    INVTYPE_WEAPON = {16,17},
-    INVTYPE_SHIELD = {17},
-    INVTYPE_2HWEAPON = {16},
-    INVTYPE_WEAPONMAINHAND = {16},
-    INVTYPE_WEAPONOFFHAND = {17},
-    INVTYPE_HOLDABLE = {17},
-    INVTYPE_RANGED = {16,18},
-    INVTYPE_THROWN = {18},
-    INVTYPE_RANGEDRIGHT = {16,18},
-    INVTYPE_RELIC = {18},
-    INVTYPE_TABARD = {19},
-};
-
-local function FormatScore(score, diff)
-    local str = string.format("%.2f", score);
+    local str = disabledColor..string.format("%.2f", score);
     if(diff ~= 0) then
         local color;
-        local sign;
+        local sign = "";
 
         if(diff < 0) then
             color = "|cFFFF0000";
@@ -162,42 +28,21 @@ local function FormatScore(score, diff)
             sign = "+";
         end
 
-        str = str.." ("..color..string.format("%.2f ", diff)..((score == diff) and "+inf%" or string.format("%s%.f%%", sign, (score / (score - diff) - 1) * 100)).."|r)";
+        if(disabled) then
+            color = "";
+        end
+
+        str = str.." ("..color..string.format("%.2f ", diff)..((score == diff) and "+inf%" or string.format("%s%.f%%", sign, (score / (score - diff) - 1) * 100)).."|r"..disabledColor..")";
     end
 
     return str;
-end
-
-local function AreUniquelyExclusive(item1, item2)
-    if(item1 == item2) then
-        return true;
-    end
-
-    local item1Group = UniqueGroups[item1];
-    local item2Group = UniqueGroups[item2];
-
-    if(item1Group and item2Group and item1Group == item2Group) then
-        return true;
-    end
-
-    return false;
-end
-
-local function GetItemLinkInfo(itemLink)
-    if(not itemLink) then
-        return nil;
-    end
-
-    local itemString = string.match(itemLink, "item[%-?%d:]+");
-    local _, itemId, enchantId, jewelId1, jewelId2, jewelId3, jewelId4, suffixId, uniqueId, linkLevel, reforgeId, _, _, bonus = strsplit(":", itemString)
-
-    return itemId, bonus;
 end
 
 function TooltipModule:OnInitialize()
     SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     ScoreModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Score");
     ScanningTooltipModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ScanningTooltip");
+    ItemModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Item");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
@@ -232,21 +77,16 @@ function TooltipModule:AddToTooltip(tooltip, compare)
     end
 
     local _, link = tooltip:GetItem();
-    local itemId, bonus = GetItemLinkInfo(link);
+    local itemId, bonus = ItemModule:GetItemLinkInfo(link);
     local _, class = UnitClass("player");
     local translatedTo;
 
-    if(TierMap[itemId] and TierMap[itemId][class]) then
-        itemId = TierMap[itemId][class];
-        translatedTo, link = GetItemInfo(itemId);
-
-        if(bonus) then
-            link = link:gsub(":0|h%[", ":1:"..TierBonusMap[bonus].."|[");
-        end
+    if(ItemModule:IsTierToken(itemId, class)) then
+        itemId, link, translatedTo = ItemModule:ConvertTierToken(itemId, class, bonus);
     end
 
     if IsEquippableItem(link) then
-        local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
+        local itemName, _, _, itemLevel, _, itemType, itemSubType, _, loc = GetItemInfo(link);
         local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
         local blankLineHandled = false;
         local count = 0;
@@ -291,7 +131,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 local diff = 0;
                 local offhandDiff = 0;
 
-                local slots = SlotMap[loc];
+                local slots = ItemModule.SlotMap[loc];
                 if(not slots) then
                     return;
                 end
@@ -308,7 +148,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                         if(equippedLink) then
                             local equippedItemName, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
                             local equippedLocStr = getglobal(equippedLoc);
-                            local equippedItemId = GetItemLinkInfo(equippedLink);
+                            local equippedItemId = ItemModule:GetItemLinkInfo(equippedLink);
                             oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON);
 
                             local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil);
@@ -318,7 +158,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
                             scoreTable[slot] = equippedScore;
 
-                            if(uniqueFamily == -1 and maxUniqueEquipped == 1 and AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
+                            if(uniqueFamily == -1 and maxUniqueEquipped == 1 and ItemModule:AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
                                 minEquippedScore = equippedScore.Score;
                                 break;
                             end
@@ -361,6 +201,8 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     end
                 end
 
+                local disabled = not ItemModule:IsItemForClass(itemType, itemSubType, locStr, class);
+
                 if(not blankLineHandled) then
                     if((compare and db.BlankLineMainAbove) or (not compare and db.BlankLineRefAbove)) then
                         tooltip:AddLine(" ");
@@ -373,9 +215,9 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     blankLineHandled = true;
                 end
 
-                tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", FormatScore(score.Score, diff));
+                tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", FormatScore(score.Score, diff, disabled));
                 if(score.Offhand ~= nil) then
-                    tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff))
+                    tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled))
                 end
                 if(score.Gem)then
                     tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", score.Gem.Value, score.Gem.Stat))

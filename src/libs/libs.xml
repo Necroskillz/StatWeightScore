@@ -10,5 +10,6 @@
     <Include file="AceConfig-3.0\AceConfig-3.0.xml" />
     <Include file="AceEvent-3.0\AceEvent-3.0.xml" />
     <Include file="AceLocale-3.0\AceLocale-3.0.xml" />
+    <Include file="LibBabble-Inventory-3.0\lib.xml" />
     <!--@end-no-lib-strip@-->
 </Ui>

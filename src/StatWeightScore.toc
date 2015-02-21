@@ -23,3 +23,4 @@ Score.lua
 Tooltip.lua
 ImportExport.lua
 Options.lua
+Item.lua
