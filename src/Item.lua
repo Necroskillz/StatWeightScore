@@ -14,7 +14,7 @@ local Cloth = BL["Cloth"];
 local Leather = BL["Leather"];
 local Mail = BL["Mail"];
 local Plate = BL["Plate"];
-local Shield = BL["Shield"];
+local Shields = BL["Shields"];
 
 local OneHandedAxes = BL["One-Handed Axes"];
 local OneHandedMaces = BL["One-Handed Maces"];
@@ -70,10 +70,10 @@ function ItemModule:CreateMaps()
     AddMapping(self.ClassArmorMap, "DRUID", Leather);
     AddMapping(self.ClassArmorMap, "ROGUE", Leather);
     AddMapping(self.ClassArmorMap, "MONK", Leather);
-    AddMapping(self.ClassArmorMap, "SHAMAN", Mail, Shield);
+    AddMapping(self.ClassArmorMap, "SHAMAN", Mail, Shields);
     AddMapping(self.ClassArmorMap, "HUNTER", Mail);
-    AddMapping(self.ClassArmorMap, "WARRIOR", Plate, Shield);
-    AddMapping(self.ClassArmorMap, "PALADIN", Plate, Shield);
+    AddMapping(self.ClassArmorMap, "WARRIOR", Plate, Shields);
+    AddMapping(self.ClassArmorMap, "PALADIN", Plate, Shields);
     AddMapping(self.ClassArmorMap, "DEATHKNIGHT", Plate);
 
     AddMapping(self.ClassWeaponMap, "WARLOCK", OneHandedSwords, Daggers, Staves, Wands);
