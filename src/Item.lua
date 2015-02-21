@@ -28,8 +28,8 @@ local Crossbows = BL["Crossbows"];
 local Polearms = BL["Polearms"];
 local FistWeapons = BL["Fist Weapons"];
 local Staves = BL["Staves"];
-local Daggers = BL["Bows"];
-local Wands = BL["Bows"];
+local Daggers = BL["Daggers"];
+local Wands = BL["Wands"];
 
 local function AddMapping(map, class, ...)
     map[class] = {};
@@ -80,8 +80,7 @@ function ItemModule:CreateMaps()
     AddMapping(self.ClassWeaponMap, "MAGE", OneHandedSwords, Daggers, Staves, Wands);
     AddMapping(self.ClassWeaponMap, "PRIEST", OneHandedMaces, Daggers, Staves, Wands);
     AddMapping(self.ClassWeaponMap, "DRUID", OneHandedMaces, TwoHandedMaces, Daggers, FistWeapons, Polearms, Staves);
-    AddMapping(self.ClassWeaponMap, "ROGUE", OneHandedMaces, TwoHandedMaces, Daggers, FistWeapons, Polearms, Staves);
-    AddMapping(self.ClassWeaponMap, "DRUID", OneHandedMaces, OneHandedSwords, OneHandedAxes, FistWeapons, Daggers);
+    AddMapping(self.ClassWeaponMap, "ROGUE", OneHandedMaces, OneHandedSwords, OneHandedAxes, FistWeapons, Daggers);
     AddMapping(self.ClassWeaponMap, "MONK", OneHandedMaces, OneHandedSwords, OneHandedAxes, FistWeapons, Polearms, Staves);
     AddMapping(self.ClassWeaponMap, "SHAMAN", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, FistWeapons, Daggers, Staves);
     AddMapping(self.ClassWeaponMap, "HUNTER", Bows, Guns, Crossbows);
@@ -92,6 +91,7 @@ function ItemModule:CreateMaps()
     AddSimpleMapping(self.HeldInOffhandMap, "WARLOCK");
     AddSimpleMapping(self.HeldInOffhandMap, "MAGE");
     AddSimpleMapping(self.HeldInOffhandMap, "PRIEST");
+    AddSimpleMapping(self.HeldInOffhandMap, "DRUID");
     AddSimpleMapping(self.HeldInOffhandMap, "MONK");
     AddSimpleMapping(self.HeldInOffhandMap, "SHAMAN");
     AddSimpleMapping(self.HeldInOffhandMap, "PALADIN");
