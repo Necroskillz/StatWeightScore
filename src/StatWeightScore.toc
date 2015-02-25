@@ -1,4 +1,4 @@
-﻿## Interface: 60000
+﻿## Interface: 60100
 ## X-Min-Interface: 60000
 ## Title:Stat Weight Score
 ## Notes:Calculates a score of an item based on stat weights and the item's stats
@@ -7,7 +7,7 @@
 ## SavedVariables: StatWeightScoreDB
 ## LoadOnDemand: 0
 ## DefaultState: enabled
-## OptionalDeps: Ace3
+## OptionalDeps: Ace3, LibBabble-Inventory-3.0
 
 libs\libs.xml
 localization\localization.xml
