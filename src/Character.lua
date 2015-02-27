@@ -22,9 +22,25 @@ function CharacterModule:OnInitialize()
     self:AddToStatsPane();
 
     self:RegisterMessage(SWS_ADDON_NAME.."ConfigChanged", "UpdateStatCategory");
+
+    local eventFrame = CreateFrame("Frame");
+    eventFrame:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player");
+    eventFrame:RegisterUnitEvent("UNIT_AURA", "player");
+    eventFrame:RegisterUnitEvent("UNIT_STATS", "player");
+    eventFrame:RegisterUnitEvent("UNIT_SPELL_HASTE", "player");
+
+    eventFrame:SetScript("OnEvent", function()
+        self:InvalidateScoreCache();
+    end)
+end
+
+function CharacterModule:InvalidateScoreCache()
+    table.wipe(ScoreCache);
 end
 
 function CharacterModule:UpdateStatCategory()
+    self:InvalidateScoreCache();
+
     local category = PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME];
     table.wipe(category.stats);
 
@@ -81,6 +97,10 @@ function CharacterModule:AddToStatsPane()
 end
 
 function CharacterModule:CalculateTotalScore(spec)
+    if(ScoreCache[spec.Name]) then
+        return ScoreCache[spec.Name]
+    end
+
     local specScore = 0;
 
     for i = 0, 19 do
@@ -89,10 +109,15 @@ function CharacterModule:CalculateTotalScore(spec)
             local _, _, _, _, _, _, _, _, loc = GetItemInfo(link);
             local score = ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec);
             if(score) then
-                specScore = specScore + score.Score;
+                if(i == 17 and score.Offhand) then
+                    specScore = specScore + score.Offhand;
+                else
+                    specScore = specScore + score.Score;
+                end
             end
         end
     end
 
+    ScoreCache[spec.Name] = specScore;
     return specScore;
 end

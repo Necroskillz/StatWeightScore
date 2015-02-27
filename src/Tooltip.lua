@@ -54,10 +54,23 @@ local function FormatScore(score, diff, disabled, characterScore, percentageType
             percentDiff = (newScore - oldScore) / oldScore;
         end
 
-        str = str.." ("..color..string.format("%.2f ", diff)..((score == diff) and "+inf%" or string.format("%s%."..precision.."f%%", sign, percentDiff * 100)).."|r"..disabledColor..")";
+        str = str.." ("..color..sign..string.format("%.2f ", diff)..(((score == diff and characterScore == nil) or characterScore == 0) and "+inf%" or string.format("%s%."..precision.."f%%", sign, percentDiff * 100)).."|r"..disabledColor..")";
     end
 
     return str;
+end
+
+local function GetScoreTableValue(scoreTable, slot)
+    local score = scoreTable[slot];
+    if(score) then
+        if(slot == 17 and score.Offhand) then
+            return score.Offhand, true;
+        end
+
+        return score.Score, true;
+    end
+
+    return 0, false;
 end
 
 function TooltipModule:OnInitialize()
@@ -181,51 +194,58 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                             oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON);
 
                             local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil);
-                            if(equippedScore == nil) then
-                                break
-                            end
+                            if(equippedScore) then
+                                scoreTable[slot] = equippedScore;
 
-                            scoreTable[slot] = equippedScore;
-
-                            if(uniqueFamily == -1 and maxUniqueEquipped == 1 and ItemModule:AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
-                                minEquippedScore = equippedScore.Score;
-                                break;
-                            end
-
-                            if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedScore)) then
-                                if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
+                                if(uniqueFamily == -1 and maxUniqueEquipped == 1 and ItemModule:AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
                                     minEquippedScore = equippedScore.Score;
+                                    break;
                                 end
-                            else
-                                isEquipped = true;
+
+                                if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedScore)) then
+                                    if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
+                                        minEquippedScore = equippedScore.Score;
+                                    end
+                                else
+                                    isEquipped = true;
+                                end
                             end
+                        else
+                            minEquippedScore = 0;
                         end
                     end
 
                     if(isEquipped) then
                         diff = 0
                     elseif(locStr == INVTYPE_WEAPON) then
-                        if(oneHand) then
-                            local mainhandScore =  scoreTable[16];
+                        local mainHandScore = GetScoreTableValue(scoreTable, 16);
+                        diff = score.Score - mainHandScore;
 
-                            if(not mainhandScore) then
-                                diff = 0;
+                        if(score.Offhand) then
+                            if(oneHand) then
+                                offhandDiff = score.Offhand - GetScoreTableValue(scoreTable, 17);
                             else
-                                diff = score.Score - mainhandScore.Score;
+                                offhandDiff = score.Offhand - mainHandScore;
                             end
-
-                            local offhandScore = scoreTable[17];
-                            if(not offhandScore) then
-                                offhandDiff = 0;
-                            else
-                                offhandDiff = (score.Offhand or score.Score) - (offhandScore.Offhand or offhandScore.Score);
-                            end
-                        else
-                            diff = 0; -- uncomparable
                         end
-                    elseif(oneHand) then
-                        diff = 0;
-                    elseif(minEquippedScore ~= -1) then
+                    elseif(locStr == INVTYPE_2HWEAPON) then
+                        diff = score.Score - GetScoreTableValue(scoreTable, 16) - GetScoreTableValue(scoreTable, 17);
+                    elseif(locStr == INVTYPE_HOLDABLE or locStr == INVTYPE_SHIELD) then
+                        local offhandScore, offhandExists = GetScoreTableValue(scoreTable, 17);
+                        if(offhandExists) then
+                            diff = score.Score - offhandScore;
+                        else
+                            if(not oneHand) then
+                                diff = score.Score - GetScoreTableValue(scoreTable, 16);
+                            else
+                                diff = score.Score;
+                            end
+                        end
+                    else
+                        if(minEquippedScore == -1) then
+                            minEquippedScore = 0;
+                        end
+
                         diff = score.Score - minEquippedScore;
                     end
                 end

@@ -43,7 +43,12 @@ function OptionsModule:CreateOptions()
                     return StatWeightScore.db.profile[info[#info]];
                 end,
                 set = function(info, value)
-                    StatWeightScore.db.profile[info[#info]] = value;
+                    local field = info[#info];
+                    StatWeightScore.db.profile[field] = value;
+
+                    if(field == "EnchantLevel" or field == "ForceSelectedGemStat") then
+                        self:NotifyConfigChanged();
+                    end
                 end,
                 name = GetAddOnMetadata(SWS_ADDON_NAME, "Title").." v"..StatWeightScore.Version,
                 args = {
@@ -253,7 +258,7 @@ function OptionsModule:CreateOptionsForSpec(key)
             local field = info[#info];
             spec[field] = value;
 
-            if(field == "Normalize") then
+            if(field == "Normalize" or field == "GemStat") then
                 self:NotifyConfigChanged();
             end
         end,
@@ -623,6 +628,4 @@ function OptionsModule:Import(spec, input)
         spec.Weights[stat] = weight;
         self:CreateOptionsForStatWeight(spec, stat);
     end
-
-    self:NotifyConfigChanged();
 end

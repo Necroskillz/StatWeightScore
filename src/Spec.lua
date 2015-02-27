@@ -3,7 +3,7 @@ local SpecModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Spec");
 
 local StatsModule;
 
-local WeightsCache;
+local WeightsCache = {};
 
 function SpecModule:OnInitialize()
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
@@ -16,7 +16,7 @@ function SpecModule:OnInitialize()
 end
 
 function SpecModule:InvalidateWeightsCache()
-    WeightsCache = nil;
+    table.wipe(WeightsCache);
 end
 
 function SpecModule:GetSpecs()
@@ -28,8 +28,6 @@ function SpecModule:SetSpec(spec)
 end
 
 function SpecModule:BuildWeightsCache()
-    WeightsCache = {};
-
     local specs = self:GetSpecs();
 
     for name, spec in pairs(specs) do
@@ -62,7 +60,7 @@ function SpecModule:BuildWeightsCache()
 end
 
 function SpecModule:GetWeights(spec)
-    if(WeightsCache == nil) then
+    if(not WeightsCache[spec.Name]) then
         self:BuildWeightsCache();
     end
 
