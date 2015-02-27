@@ -14,6 +14,9 @@ local StatsModule;
 local Utils;
 local L;
 
+local ScoreCompareTypes;
+local PercentageCalculationTypes;
+
 OptionsModule.Defaults = {
     profile = {
         EnableTooltip = true,
@@ -24,6 +27,8 @@ OptionsModule.Defaults = {
         BlankLineRefBelow = false,
         EnableCmMode = true,
         ForceSelectedGemStat = true,
+        ScoreCompareType = "total",
+        PercentageCalculationType = "change",
         Specs = {}
     }
 };
@@ -112,7 +117,26 @@ function OptionsModule:CreateOptions()
                                 type = "toggle",
                                 name = L["Options_BlankLineRefBelow_Label"],
                                 desc = L["Options_BlankLineRefBelow_Tooltip"],
-                            }
+                            },
+                            NewLine2 = {
+                                type= 'description',
+                                order = 45,
+                                name= '',
+                            },
+                            ScoreCompareType = {
+                                order = 50,
+                                type = "select",
+                                name = L["Options_Compare_Label"],
+                                desc = L["Options_Compare_Tooltip"],
+                                values = ScoreCompareTypes
+                            },
+                            PercentageCalculationType = {
+                                order = 55,
+                                type = "select",
+                                name = L["Options_Percentage_Label"],
+                                desc = L["Options_Percentage_Tooltip"],
+                                values = PercentageCalculationTypes
+                            },
                         }
                     }
                 }
@@ -163,6 +187,16 @@ function OptionsModule:OnInitialize()
 
     self.ImportType = "sim";
     self.ExportType = "amr";
+
+    ScoreCompareTypes = {
+        ["item"] = L["Options_Compare_Item"],
+        ["total"] = L["Options_Compare_Character"]
+    };
+
+    PercentageCalculationTypes = {
+        ["change"] = L["Options_Percentage_Change"],
+        ["diff"] = L["Options_Percentage_Difference"]
+    };
 
     self:CreateOptions();
 
@@ -361,6 +395,8 @@ function OptionsModule:CreateOptionsForSpec(key)
                             s.Order = s.Order - 1;
                         end
                     end
+
+                    self:NotifyConfigChanged();
                 end,
                 values = function()
                     local v = {};
@@ -539,12 +575,13 @@ function OptionsModule:CreateNewSpec()
         Weights = {},
         GemStat = "best",
         Order = order,
-        Normalize = false
+        Normalize = true
     };
 
     SpecModule:SetSpec(spec);
 
     self:CreateOptionsForSpec(spec.Name);
+    self:NotifyConfigChanged();
     AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", spec.Name);
 end
 
@@ -560,6 +597,8 @@ function OptionsModule:RemoveSpec(key)
         db[specKey].Order = order;
         order = order + 1;
     end
+
+    self:NotifyConfigChanged();
 end
 
 function OptionsModule:Import(spec, input)
@@ -584,4 +623,6 @@ function OptionsModule:Import(spec, input)
         spec.Weights[stat] = weight;
         self:CreateOptionsForStatWeight(spec, stat);
     end
+
+    self:NotifyConfigChanged();
 end

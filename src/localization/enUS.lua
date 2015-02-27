@@ -3,6 +3,8 @@ local L = LibStub("AceLocale-3.0"):NewLocale("StatWeightScore", "enUS", true);
 L["ThousandSeparator"] = ",";
 L["DecimalSeparator"] = "%.";
 
+L["StatPaneCategoryTitle"] = "Stat Weight Score";
+
 L["WelcomeMessage"] = "loaded. v%s by Necroskillz";
 L["GemsDisplayFormat"] = "%s gems";
 L["Offhand_DPS"] = "Offhand DPS";
@@ -57,6 +59,16 @@ L["Options_Export_Label"] = "Export output";
 L["Options_NormalizeWeights_Label"] = "Normalize values";
 L["Options_NormalizeWeights_Tooltip"] = "Adjust values for calculation- so that primary stat is 1.0 and other stats are scaled to it";
 L["Error_MultiplePrimaryStatsSelected"] = "You can only select one primary stat (agi, str or int)";
+L["Options_Compare_Label"] = "Compare percentage gain to";
+L["Options_Compare_Tooltip"] = "Whether to display the percent value in tooltips relative to equipped item or total character score.";
+L["Options_Compare_Item"] = "Equipped item score";
+L["Options_Compare_Character"] = "Total character score";
+L["Options_Percentage_Label"] = "Calculate percentage as";
+L["Options_Percentage_Tooltip"] = "Whether to display the percent value in tooltips as percentage change or percentage difference. ";
+L["Options_Percentage_Change"] = "Change";
+L["Options_Percentage_Difference"] = "Difference";
+L["Warning"] = "Warning";
+L["CharacterPane_CM_Tooltip"] = "Total score doesn't factor in reduced item level in CM mode dungeons";
 
 -- +<value> <stat>; <value> Armor; (<value> damage per second)
 L["Matcher_StatTooltipParser_Stat"] = "^%+(%d+) ([%a ]+)$";

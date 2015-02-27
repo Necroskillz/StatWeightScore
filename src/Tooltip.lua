@@ -5,14 +5,15 @@ local SpecModule;
 local ScoreModule;
 local ScanningTooltipModule;
 local ItemModule;
+local CharacterModule;
 
 local L;
 local Utils;
 
-local function FormatScore(score, diff, disabled)
+local function FormatScore(score, diff, disabled, characterScore, percentageType)
     local disabledColor = "";
     if(disabled) then
-        disabledColor = "|cFFCCCCCC";
+        disabledColor = GRAY_FONT_COLOR_CODE;
     end
 
     local str = disabledColor..string.format("%.2f", score);
@@ -21,10 +22,10 @@ local function FormatScore(score, diff, disabled)
         local sign = "";
 
         if(diff < 0) then
-            color = "|cFFFF0000";
+            color = RED_FONT_COLOR_CODE;
             sign = "";
         else
-            color = "|cFF00FF00+";
+            color = GREEN_FONT_COLOR_CODE;
             sign = "+";
         end
 
@@ -32,7 +33,28 @@ local function FormatScore(score, diff, disabled)
             color = "";
         end
 
-        str = str.." ("..color..string.format("%.2f ", diff)..((score == diff) and "+inf%" or string.format("%s%.f%%", sign, (score / (score - diff) - 1) * 100)).."|r"..disabledColor..")";
+        local percentDiff;
+        local oldScore;
+        local newScore;
+        local precision;
+
+        if(characterScore ~= nil) then
+            newScore = characterScore + diff;
+            oldScore = characterScore;
+            precision = "2";
+        else
+            newScore = score;
+            oldScore = score - diff;
+            precision = ""
+        end
+
+        if(percentageType == "diff") then
+            percentDiff = (newScore - oldScore) / ((newScore + oldScore) / 2);
+        else
+            percentDiff = (newScore - oldScore) / oldScore;
+        end
+
+        str = str.." ("..color..string.format("%.2f ", diff)..((score == diff) and "+inf%" or string.format("%s%."..precision.."f%%", sign, percentDiff * 100)).."|r"..disabledColor..")";
     end
 
     return str;
@@ -43,6 +65,7 @@ function TooltipModule:OnInitialize()
     ScoreModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Score");
     ScanningTooltipModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ScanningTooltip");
     ItemModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Item");
+    CharacterModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Character");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
@@ -115,10 +138,16 @@ function TooltipModule:AddToTooltip(tooltip, compare)
             end
         end
 
-        for _, specKey in ipairs(Utils.OrderKeysBy(SpecModule:GetSpecs(), "Order")) do
+        local specs = SpecModule:GetSpecs();
+        for _, specKey in ipairs(Utils.OrderKeysBy(specs, "Order")) do
             count = count + 1;
-            local spec = db.Specs[specKey];
+            local spec = specs[specKey];
             if(spec.Enabled) then
+                local characterScore;
+                if(db.ScoreCompareType == "total" and not cmMode) then
+                    characterScore = CharacterModule:CalculateTotalScore(spec);
+                end
+
                 local score = calculateScore(link, loc, spec, tooltip);
 
                 local isEquippedItem = function(comparedItemId, comparedItemLevel, comparedScore)
@@ -215,9 +244,9 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     blankLineHandled = true;
                 end
 
-                tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", FormatScore(score.Score, diff, disabled));
+                tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", FormatScore(score.Score, diff, disabled, characterScore, db.PercentageCalculationType));
                 if(score.Offhand ~= nil) then
-                    tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled))
+                    tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled, characterScore, db.PercentageCalculationType))
                 end
                 if(score.Gem)then
                     tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
