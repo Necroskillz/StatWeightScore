@@ -124,6 +124,10 @@ local function ImportAskMrRobotShare(input)
             end
 
             if(c == "\n" or count == len) then
+                if(count == len) then
+                    current[field] = current[field]..c;
+                end
+
                 current[field] = tonumber(current[field]);
                 current = nil;
                 stage = "name";
