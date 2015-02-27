@@ -69,6 +69,8 @@ L["Options_Percentage_Change"] = "Change";
 L["Options_Percentage_Difference"] = "Difference";
 L["Warning"] = "Warning";
 L["CharacterPane_CM_Tooltip"] = "Total score doesn't factor in reduced item level in CM mode dungeons";
+L["CharacterPane_Tooltip_Title"] = "Weighted stat score";
+L["CharacterPane_Tooltip_Title_Text"] = "Total weighted stat score for all currently equipped items for %s spec";
 
 -- +<value> <stat>; <value> Armor; (<value> damage per second)
 L["Matcher_StatTooltipParser_Stat"] = "^%+(%d+) ([%a ]+)$";

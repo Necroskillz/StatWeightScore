@@ -43,13 +43,16 @@ function CharacterModule:UpdateStatCategory()
         PAPERDOLL_STATINFO[key] = {
             updateFunc = function(statFrame, unit)
                 local score = self:CalculateTotalScore(spec);
-                local color;
+                local color = "";
 
                 -- not correct in CM
                 if(select(3, GetInstanceInfo()) == 8) then
                     color = GRAY_FONT_COLOR_CODE;
-                    statFrame.tooltip = L["Warning"];
-                    statFrame.tooltip2 = HIGHLIGHT_FONT_COLOR_CODE..L["CharacterPane_CM_Tooltip"];
+                    statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..L["Warning"];
+                    statFrame.tooltip2 = L["CharacterPane_CM_Tooltip"];
+                else
+                    statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..L["CharacterPane_Tooltip_Title"];
+                    statFrame.tooltip2 = string.format(L["CharacterPane_Tooltip_Title_Text"], spec.Name);
                 end
 
                 PaperDollFrame_SetLabelAndText(statFrame, L["TooltipMessage_StatScore"].." ("..spec.Name..")", color..string.format("%.2f", score), false);
@@ -80,15 +83,13 @@ end
 function CharacterModule:CalculateTotalScore(spec)
     local specScore = 0;
 
-    for _, slots in pairs(ItemModule.SlotMap) do
-        for _, slot in pairs(slots) do
-            local link = GetInventoryItemLink("player", slot);
-            if(link) then
-                local _, _, _, _, _, _, _, _, loc = GetItemInfo(link);
-                local score = ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec);
-                if(score) then
-                    specScore = specScore + score.Score;
-                end
+    for i = 0, 19 do
+        local link = GetInventoryItemLink("player", i);
+        if(link) then
+            local _, _, _, _, _, _, _, _, loc = GetItemInfo(link);
+            local score = ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec);
+            if(score) then
+                specScore = specScore + score.Score;
             end
         end
     end
