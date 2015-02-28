@@ -31,16 +31,6 @@ local Staves = BL["Staves"];
 local Daggers = BL["Daggers"];
 local Wands = BL["Wands"];
 
-local function AddMapping(map, class, ...)
-    map[class] = {};
-
-    local items = Utils.Pack(...);
-
-    for i = 1, items.n do
-        map[class][items[i]] = true;
-    end
-end
-
 local function AddMapping(map, key, ...)
     map[key] = {};
 

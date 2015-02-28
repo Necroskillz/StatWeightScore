@@ -3,7 +3,6 @@ local CharacterModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Character");
 
 local ScoreModule;
 local SpecModule;
-local ItemModule;
 local ScanningTooltipModule;
 
 local L;
@@ -14,7 +13,6 @@ local ScoreCache = {};
 function CharacterModule:OnInitialize()
     ScoreModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Score");
     SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
-    ItemModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Item");
     ScanningTooltipModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ScanningTooltip");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
