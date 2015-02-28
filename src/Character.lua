@@ -80,8 +80,16 @@ function CharacterModule:UpdateStatCategory()
 end
 
 function CharacterModule:AddToStatsPane()
+    local lastId = -1;
+
+    for _, cat in pairs(PAPERDOLL_STATCATEGORIES) do
+        if(cat.id > lastId) then
+            lastId = cat.id;
+        end
+    end
+
     local category = {
-        id = 846684247, -- hopefully unique
+        id = lastId + 1,
         stats = {
         }
     };
