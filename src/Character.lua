@@ -41,6 +41,20 @@ end
 function CharacterModule:UpdateStatCategory()
     self:InvalidateScoreCache();
 
+    if(StatWeightScore.db.profile.ShowStatsPane) then
+        self:AddToStatsPane();
+    else
+        PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME] = nil;
+        for i, k in pairs(PAPERDOLL_STATCATEGORY_DEFAULTORDER) do
+            if(k == SWS_ADDON_NAME) then
+                table.remove(PAPERDOLL_STATCATEGORY_DEFAULTORDER, i);
+                break;
+            end
+        end
+
+        return;
+    end
+
     local category = PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME];
     table.wipe(category.stats);
 
@@ -80,6 +94,10 @@ function CharacterModule:UpdateStatCategory()
 end
 
 function CharacterModule:AddToStatsPane()
+    if(not StatWeightScore.db.profile.ShowStatsPane or PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME]) then
+        return;
+    end
+
     local lastId = -1;
 
     for _, cat in pairs(PAPERDOLL_STATCATEGORIES) do
@@ -95,13 +113,15 @@ function CharacterModule:AddToStatsPane()
     };
 
     PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME] = category;
+    table.insert(PAPERDOLL_STATCATEGORY_DEFAULTORDER, 2, SWS_ADDON_NAME);
 
     self:UpdateStatCategory();
 
-    table.insert(PAPERDOLL_STATCATEGORY_DEFAULTORDER, 2, SWS_ADDON_NAME);
-    _G["STAT_CATEGORY_"..SWS_ADDON_NAME] = L["StatPaneCategoryTitle"];
-
-    CreateFrame("Frame", "CharacterStatsPaneCategory"..category.id, CharacterStatsPaneScrollChild, "StatGroupTemplate")
+    local frameName = "CharacterStatsPaneCategory"..category.id;
+    if(not getglobal(frameName)) then
+        _G["STAT_CATEGORY_"..SWS_ADDON_NAME] = L["StatPaneCategoryTitle"];
+        CreateFrame("Frame", frameName, CharacterStatsPaneScrollChild, "StatGroupTemplate");
+    end
 end
 
 function CharacterModule:CalculateTotalScore(spec)

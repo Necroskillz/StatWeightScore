@@ -29,6 +29,7 @@ OptionsModule.Defaults = {
         ForceSelectedGemStat = true,
         ScoreCompareType = "total",
         PercentageCalculationType = "change",
+        ShowStatsPane = true,
         Specs = {}
     }
 };
@@ -46,7 +47,7 @@ function OptionsModule:CreateOptions()
                     local field = info[#info];
                     StatWeightScore.db.profile[field] = value;
 
-                    if(field == "EnchantLevel" or field == "ForceSelectedGemStat") then
+                    if(field == "EnchantLevel" or field == "ForceSelectedGemStat" or field == "ShowStatsPane") then
                         self:NotifyConfigChanged();
                     end
                 end,
@@ -128,6 +129,22 @@ function OptionsModule:CreateOptions()
                                 order = 45,
                                 name= '',
                             },
+                            ShowStatsPane = {
+                                order = 46,
+                                type = "toggle",
+                                name = L["Options_ShowStatsPane_Label"],
+                                desc = L["Options_ShowStatsPane_Tooltip"],
+                            },
+                            NewLine3 = {
+                                type= 'description',
+                                order = 47,
+                                name= '',
+                            },
+                            NewLine4 = {
+                                type= 'description',
+                                order = 48,
+                                name= '',
+                            },
                             ScoreCompareType = {
                                 order = 50,
                                 type = "select",
@@ -141,7 +158,7 @@ function OptionsModule:CreateOptions()
                                 name = L["Options_Percentage_Label"],
                                 desc = L["Options_Percentage_Tooltip"],
                                 values = PercentageCalculationTypes
-                            },
+                            }
                         }
                     }
                 }
