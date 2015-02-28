@@ -210,8 +210,8 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                                     isEquipped = true;
                                 end
                             end
-                        else
-                            minEquippedScore = 0;
+                        elseif(slot ~= 17) then
+                            minEquippedScore = 0
                         end
                     end
 
