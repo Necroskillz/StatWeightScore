@@ -196,12 +196,12 @@ function ItemModule:CreateMaps()
         },
         ["119309"] = { -- Shoulders of Iron Conqueror
             ["PALADIN"] = "115566",
-            ["PRIEST"] = "115560",
+            ["PRIEST"] = "115561",
             ["WARLOCK"] = "115588"
         },
         ["119305"] = { -- Chest of Iron Conqueror
             ["PALADIN"] = "115565",
-            ["PRIEST"] = "115561",
+            ["PRIEST"] = "115560",
             ["WARLOCK"] = "115589"
         },
         ["119308"] = { -- Helm of Iron Conqueror
