@@ -51,6 +51,8 @@ function StatsModule:OnInitialize()
     AddStat("multistrike", "ITEM_MOD_CR_MULTISTRIKE_SHORT", { Gem = true });
     AddStat("versatility", "ITEM_MOD_VERSATILITY", { Gem = true });
 
+    AddStat("avoidance", "ITEM_MOD_CR_AVOIDANCE_SHORT");
+
     AddAlias("socket", "EMPTY_SOCKET_PRISMATIC");
 
     local order = 10;

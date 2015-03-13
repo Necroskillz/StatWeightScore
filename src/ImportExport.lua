@@ -37,6 +37,9 @@ local function CreateAmrMaps()
     map("Haste", "haste");
     map("Multistrike", "multistrike");
     map("Versatility", "versatility");
+    map("Avoidance", "avoidance");
+    map("MovementSpeed", "none");
+    map("Leech", "none");
 
     return askMrRobotStatMap, reverseAskMrRobotStatMap;
 end
@@ -66,7 +69,6 @@ local function ImportSimulationCraftXML(input)
             else
                 error("Unknown stat "..statName);
             end
-
         end
     end
 
@@ -153,10 +155,12 @@ local function ImportAskMrRobotShare(input)
         matched = true;
         local alias = map[stat.Name];
 
-        if(StatsModule:GetStatInfo(alias)) then
-            result[alias] = stat.Value;
-        else
-            error("Unknown stat "..stat.Name);
+        if(alias ~= "none") then
+            if(StatsModule:GetStatInfo(alias)) then
+                result[alias] = stat.Value;
+            else
+                error("Unknown stat "..stat.Name);
+            end
         end
     end
 
