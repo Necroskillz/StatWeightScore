@@ -228,7 +228,7 @@ end
 
 function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreCm, fixBonusArmor)
     local weights = SpecModule:GetWeights(spec);
-    local stats = getStatsFunc();
+    local stats = getStatsFunc() or {};
     local secondaryStat = StatsModule:GetBestGemStat(spec);
     local locStr = getglobal(loc);
     local db = StatWeightScore.db.profile;
