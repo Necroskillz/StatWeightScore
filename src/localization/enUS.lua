@@ -96,6 +96,7 @@ L["Matcher_Partial_CdSec"] = "(%d+) Sec";
 -- Solium Band - Equip: Your attacks have a chance to grant Archmage's Incandescence for <duration> sec.  (Approximately <procs> procs per minute)
 -- +<value> Bonus Armor
 -- Equip: Your (attacks/melee attacks/spells) have a chance to trigger <effect> for <dur> sec. While <effect> is active, you gain <value> <stat> every <tick> sec, stacking up to <maxstack> times.  (Approximately <procs> procs per minute)
+-- Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by <value> for <duration> sec.  Your highest stat is always chosen.
 
 L["Matcher_RPPM_Pattern"] = "^Equip: Your attacks have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_RPPM_ArgOrder"] = "value stat duration ppm";
@@ -124,3 +125,6 @@ L["Matcher_BonusArmor_ArgOrder"] = "value";
 
 L["Matcher_BlackhandTrinket_Pattern"] = "^Equip: Your [%a ]- have a chance to trigger [%a' ]- for (%d+) sec.  While [%a' ]- is active, you gain ([%d,%. ]+) ([%a ]-) every ([%d,%. ]+) sec, stacking up to ([%d,%. ]+) times%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_BlackhandTrinket_ArgOrder"] = "duration value stat tick maxstack ppm";
+
+L["Matcher_StoneOfFire_Pattern"] = "^Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by ([%d,%. ]+) for (%d+) sec%.  Your highest stat is always chosen%.$";
+L["Matcher_StoneOfFire_ArgOrder"] = "value duration";

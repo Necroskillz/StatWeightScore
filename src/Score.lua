@@ -40,6 +40,7 @@ function ScoreModule:OnInitialize()
     self:RegisterMatcher("Use2", "use");
     self:RegisterMatcher("BonusArmor", "bonusarmor");
     self:RegisterMatcher("BlackhandTrinket", "blackhandtrinket");
+    self:RegisterMatcher("StoneOfFire", "stoneoffire");
 end
 
 function ScoreModule:RegisterMatcher(name, fx)
@@ -79,7 +80,7 @@ local function GetStatsFromTooltip(tooltip)
                 if(value and stat) then
                     local statInfo = StatsModule:GetStatInfoByDisplayName(stat);
                     if(statInfo) then
-                        stats[statInfo.Key] = tonumber(value);
+                        stats[statInfo.Key] = Utils.ToNumber(value);
                     end
                 end
             end
@@ -98,6 +99,20 @@ local primaryStatIndex = {
     ["agi"] = 2,
     ["int"] = 4
 };
+
+local function GetPrimaryStatForSpec(weights)
+    local primaryStatValue, primaryStat;
+
+    for _, alias in ipairs({"str","agi","int"}) do
+        if(weights[alias]) then
+            primaryStatValue = UnitStat("player", primaryStatIndex[alias]);
+            primaryStat = alias;
+            break;
+        end
+    end
+
+    return primaryStat, primaryStatValue;
+end
 
 ScoreModule.Fx = {
     ["rppm"] = function(result, stats, weights, args)
@@ -166,18 +181,7 @@ ScoreModule.Fx = {
         ScoreModule.Fx["icd"](result, stats, weights, args);
     end,
     ["soliumband"] = function(result, stats, weights, args)
-        local primaryStat;
-        local primaryStatValue = 0;
-
-        for _, alias in ipairs({"str","agi","int"}) do
-            local stat = StatsModule:GetStatInfo(alias);
-
-            if(stats[stat.Key]) then
-                primaryStatValue = UnitStat("player", primaryStatIndex[alias]);
-                primaryStat = alias;
-                break;
-            end
-        end
+        local primaryStat, primaryStatValue = GetPrimaryStatForSpec(weights);
 
         local buff = 0.1;
         if(args["type"] == L["Matcher_SoliumBand_BuffType_Greater"]) then
@@ -212,6 +216,16 @@ ScoreModule.Fx = {
         args["value"] = overtimeValue / (duration / tick);
 
         ScoreModule.Fx["rppm"](result, stats, weights, args);
+    end,
+    ["stoneoffire"] = function(result, stats, weights, args)
+        local primaryStat = GetPrimaryStatForSpec(weights);
+        local statInfo = StatsModule:GetStatInfo(primaryStat);
+
+        args["chance"] = 35;
+        args["cd"] = 55;
+        args["stat"] = statInfo.DisplayName;
+
+        ScoreModule.Fx["icd"](result, stats, weights, args);
     end
 };
 
