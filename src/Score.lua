@@ -180,7 +180,7 @@ ScoreModule.Fx = {
         end
 
         local buff = 0.1;
-        if(args["type"] == "Greater") then
+        if(args["type"] == L["Matcher_SoliumBand_BuffType_Greater"]) then
             buff = 0.15;
         end
 
