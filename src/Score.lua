@@ -318,7 +318,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
     end
 
     if((locStr == INVTYPE_WEAPON) and weights["wohdps"]) then
-        result.Offhand = 0;
+        result.Offhand = result.Score;
     end
 
     for stat, value in pairs(stats) do
