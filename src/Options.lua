@@ -16,6 +16,7 @@ local L;
 
 local ScoreCompareTypes;
 local PercentageCalculationTypes;
+local GetStatsMethods;
 
 OptionsModule.Defaults = {
     profile = {
@@ -58,6 +59,13 @@ function OptionsModule:CreateOptions()
                         type = "toggle",
                         name = L["Options_Enabled"],
                         desc = L["Options_EnabledGlobal_Tooltip"],
+                    },
+                    GetStatsMethod = {
+                        order = 13,
+                        type = "select",
+                        name = L["Options_GetStats_Label"],
+                        desc = L["Options_GetStats_Tooltip"],
+                        values = GetStatsMethods
                     },
                     EnableCmMode = {
                         order = 15,
@@ -220,6 +228,11 @@ function OptionsModule:OnInitialize()
         ["diff"] = L["Options_Percentage_Difference"]
     };
 
+    GetStatsMethods = {
+        ["api"] = L["Options_GetStats_WoWAPI"],
+        ["tooltip"] = L["Options_GetStats_ParseTooltip"]
+    };
+
     self:CreateOptions();
 
     self.Options.args.profiles = AceDBOptions:GetOptionsTable(StatWeightScore.db);
@@ -239,6 +252,19 @@ function OptionsModule:OnInitialize()
 end
 
 function OptionsModule:InitializeDatabase()
+    if(OptionsModule.Defaults.profile.GetStatsMethod == nil) then
+        local locale = GetLocale();
+        if(locale == "enGB") then
+            locale = "enUS";
+        end
+        
+        if(StatWeightScore.L["Culture"] == locale) then
+            OptionsModule.Defaults.profile.GetStatsMethod = "tooltip"
+        else
+            OptionsModule.Defaults.profile.GetStatsMethod = "api"
+        end
+    end
+
     local db = AceDB:New(SWS_ADDON_NAME.."DB", OptionsModule.Defaults);
     StatWeightScore.db = db;
     db.RegisterCallback(self, "OnProfileChanged", "NotifyConfigChanged");

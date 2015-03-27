@@ -1,5 +1,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("StatWeightScore", "enUS", true);
 
+L["Culture"] = "enUS";
+
 L["ThousandSeparator"] = ",";
 L["DecimalSeparator"] = "%.";
 
@@ -69,6 +71,10 @@ L["Options_Percentage_Change"] = "Change";
 L["Options_Percentage_Difference"] = "Difference";
 L["Options_ShowStatsPane_Label"] = "Show total score";
 L["Options_ShowStatsPane_Tooltip"] = "Whether to show total score on character tab";
+L["Options_GetStats_Label"] = "Get stats from";
+L["Options_GetStats_Tooltip"] = "Whether to get stats from wow api call (GetItemStats()) or parse them from tooltip. Parsing from tooltip has some advantages (for example allows you to have greyed out stats calculated for offspec), but requires support for culture you are using.";
+L["Options_GetStats_WoWAPI"] = "WoW API";
+L["Options_GetStats_ParseTooltip"] = "Item Tooltip";
 L["Warning"] = "Warning";
 L["CharacterPane_CM_Tooltip"] = "Total score doesn't factor in reduced item level in CM mode dungeons";
 L["CharacterPane_Tooltip_Title"] = "Weighted stat score";

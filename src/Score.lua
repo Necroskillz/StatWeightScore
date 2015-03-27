@@ -231,8 +231,13 @@ ScoreModule.Fx = {
 
 function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
-        return GetStatsFromLink(link);
-    end, false, true);
+        if(StatWeightScore.db.profile.GetStatsMethod == "tooltip") then
+            return GetStatsFromTooltip(tooltip);
+        else
+            return GetStatsFromLink(link);
+        end
+
+    end, false, false);
 end
 
 function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
@@ -256,8 +261,10 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
         Score = 0;
     };
 
+    local socketStats = GetStatsFromLink(link);
+
     if(not ignoreCm) then
-        if(stats[StatsModule:AliasToKey("socket")]) then
+        if(socketStats[StatsModule:AliasToKey("socket")]) then
             local _, gemLink = GetItemGem(link, 1);
             local enchantLevel;
             local gemStatWeight;
