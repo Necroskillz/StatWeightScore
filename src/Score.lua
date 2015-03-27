@@ -263,7 +263,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
         Score = 0;
     };
 
-    local socketStats = GetStatsFromLink(link);
+    local socketStats = GetStatsFromLink(link) or {};
 
     if(not ignoreCm) then
         if(socketStats[StatsModule:AliasToKey("socket")]) then
