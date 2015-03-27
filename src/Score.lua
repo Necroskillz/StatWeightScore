@@ -230,6 +230,8 @@ ScoreModule.Fx = {
 };
 
 function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
+    local fixBonusArmor = StatWeightScore.db.profile.GetStatsMethod == "api";
+
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
         if(StatWeightScore.db.profile.GetStatsMethod == "tooltip") then
             return GetStatsFromTooltip(tooltip);
@@ -237,7 +239,7 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
             return GetStatsFromLink(link);
         end
 
-    end, false, false);
+    end, false, fixBonusArmor);
 end
 
 function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
