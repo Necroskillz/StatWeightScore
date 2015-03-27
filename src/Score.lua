@@ -179,10 +179,15 @@ ScoreModule.Fx = {
             end
         end
 
+        local buff = 0.1;
+        if(args["type"] == "Greater") then
+            buff = 0.15;
+        end
+
         local statInfo = StatsModule:GetStatInfo(primaryStat);
 
         args["stat"] = statInfo.DisplayName;
-        args["value"] = primaryStatValue / 10;
+        args["value"] = primaryStatValue * buff;
 
         ScoreModule.Fx["rppm"](result, stats, weights, args);
     end,

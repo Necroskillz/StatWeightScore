@@ -102,6 +102,11 @@ function ItemModule:CreateMaps()
         ["Spellbound Solium Band of Sorcerous Strength"] = 1,
         ["Spellbound Solium Band of the Immortal Spirit"] = 1,
         ["Spellbound Solium Band of Sorcerous Invincibility"] = 1,
+        ["Spellbound Runic Band of the All-Seeing Eye"] = 1,
+        ["Spellbound Runic Band of Unrelenting Slaughter"] = 1,
+        ["Spellbound Runic Band of Infinite Preservation"] = 1,
+        ["Spellbound Runic Band of Elemental Power"] = 1,
+        ["Spellbound Runic Band of Elemental Invincibility"] = 1
     };
 
     self.SlotMap = {

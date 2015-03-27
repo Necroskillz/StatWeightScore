@@ -100,8 +100,8 @@ L["Matcher_Partial_CdSec"] = "(%d+) Sec";
 L["Matcher_RPPM_Pattern"] = "^Equip: Your attacks have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_RPPM_ArgOrder"] = "value stat duration ppm";
 
-L["Matcher_SoliumBand_Pattern"] = "^Equip: Your attacks have a chance to grant Archmage's Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
-L["Matcher_SoliumBand_ArgOrder"] = "duration ppm";
+L["Matcher_SoliumBand_Pattern"] = "^Equip: Your attacks have a chance to grant Archmage's ?(%a-) Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
+L["Matcher_SoliumBand_ArgOrder"] = "type duration ppm";
 
 L["Matcher_ICD_Pattern"] = "^Equip: Each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$";
 L["Matcher_ICD_ArgOrder"] = "value stat duration chance cd";
