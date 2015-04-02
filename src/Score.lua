@@ -18,10 +18,15 @@ function ScoreModule:OnInitialize()
     L = StatWeightScore.L;
 
     self.Matcher = {
+        Stats = {
+            Armor = gsub(L["Matcher_StatTooltipParser_Armor"], "RESISTANCE0_NAME", RESISTANCE0_NAME),
+            Dps = L["Matcher_StatTooltipParser_DPS"],
+            Stat = L["Matcher_StatTooltipParser_Stat"],
+        },
         PreCheck = {
             L["Matcher_Precheck_Equip"],
             L["Matcher_Precheck_Use"],
-            L["Matcher_Precheck_BonusArmor"]
+            gsub(L["Matcher_Precheck_BonusArmor"], "BONUS_ARMOR", BONUS_ARMOR)
         },
         Partial = {
             ["cdmin"] = L["Matcher_Partial_CdMin"],
@@ -38,14 +43,22 @@ function ScoreModule:OnInitialize()
     self:RegisterMatcher("InsigniaOfConquest", "insigniaofconquest");
     self:RegisterMatcher("Use", "use");
     self:RegisterMatcher("Use2", "use");
-    self:RegisterMatcher("BonusArmor", "bonusarmor");
+    self:RegisterMatcher("BonusArmor", "bonusarmor", function(pattern)
+        return gsub(pattern, "BONUS_ARMOR", BONUS_ARMOR);
+    end);
     self:RegisterMatcher("BlackhandTrinket", "blackhandtrinket");
     self:RegisterMatcher("StoneOfFire", "stoneoffire");
 end
 
-function ScoreModule:RegisterMatcher(name, fx)
+function ScoreModule:RegisterMatcher(name, fx, patternModFunc)
+    local pattern = L["Matcher_"..name.."_Pattern"];
+
+    if(patternModFunc) then
+        pattern = patternModFunc(pattern);
+    end
+
     table.insert(self.Matcher.Matchers, {
-        Pattern = L["Matcher_"..name.."_Pattern"],
+        Pattern = pattern,
         Fx = fx,
         ArgOrder = Utils.SplitString(L["Matcher_"..name.."_ArgOrder"])
     });
@@ -59,7 +72,7 @@ local function UpdateResult(result, type, stat, averageStatValue, weight)
     };
 end
 
-local function GetStatsFromTooltip(tooltip)
+function ScoreModule:GetStatsFromTooltip(tooltip)
     local stats = {};
 
     if(tooltip) then
@@ -69,12 +82,12 @@ local function GetStatsFromTooltip(tooltip)
                 local line = (tooltipText:GetText() or "");
                 local value, stat;
 
-                value, stat = line:match(L["Matcher_StatTooltipParser_Stat"]);
+                value, stat = line:match(self.Matcher.Stats.Stat);
                 if(not value) then
-                    value, stat = line:match(L["Matcher_StatTooltipParser_Armor"]);
+                    value, stat = line:match(self.Matcher.Stats.Armor);
                 end
                 if(not value) then
-                    value, stat = line:match(L["Matcher_StatTooltipParser_DPS"]);
+                    value, stat = line:match(self.Matcher.Stats.Dps);
                 end
 
                 if(value and stat) then
@@ -234,7 +247,7 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
 
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
         if(StatWeightScore.db.profile.GetStatsMethod == "tooltip") then
-            return GetStatsFromTooltip(tooltip);
+            return self:GetStatsFromTooltip(tooltip);
         else
             return GetStatsFromLink(link);
         end
@@ -274,7 +287,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
             local statValue;
 
             if(not db.ForceSelectedGemStat and gemLink) then
-                local gemStats = GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
+                local gemStats = self:GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
                 for stat, value in pairs(gemStats) do
                     local alias = StatsModule:KeyToAlias(stat);
                     local weight = weights[alias];
