@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Stat Weight Score : WoW WoD addon that calculates a score of an item based on stat weights and the item&#39;s stats.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Stat Weight Score</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Necroskillz/StatWeightScore">View on GitHub</a>
+
+          <h1 id="project_title">Stat Weight Score</h1>
+          <h2 id="project_tagline">WoW WoD addon that calculates a score of an item based on stat weights and the item&#39;s stats.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Necroskillz/StatWeightScore/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Necroskillz/StatWeightScore/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="change-log" class="anchor" href="#change-log" aria-hidden="true"><span class="octicon octicon-link"></span></a>Change log</h1>
+
+<h2>
+<a id="v153---28-mar-2015" class="anchor" href="#v153---28-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.5.3 - 28 Mar 2015</h2>
+
+<ul>
+<li>Fixed parsing of stats above 1000</li>
+</ul>
+
+<h2>
+<a id="v152---27-mar-2015" class="anchor" href="#v152---27-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.5.2 - 27 Mar 2015</h2>
+
+<ul>
+<li>Fixed an onload error</li>
+</ul>
+
+<h2>
+<a id="v151---27-mar-2015" class="anchor" href="#v151---27-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.5.1 - 27 Mar 2015</h2>
+
+<ul>
+<li>Fixed bonus armor correction calculation for WoW API</li>
+</ul>
+
+<h2>
+<a id="v15---27-mar-2015" class="anchor" href="#v15---27-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.5 - 27 Mar 2015</h2>
+
+<ul>
+<li>Support for ilvl 715 legendary ring, and crafted trinket Stone of Fire</li>
+<li>Option to select which way to get item stats (WoW API - GetItemStats or parse from tooltip). Parsing from tooltip allows you to have "greyed out" stats calculated for you offspec (by default enabled for enUS culture users, because it has a dependency on localization). Others still use WoW API call.</li>
+</ul>
+
+<h2>
+<a id="v141---15-mar-2015" class="anchor" href="#v141---15-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.4.1 - 15 Mar 2015</h2>
+
+<ul>
+<li>Added Avoidance stat</li>
+<li>Bugfixes</li>
+</ul>
+
+<h2>
+<a id="v14---28-feb-2015" class="anchor" href="#v14---28-feb-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.4 - 28 Feb 2015</h2>
+
+<ul>
+<li>Total weighted stat score of all equipped items is now calculated and displayed on character stats pane (this can be disabled in options by unchecking <strong>Show total score</strong>)</li>
+<li>By default, the percentage difference in score is now calculated against total score, rather than equipped item. This better shows you how big of an upgrade an item is. //(For example an item that is (+50 +20%) better than current item adds less score than an item that is (+100 +10%), even though the percentage is bigger and that can be misleading. Comparison against total score would show something like (+50 +1%) and (+100 +2%))//. If you preferred the way it was before, you can change it in options by selecting <strong>Compare percentage gain to</strong> - Equipped item score.</li>
+<li>You can now select whether to display percentage as change or difference (<a href="http://en.wikipedia.org/wiki/Relative_change_and_difference">http://en.wikipedia.org/wiki/Relative_change_and_difference</a>). See <strong>Calculate percentage as</strong> in options.</li>
+<li>Two handed weapons are now compared to Main hand + Offhand score</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Stat Weight Score maintained by <a href="https://github.com/Necroskillz">Necroskillz</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
