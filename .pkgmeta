@@ -4,7 +4,8 @@ move-folders:
 	StatWeightScore/src: StatWeightScore
 
 ignore:
-	- src/localization/*.debug.lua
+	- src/localization/enUS.debug.lua
+	- src/localization/koKR.debug.lua
 
 externals:
 	Libs/LibStub: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
