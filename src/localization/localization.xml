@@ -2,7 +2,7 @@
     <!--@non-debug@
     <Script file="enUS.lua"/>
     <Script file="koKR.lua"/>
-    @end-non-debug@ -->
+    @end-non-debug@-->
 
     <!--@debug@-->
     <Script file="enUS.debug.lua"/>
