@@ -133,7 +133,7 @@ function ItemModule:CreateMaps()
         INVTYPE_HOLDABLE = {16,17},
         INVTYPE_RANGED = {16},
         INVTYPE_THROWN = {18},
-        INVTYPE_RANGEDRIGHT = {16,17},
+        INVTYPE_RANGEDRIGHT = {16},
         INVTYPE_RELIC = {18},
         INVTYPE_TABARD = {19},
     };
