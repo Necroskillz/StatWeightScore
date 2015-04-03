@@ -32,6 +32,61 @@ Utils.ToNumber = function(s)
     return tonumber(s);
 end;
 
+local DecimalSeparator = gsub(L["DecimalSeparator"], "%%", "");
+local ThousandSeparator = gsub(L["ThousandSeparator"], "%%", "");
+
+Utils.Round = function(val, decimal)
+    if (decimal) then
+        return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
+    else
+        return math.floor(val+0.5)
+    end
+end
+
+Utils.FormatNumber = function (amount, decimal, prefix, neg_prefix)
+    local str_amount,  formatted, famount, remain
+
+    decimal = decimal or 0  -- default 0 decimal places
+    neg_prefix = neg_prefix or "-" -- default negative sign
+
+    famount = math.abs(Utils.Round(amount,decimal))
+    famount = math.floor(famount)
+
+    remain = Utils.Round(math.abs(amount) - famount, decimal)
+
+    -- comma to separate the thousandslocal formatted = tostring(num);
+    local k;
+    local formatted = tostring(famount);
+
+    while true do
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", "%1"..ThousandSeparator.."%2");
+        if (k == 0) then
+            break;
+        end
+    end
+
+    -- attach the decimal portion
+    if (decimal > 0) then
+        remain = string.sub(tostring(remain),3)
+        formatted = formatted ..DecimalSeparator.. remain ..
+                string.rep("0", decimal - string.len(remain))
+    end
+
+    -- attach prefix string e.g '$'
+    formatted = (prefix or "") .. formatted
+
+    -- if value is negative then format accordingly
+    if (amount<0) then
+        if (neg_prefix=="()") then
+            formatted = "("..formatted ..")"
+        else
+            formatted = neg_prefix .. formatted
+        end
+    end
+
+    return formatted
+end
+
 Utils.Pack = function(...)
     if(... == nil) then
         return nil
@@ -64,7 +119,9 @@ Utils.Try = function(tryFunc, catchFunc)
     if(ok) then
         return err_or_ret;
     else
-        catchFunc(err_or_ret);
+        if(catchFunc) then
+            catchFunc(err_or_ret);
+        end
     end
 end;
 

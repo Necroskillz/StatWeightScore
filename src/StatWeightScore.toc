@@ -25,3 +25,4 @@ ImportExport.lua
 Options.lua
 Item.lua
 Character.lua
+Test.lua

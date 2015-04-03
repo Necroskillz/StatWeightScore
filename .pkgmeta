@@ -6,6 +6,7 @@ move-folders:
 ignore:
 	- src/localization/enUS.debug.lua
 	- src/localization/koKR.debug.lua
+	- src/localization/zhTW.debug.lua
 
 manual-changelog:
     filename: CHANGELOG.txt

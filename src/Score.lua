@@ -57,11 +57,11 @@ function ScoreModule:RegisterMatcher(name, fx, patternModFunc)
         pattern = patternModFunc(pattern);
     end
 
-    table.insert(self.Matcher.Matchers, {
+    self.Matcher.Matchers[name] = {
         Pattern = pattern,
         Fx = fx,
         ArgOrder = Utils.SplitString(L["Matcher_"..name.."_ArgOrder"])
-    });
+    };
 end
 
 local function UpdateResult(result, type, stat, averageStatValue, weight)
@@ -329,10 +329,10 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
                     end
 
                     if(precheck) then
-                        for _, matcher in ipairs(self.Matcher.Matchers) do
+                        for _, matcher in pairs(self.Matcher.Matchers) do
                             if(matcher.Fx == "bonusarmor" and not fixBonusArmor) then
                             else
-                                local match =  Utils.Pack(line:match(matcher.Pattern));
+                                local match = Utils.Pack(line:match(matcher.Pattern));
 
                                 if(match) then
                                     local argOrder = matcher.ArgOrder;

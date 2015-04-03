@@ -200,6 +200,51 @@ function OptionsModule:CreateOptions()
                         func = function()
                             self:ToggleOptions(L["Options_Weights_Section"]);
                         end
+                    },
+                    test = {
+                        type = "execute",
+                        name = "Run test suite",
+                        func = function()
+                            local testSuite = StatWeightScore:GetModule(SWS_ADDON_NAME.."Test");
+                            Utils.Print("Running test suit...");
+                            local results = testSuite:RunTests();
+                            local totalOk = 0;
+                            local totalFail = 0;
+                            local totalIgnored = 0;
+
+                            for _, result in pairs(results) do
+                                local color;
+                                if(result.status == "OK") then
+                                    totalOk = totalOk + 1;
+                                    color = GREEN_FONT_COLOR_CODE;
+                                elseif(result.status == "FAIL") then
+                                    totalFail = totalFail + 1;
+                                    color = RED_FONT_COLOR_CODE;
+                                else
+                                    totalIgnored = totalIgnored + 1;
+                                    color = YELLOW_FONT_COLOR_CODE;
+                                end
+
+                                local line = string.format("[%s%s|r] %s %s", color, result.status, result.name, result.message);
+                                print(line);
+                            end
+
+                            local totalStatus;
+                            local totalColor;
+                            if(totalOk == #results) then
+                                totalStatus = "SUCCESS";
+                                totalColor = GREEN_FONT_COLOR_CODE;
+                            elseif(totalFail > 0) then
+                                totalStatus = "FAILED";
+                                totalColor = RED_FONT_COLOR_CODE;
+                            else
+                                totalStatus = "UNKNOWN";
+                                totalColor = YELLOW_FONT_COLOR_CODE;
+                            end
+
+                            print();
+                            Utils.Print(string.format("Test suite %s%s|r. %d success %d failed %d ignored.", totalColor, totalStatus, totalOk, totalFail, totalIgnored));
+                        end
                     }
                 }
             }
