@@ -82,8 +82,11 @@ L["CharacterPane_Tooltip_Title_Text"] = "Total weighted stat score for all curre
 
 -- +<value> <stat>; <value> Armor; (<value> damage per second)
 L["Matcher_StatTooltipParser_Stat"] = "^%+([%d,%. ]+) ([%a ]+)$";
+L["Matcher_StatTooltipParser_Stat_ArgOrder"] = "value stat";
 L["Matcher_StatTooltipParser_Armor"] = "^(%d+) (RESISTANCE0_NAME)$";
+L["Matcher_StatTooltipParser_Armor_ArgOrder"] = "value stat";
 L["Matcher_StatTooltipParser_DPS"] = "^%(([%d,%. ]+) ([%a ]+)%)$";
+L["Matcher_StatTooltipParser_DPS_ArgOrder"] = "value stat";
 
 L["Matcher_Precheck_Equip"] = "^Equip:";
 L["Matcher_Precheck_Use"] = "^Use:";

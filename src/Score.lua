@@ -19,9 +19,18 @@ function ScoreModule:OnInitialize()
 
     self.Matcher = {
         Stats = {
-            Armor = gsub(L["Matcher_StatTooltipParser_Armor"], "RESISTANCE0_NAME", RESISTANCE0_NAME),
-            Dps = L["Matcher_StatTooltipParser_DPS"],
-            Stat = L["Matcher_StatTooltipParser_Stat"],
+            Armor = {
+                Pattern = gsub(L["Matcher_StatTooltipParser_Armor"], "RESISTANCE0_NAME", RESISTANCE0_NAME),
+                ArgOrder = Utils.SplitString(L["Matcher_StatTooltipParser_Armor_ArgOrder"])
+            },
+            Dps = {
+                Pattern = L["Matcher_StatTooltipParser_DPS"],
+                ArgOrder = Utils.SplitString(L["Matcher_StatTooltipParser_DPS_ArgOrder"])
+            },
+            Stat = {
+                Pattern = L["Matcher_StatTooltipParser_Stat"],
+                ArgOrder = Utils.SplitString(L["Matcher_StatTooltipParser_Stat_ArgOrder"])
+            }
         },
         PreCheck = {
             L["Matcher_Precheck_Equip"],
@@ -82,12 +91,24 @@ function ScoreModule:GetStatsFromTooltip(tooltip)
                 local line = (tooltipText:GetText() or "");
                 local value, stat;
 
-                value, stat = line:match(self.Matcher.Stats.Stat);
-                if(not value) then
-                    value, stat = line:match(self.Matcher.Stats.Armor);
-                end
-                if(not value) then
-                    value, stat = line:match(self.Matcher.Stats.Dps);
+                for _, matcher in pairs(self.Matcher.Stats) do
+                    local match = Utils.Pack(line:match(matcher.Pattern));
+
+                    if(match) then
+                        local argOrder = matcher.ArgOrder;
+                        local args = {};
+
+                        for i = 1, match.n do
+                            local argName = argOrder[i];
+                            local argValue = match[i]
+
+                            args[argName] = argValue;
+                        end
+
+                        value = args["value"];
+                        stat = args["stat"];
+                        break;
+                    end
                 end
 
                 if(value and stat) then

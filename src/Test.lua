@@ -22,7 +22,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 8,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -35,7 +35,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 9,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -48,7 +48,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 6,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -61,7 +61,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 7,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -74,7 +74,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113966,
         line = 9,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -87,7 +87,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113930,
         line = 8,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -100,7 +100,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113930,
         line = 9,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -113,7 +113,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113988,
         line = 7,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -126,7 +126,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113988,
         line = 10,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -139,7 +139,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113886,
         line = 7,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -152,7 +152,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113923,
         line = 8,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -165,7 +165,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113957,
         line = 9,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Stat;
         end,
         expectedArgs = {
@@ -178,7 +178,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113930,
         line = 5,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Armor;
         end,
         expectedArgs = {
@@ -191,7 +191,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113966,
         line = 6,
-        patternSelector = function (matcher)
+        matcherSelector = function (matcher)
             return matcher.Stats.Dps;
         end,
         expectedArgs = {
@@ -533,8 +533,10 @@ function TestSuite:RunTests()
                 local pattern;
                 local argOrder;
 
-                if(test.patternSelector) then
-                    pattern = test.patternSelector(ScoreModule.Matcher);
+                if(test.matcherSelector) then
+                    local matcher = test.matcherSelector(ScoreModule.Matcher);
+                    pattern = matcher.Pattern;
+                    argOrder = matcher.ArgOrder;
                 elseif(test.matcherName) then
                     local matcher = ScoreModule.Matcher.Matchers[test.matcherName];
                     pattern = matcher.Pattern;
