@@ -107,8 +107,14 @@ L["Matcher_Partial_CdSec"] = "(%d+) Sec";
 -- Equip: Your (attacks/melee attacks/spells) have a chance to trigger <effect> for <dur> sec. While <effect> is active, you gain <value> <stat> every <tick> sec, stacking up to <maxstack> times.  (Approximately <procs> procs per minute)
 -- Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by <value> for <duration> sec.  Your highest stat is always chosen.
 
+L["AlternativeStatDisplayNames_Crit"] = "";
+L["AlternativeStatDisplayNames_Spellpower"] = "spellpower";
+
 L["Matcher_RPPM_Pattern"] = "^Equip: Your [%a ]- have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_RPPM_ArgOrder"] = "value stat duration ppm";
+
+L["Matcher_RPPM2_Pattern"] = "";
+L["Matcher_RPPM2_ArgOrder"] = "";
 
 L["Matcher_SoliumBand_Pattern"] = "^Equip: Your attacks have a chance to grant Archmage's ?(%a-) Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_SoliumBand_ArgOrder"] = "type duration ppm";
@@ -119,6 +125,9 @@ L["Matcher_ICD_ArgOrder"] = "value stat duration chance cd";
 
 L["Matcher_ICD2_Pattern"] = "^Equip: Your attacks have a chance to grant you ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$";
 L["Matcher_ICD2_ArgOrder"] = "value stat duration chance cd";
+
+L["Matcher_ICD3_ArgOrder"] = "";
+L["Matcher_ICD3_Pattern"] = "";
 
 L["Matcher_InsigniaOfConquest_Pattern"] = "^Equip: When you deal damage you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.";
 L["Matcher_InsigniaOfConquest_ArgOrder"] = "value stat duration";

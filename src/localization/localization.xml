@@ -3,11 +3,13 @@
     <Script file="enUS.lua"/>
     <Script file="koKR.lua"/>
     <Script file="zhTW.lua"/>
+    <Script file="frFR.lua"/>
     @end-non-debug@-->
 
     <!--@debug@-->
     <Script file="enUS.debug.lua"/>
     <Script file="koKR.debug.lua"/>
     <Script file="zhTW.debug.lua"/>
+    <Script file="frFR.debug.lua"/>
     <!--@end-debug@-->
 </Ui>

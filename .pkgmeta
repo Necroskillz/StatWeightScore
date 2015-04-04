@@ -7,6 +7,7 @@ ignore:
 	- src/localization/enUS.debug.lua
 	- src/localization/koKR.debug.lua
 	- src/localization/zhTW.debug.lua
+	- src/localization/frFR.debug.lua
 
 manual-changelog:
     filename: CHANGELOG.txt

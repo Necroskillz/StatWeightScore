@@ -46,9 +46,11 @@ function ScoreModule:OnInitialize()
     };
 
     self:RegisterMatcher("RPPM", "rppm");
+    self:RegisterMatcher("RPPM2", "rppm");
     self:RegisterMatcher("SoliumBand", "soliumband");
     self:RegisterMatcher("ICD", "icd");
     self:RegisterMatcher("ICD2", "icd");
+    self:RegisterMatcher("ICD3", "icd");
     self:RegisterMatcher("InsigniaOfConquest", "insigniaofconquest");
     self:RegisterMatcher("Use", "use");
     self:RegisterMatcher("Use2", "use");
@@ -61,6 +63,10 @@ end
 
 function ScoreModule:RegisterMatcher(name, fx, patternModFunc)
     local pattern = L["Matcher_"..name.."_Pattern"];
+    if(not pattern or pattern:len() == 0) then
+        print(name);
+        return;
+    end
 
     if(patternModFunc) then
         pattern = patternModFunc(pattern);
@@ -362,7 +368,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
                                     for i = 1, match.n do
                                         local argName = argOrder[i];
                                         local argValue = match[i]
-                                        if(argName == "stat" and argValue == RESISTANCE0_NAME) then
+                                        if(argName == "stat" and argValue:lower() == RESISTANCE0_NAME:lower()) then
                                             -- armor procs actually add bonus armor
                                             argValue = BONUS_ARMOR;
                                         end

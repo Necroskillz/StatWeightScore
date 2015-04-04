@@ -22,7 +22,8 @@ local function AddStat(alias, key, options)
         Alias = alias,
         DisplayName = options.DisplayName or getglobal(key),
         Gem = not not options.Gem,
-        Primary = not not options.Primary
+        Primary = not not options.Primary,
+        AltDisplayNames = options.AltDisplayNames and Utils.SplitString(options.AltDisplayNames, "[^,]+") or {};
     };
 end
 
@@ -45,9 +46,9 @@ function StatsModule:OnInitialize()
     AddStat("bonusarmor", "BONUS_ARMOR");
 
     AddStat("ap", "ITEM_MOD_ATTACK_POWER_SHORT");
-    AddStat("crit", "ITEM_MOD_CRIT_RATING_SHORT", { Gem = true });
+    AddStat("crit", "ITEM_MOD_CRIT_RATING_SHORT", { Gem = true, AltDisplayNames = L["AlternativeStatDisplayNames_Crit"] });
     AddStat("haste", "ITEM_MOD_HASTE_RATING_SHORT", { Gem = true });
-    AddStat("sp", "ITEM_MOD_SPELL_POWER_SHORT");
+    AddStat("sp", "ITEM_MOD_SPELL_POWER_SHORT", { AltDisplayNames = L["AlternativeStatDisplayNames_Spellpower"] });
     AddStat("multistrike", "ITEM_MOD_CR_MULTISTRIKE_SHORT", { Gem = true });
     AddStat("versatility", "ITEM_MOD_VERSATILITY", { Gem = true });
 
@@ -91,6 +92,12 @@ function StatsModule:GetStatInfoByDisplayName(displayName)
     for _, stat in pairs(StatRepository) do
         if(stat.DisplayName:lower() == displayName) then
             return stat;
+        end
+
+        for _, altName in pairs(stat.AltDisplayNames) do
+            if(altName:lower() == displayName) then
+                return stat;
+            end
         end
     end
 end

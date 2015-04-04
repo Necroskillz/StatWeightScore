@@ -231,15 +231,12 @@ function OptionsModule:CreateOptions()
 
                             local totalStatus;
                             local totalColor;
-                            if(totalOk == #results) then
+                            if(totalFail == 0) then
                                 totalStatus = "SUCCESS";
                                 totalColor = GREEN_FONT_COLOR_CODE;
-                            elseif(totalFail > 0) then
+                            else
                                 totalStatus = "FAILED";
                                 totalColor = RED_FONT_COLOR_CODE;
-                            else
-                                totalStatus = "UNKNOWN";
-                                totalColor = YELLOW_FONT_COLOR_CODE;
                             end
 
                             print();
