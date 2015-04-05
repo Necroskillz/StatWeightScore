@@ -24,9 +24,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 8,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "92",
             ["stat"] = ITEM_MOD_CRIT_RATING_SHORT
@@ -37,9 +35,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 9,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "89",
             ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT
@@ -50,9 +46,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 6,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+                statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "136",
             ["stat"] = ITEM_MOD_AGILITY_SHORT
@@ -63,9 +57,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 7,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "204",
             ["stat"] = ITEM_MOD_STAMINA_SHORT
@@ -76,9 +68,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113966,
         line = 9,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "176",
             ["stat"] = ITEM_MOD_MASTERY_RATING_SHORT
@@ -89,9 +79,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113930,
         line = 8,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "112",
             ["stat"] = ITEM_MOD_HASTE_RATING_SHORT
@@ -102,9 +90,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113930,
         line = 9,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "127",
             ["stat"] = ITEM_MOD_VERSATILITY
@@ -115,9 +101,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113988,
         line = 7,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "242",
             ["stat"] = ITEM_MOD_INTELLECT_SHORT
@@ -128,9 +112,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113988,
         line = 10,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = Utils.FormatNumber(1389),
             ["stat"] = ITEM_MOD_SPELL_POWER_SHORT
@@ -141,9 +123,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113886,
         line = 7,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "242",
             ["stat"] = ITEM_MOD_STRENGTH_SHORT
@@ -154,9 +134,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113923,
         line = 8,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "91",
             ["stat"] = BONUS_ARMOR
@@ -167,9 +145,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113957,
         line = 9,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Stat;
-        end,
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "73",
             ["stat"] = ITEM_MOD_SPIRIT_SHORT
@@ -180,9 +156,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113930,
         line = 5,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Armor;
-        end,
+        statMatcherName = "Armor",
         expectedArgs = {
             ["value"] = "123",
             ["stat"] = RESISTANCE0_NAME
@@ -193,9 +167,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113966,
         line = 6,
-        matcherSelector = function (matcher)
-            return matcher.Stats.Dps;
-        end,
+        statMatcherName = "DPS",
         expectedArgs = {
             ["value"] = Utils.FormatNumber(435.5, 2),
             ["stat"] = ITEM_MOD_DAMAGE_PER_SECOND_SHORT
@@ -657,16 +629,16 @@ function TestSuite:RunTests()
                 local pattern;
                 local argOrder;
 
-                if(test.matcherSelector) then
-                    local matcher = test.matcherSelector(ScoreModule.Matcher);
+                local matcher;
+                if(test.statMatcherName) then
+                    matcher = ScoreModule.Matcher.Stats[test.statMatcherName];
+                elseif(test.matcherName) then
+                    matcher = ScoreModule.Matcher.Matchers[test.matcherName];
+                end
+
+                if(matcher) then
                     pattern = matcher.Pattern;
                     argOrder = matcher.ArgOrder;
-                elseif(test.matcherName) then
-                    local matcher = ScoreModule.Matcher.Matchers[test.matcherName];
-                    if(matcher) then
-                        pattern = matcher.Pattern;
-                        argOrder = matcher.ArgOrder;
-                    end
                 end
 
                 local _, link = GetItemInfo(test.itemId);
@@ -678,7 +650,7 @@ function TestSuite:RunTests()
                     result.message = string.format("- item with id %d is not cached. rerun tests.", test.itemId);
                 elseif(not pattern) then
                     result.status = "FAIL";
-                    result.message = string.format("- pattern %s is not defined for current locale.", test.matcherName);
+                    result.message = string.format("- pattern %s is not defined for current locale.", test.matcherName or test.statMatcherName);
                 else
                     local line = GetTooltipLine(link, test.line);
                     if(line) then

@@ -19,18 +19,6 @@ function ScoreModule:OnInitialize()
 
     self.Matcher = {
         Stats = {
-            Armor = {
-                Pattern = gsub(L["Matcher_StatTooltipParser_Armor"], "RESISTANCE0_NAME", RESISTANCE0_NAME),
-                ArgOrder = Utils.SplitString(L["Matcher_StatTooltipParser_Armor_ArgOrder"])
-            },
-            Dps = {
-                Pattern = L["Matcher_StatTooltipParser_DPS"],
-                ArgOrder = Utils.SplitString(L["Matcher_StatTooltipParser_DPS_ArgOrder"])
-            },
-            Stat = {
-                Pattern = L["Matcher_StatTooltipParser_Stat"],
-                ArgOrder = Utils.SplitString(L["Matcher_StatTooltipParser_Stat_ArgOrder"])
-            }
         },
         PreCheck = {
             L["Matcher_Precheck_Equip"],
@@ -44,6 +32,12 @@ function ScoreModule:OnInitialize()
         Matchers = {
         }
     };
+
+    self:RegisterStatMatcher("Armor", function(pattern)
+        return gsub(pattern, "RESISTANCE0_NAME", RESISTANCE0_NAME);
+    end);
+    self:RegisterStatMatcher("DPS");
+    self:RegisterStatMatcher("Stat");
 
     self:RegisterMatcher("RPPM", "rppm");
     self:RegisterMatcher("RPPM2", "rppm");
@@ -61,16 +55,32 @@ function ScoreModule:OnInitialize()
     self:RegisterMatcher("StoneOfFire", "stoneoffire");
 end
 
+
+function ScoreModule:RegisterStatMatcher(name, patternModFunc)
+    local pattern = L["Matcher_StatTooltipParser_"..name];
+    if(patternModFunc) then
+        pattern = patternModFunc(pattern);
+    end
+
+    pattern = Utils.UnescapeUnicode(pattern);
+
+    self.Matcher.Stats[name] = {
+        Pattern = pattern,
+        ArgOrder = Utils.SplitString(L["Matcher_StatTooltipParser_"..name.."_ArgOrder"])
+    };
+end
+
 function ScoreModule:RegisterMatcher(name, fx, patternModFunc)
     local pattern = L["Matcher_"..name.."_Pattern"];
     if(not pattern or pattern:len() == 0) then
-        print(name);
         return;
     end
 
     if(patternModFunc) then
         pattern = patternModFunc(pattern);
     end
+
+    pattern = Utils.UnescapeUnicode(pattern);
 
     self.Matcher.Matchers[name] = {
         Pattern = pattern,

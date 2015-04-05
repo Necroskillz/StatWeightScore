@@ -135,3 +135,26 @@ Utils.SplitString = function(str, pattern)
     parts.__index = nil;
     return parts;
 end;
+
+-- workaround for curse localization generator
+Utils.UnescapeUnicode = function(s)
+    local ch = {
+        ["\\a"] = '\\007', --'\a' alarm             Ctrl+G BEL
+        ["\\b"] = '\\008', --'\b' backspace         Ctrl+H BS
+        ["\\f"] = '\\012', --'\f' formfeed          Ctrl+L FF
+        ["\\n"] = '\\010', --'\n' newline           Ctrl+J LF
+        ["\\r"] = '\\013', --'\r' carriage return   Ctrl+M CR
+        ["\\t"] = '\\009', --'\t' horizontal tab    Ctrl+I HT
+        ["\\v"] = '\\011', --'\v' vertical tab      Ctrl+K VT
+        ["\\\n"] = '\\010',--     newline
+        ["\\\\"] = '\\092',--     backslash
+        ["\\'"] = '\\039', --     apostrophe
+        ['\\"'] = '\\034', --     quote
+    };
+
+    return s
+        :gsub("(\\.)", ch)
+        :gsub("\\(%d%d?%d?)", function(n)
+            return string.char(tonumber(n))
+        end);
+end;
