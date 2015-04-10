@@ -44,6 +44,33 @@ local function CreateAmrMaps()
     return askMrRobotStatMap, reverseAskMrRobotStatMap;
 end
 
+local function CreatePawnMap()
+    local pawnMap = {};
+
+    local map = function (from, to)
+        pawnMap[from] = to;
+    end
+
+    map("Dps", "dps");
+    map("Agility", "agi");
+    map("Intellect", "int");
+    map("Stamina", "sta");
+    map("Spirit", "spi");
+    map("Strength", "str");
+    map("MasteryRating", "mastery");
+    map("Armor", "armor");
+    map("BonusArmor", "bonusarmor");
+    map("CritRating", "crit");
+    map("Ap", "ap");
+    map("SpellPower", "sp");
+    map("HasteRating", "haste");
+    map("Multistrike", "multistrike");
+    map("Versatility", "versatility");
+    map("Avoidance", "avoidance");
+
+    return pawnMap;
+end
+
 local function ImportSimulationCraftXML(input)
     local result = {};
     local x = XmlModule:Parse(input);
@@ -185,6 +212,38 @@ local function ExportAskMrRobotShare(spec)
     return result;
 end
 
+local function ImportPawnString(input)
+    local valuesString = input:match("^%s*%(%s*Pawn%s*:%s*v%d+%s*:%s*\"[^\"]+\"%s*:%s*(.+)%s*%)%s*$");
+
+    if(not valuesString or valuesString == "") then
+        error("Input sting is not a valid Pawn string");
+    end
+
+    local values = Utils.SplitString(valuesString, "[^,]+");
+    local result = {};
+    local map = CreatePawnMap();
+
+    for _, valuePair in pairs(values) do
+        local stat, value = valuePair:match("^%s*([%a%d]+)%s*=%s*(%-?[%d%.]+)%s*$");
+        if(not stat or not value) then
+            error("Invalid Pawn string format");
+        end
+
+        value = tonumber(value);
+
+        local alias = map[stat];
+        if(alias ~= "none") then
+            if(not alias) then
+                Utils.PrintError("Unknown stat "..stat);
+            else
+                result[alias] = value;
+            end
+        end
+    end
+
+    return result;
+end
+
 function ImportExportModule:OnInitialize()
     XmlModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Xml");
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
@@ -214,6 +273,7 @@ end
 function ImportExportModule:RegisterDefaultImportExport()
     self:RegisterImport("sim", "SimulationCraft xml", ImportSimulationCraftXML);
     self:RegisterImport("amr", "Ask Mr. Robot share", ImportAskMrRobotShare);
+    self:RegisterImport("pawn", "Pawn string", ImportPawnString)
 
     self:RegisterExport("amr", "Ask Mr. Robot share", ExportAskMrRobotShare);
 end
