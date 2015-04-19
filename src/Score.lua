@@ -400,7 +400,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
         end
     end
 
-    if((locStr == INVTYPE_WEAPON) and weights["wohdps"]) then
+    if((locStr == INVTYPE_WEAPON  or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON)) and weights["wohdps"]) then
         result.Offhand = result.Score;
     end
 

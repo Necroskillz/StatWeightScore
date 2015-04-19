@@ -67,3 +67,6 @@ function SpecModule:GetWeights(spec)
     return WeightsCache[spec.Name] or {};
 end
 
+function SpecModule:IsDualWielding2h()
+    return select(2, UnitClass("player")) == "WARRIOR" and GetSpecialization() == 2;
+end

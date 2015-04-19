@@ -191,7 +191,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                             local equippedItemName, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
                             local equippedLocStr = getglobal(equippedLoc);
                             local equippedItemId = ItemModule:GetItemLinkInfo(equippedLink);
-                            oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON);
+                            oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON));
 
                             local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil);
                             if(equippedScore) then
@@ -219,7 +219,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
                     if(isEquipped) then
                         diff = 0
-                    elseif(locStr == INVTYPE_WEAPON) then
+                    elseif(locStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON)) then
                         local mainHandScore = GetScoreTableValue(scoreTable, 16);
                         diff = score.Score - mainHandScore;
 
