@@ -132,17 +132,32 @@ L["Matcher_ICD3_Pattern"] = "";
 L["Matcher_InsigniaOfConquest_Pattern"] = "^Equip: When you deal damage you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.";
 L["Matcher_InsigniaOfConquest_ArgOrder"] = "value stat duration";
 
+L["Matcher_InsigniaOfConquest2_ArgOrder"] = "";
+L["Matcher_InsigniaOfConquest2_Pattern"] = "";
+
 L["Matcher_Use_Pattern"] = "^Use: Increases y?o?u?r? ?([%a ]-) by ([%d,%. ]+) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$";
 L["Matcher_Use_ArgOrder"] = "stat value duration cd";
 
 L["Matcher_Use2_Pattern"] = "^Use: Grants ([%d,%. ]+) ([%a ]-) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$";
 L["Matcher_Use2_ArgOrder"] = "value stat duration cd";
 
+L["Matcher_Use3_ArgOrder"] = "";
+L["Matcher_Use3_Pattern"] = "";
+
+L["Matcher_Use4_ArgOrder"] = "";
+L["Matcher_Use4_Pattern"] = "";
+
 L["Matcher_BonusArmor_Pattern"] = "^%+(%d+) ?BONUS_ARMOR$";
 L["Matcher_BonusArmor_ArgOrder"] = "value";
 
 L["Matcher_BlackhandTrinket_Pattern"] = "^Equip: Your [%a ]- have a chance to trigger [%a' ]- for (%d+) sec.  While [%a' ]- is active, you gain ([%d,%. ]+) ([%a ]-) every ([%d,%. ]+) sec, stacking up to ([%d,%. ]+) times%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_BlackhandTrinket_ArgOrder"] = "duration value stat tick maxstack ppm";
+
+L["Matcher_BlackhandTrinket2_ArgOrder"] = "";
+L["Matcher_BlackhandTrinket2_Pattern"] = "";
+
+L["Matcher_BlackhandTrinket3_ArgOrder"] = "";
+L["Matcher_BlackhandTrinket3_Pattern"] = "";
 
 L["Matcher_StoneOfFire_Pattern"] = "^Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by ([%d,%. ]+) for (%d+) sec%.  Your highest stat is always chosen%.$";
 L["Matcher_StoneOfFire_ArgOrder"] = "value duration";

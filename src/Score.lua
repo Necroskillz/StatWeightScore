@@ -46,12 +46,17 @@ function ScoreModule:OnInitialize()
     self:RegisterMatcher("ICD2", "icd");
     self:RegisterMatcher("ICD3", "icd");
     self:RegisterMatcher("InsigniaOfConquest", "insigniaofconquest");
+    self:RegisterMatcher("InsigniaOfConquest2", "insigniaofconquest");
     self:RegisterMatcher("Use", "use");
     self:RegisterMatcher("Use2", "use");
+    self:RegisterMatcher("Use3", "use");
+    self:RegisterMatcher("Use4", "use");
     self:RegisterMatcher("BonusArmor", "bonusarmor", function(pattern)
         return gsub(pattern, "BONUS_ARMOR", BONUS_ARMOR);
     end);
     self:RegisterMatcher("BlackhandTrinket", "blackhandtrinket");
+    self:RegisterMatcher("BlackhandTrinket2", "blackhandtrinket");
+    self:RegisterMatcher("BlackhandTrinket3", "blackhandtrinket");
     self:RegisterMatcher("StoneOfFire", "stoneoffire");
 end
 

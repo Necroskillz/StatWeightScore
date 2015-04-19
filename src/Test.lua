@@ -46,7 +46,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113877,
         line = 6,
-                statMatcherName = "Stat",
+        statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "136",
             ["stat"] = ITEM_MOD_AGILITY_SHORT
@@ -187,7 +187,7 @@ function TestSuite:CreateTests()
         }
     };
 
-    self.Tests["RPPM crit proc match"] = {
+    self.Tests["[frFR] RPPM crit proc match"] = {
         type = "matcher",
         itemId = 113645,
         line = 8,
@@ -201,10 +201,25 @@ function TestSuite:CreateTests()
         }
     };
 
+    self.Tests["[koKR] RPPM armor proc match"] = {
+        type = "matcher",
+        itemId = 113861,
+        line = 8,
+        locale = "koKR";
+        matcherName = "RPPM2",
+        expectedArgs = {
+            ["value"] = Utils.FormatNumber(1743),
+            ["stat"] = RESISTANCE0_NAME,
+            ["duration"] = "10",
+            ["ppm"] = Utils.FormatNumber(0.92, 2)
+        }
+    };
+
     self.Tests["RPPM armor proc match"] = {
         type = "matcher",
         itemId = 113861,
         line = 8,
+        locale = "!koKR";
         matcherName = "RPPM",
         expectedArgs = {
             ["value"] = Utils.FormatNumber(1743),
@@ -305,7 +320,7 @@ function TestSuite:CreateTests()
         }
     };
 
-    self.Tests["ICD3 proc match"] = {
+    self.Tests["[frFR] ICD3 proc match"] = {
         type = "matcher",
         itemId = 112317,
         locale = "frFR";
@@ -332,10 +347,27 @@ function TestSuite:CreateTests()
         }
     };
 
+    self.Tests["[koKR] BlackhandTrinket agi proc match"] = {
+        type = "matcher",
+        itemId = 113985,
+        line = 8,
+        locale = "koKR";
+        matcherName = "BlackhandTrinket3",
+        expectedArgs = {
+            ["duration"] = "10",
+            ["value"] = "137",
+            ["stat"] = ITEM_MOD_CRIT_RATING_SHORT,
+            ["tick"] = Utils.FormatNumber(0.5, 2),
+            ["maxstack"] = "20",
+            ["ppm"] = Utils.FormatNumber(0.92, 2)
+        }
+    };
+
     self.Tests["BlackhandTrinket agi proc match"] = {
         type = "matcher",
         itemId = 113985,
         line = 8,
+        locale = "!koKR";
         matcherName = "BlackhandTrinket",
         expectedArgs = {
             ["duration"] = "10",
@@ -377,11 +409,44 @@ function TestSuite:CreateTests()
         }
     };
 
+    self.Tests["[koKR] BlackhandTrinket sta proc match"] = {
+        type = "matcher",
+        itemId = 113987,
+        line = 8,
+        locale = "koKR";
+        matcherName = "BlackhandTrinket2",
+        expectedArgs = {
+            ["duration"] = "10",
+            ["value"] = "137",
+            ["stat"] = ITEM_MOD_HASTE_RATING_SHORT,
+            ["tick"] = Utils.FormatNumber(0.5, 2),
+            ["maxstack"] = "20",
+            ["ppm"] = Utils.FormatNumber(0.92, 2)
+        }
+    };
+
     self.Tests["BlackhandTrinket sta proc match"] = {
         type = "matcher",
         itemId = 113987,
         line = 8,
+        locale = "!koKR";
         matcherName = "BlackhandTrinket",
+        expectedArgs = {
+            ["duration"] = "10",
+            ["value"] = "137",
+            ["stat"] = ITEM_MOD_HASTE_RATING_SHORT,
+            ["tick"] = Utils.FormatNumber(0.5, 2),
+            ["maxstack"] = "20",
+            ["ppm"] = Utils.FormatNumber(0.92, 2)
+        }
+    };
+
+    self.Tests["[koKR] BlackhandTrinket spi proc match"] = {
+        type = "matcher",
+        itemId = 113986,
+        line = 8,
+        locale = "koKR";
+        matcherName = "BlackhandTrinket2",
         expectedArgs = {
             ["duration"] = "10",
             ["value"] = "137",
@@ -396,6 +461,7 @@ function TestSuite:CreateTests()
         type = "matcher",
         itemId = 113986,
         line = 8,
+        locale = "!koKR";
         matcherName = "BlackhandTrinket",
         expectedArgs = {
             ["duration"] = "10",
@@ -460,10 +526,28 @@ function TestSuite:CreateTests()
         }
     };
 
+    self.Tests["[koKR] Use match multistrike"] = {
+        type = "matcher",
+        itemId = 113931,
+        line = 8,
+        locale = "koKR";
+        matcherName = "Use",
+        expectedArgs = {
+            ["value"] = Utils.FormatNumber(1537),
+            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT,
+            ["duration"] = "20",
+            ["cd"] = function(value)
+                local pattern = ScoreModule.Matcher.Partial["cdmin"];
+                return value:match(pattern) == "2", pattern.." with capture = 2";
+            end
+        }
+    };
+
     self.Tests["Use2 match"] = {
         type = "matcher",
         itemId = 113931,
         line = 8,
+        locale = "!koKR";
         matcherName = "Use2",
         expectedArgs = {
             ["value"] = Utils.FormatNumber(1537),
@@ -508,10 +592,29 @@ function TestSuite:CreateTests()
         }
     };
 
+    self.Tests["[koKR] Use 1 min 30 sec match"] = {
+        type = "matcher",
+        itemId = 110013,
+        line = 8,
+        locale = "koKR";
+        matcherName = "Use3",
+        expectedArgs = {
+            ["value"] = Utils.FormatNumber(1060),
+            ["stat"] = ITEM_MOD_VERSATILITY,
+            ["duration"] = "15",
+            ["cd"] = function(value)
+                local pattern = ScoreModule.Matcher.Partial["cdmin"];
+                local pattern2 = ScoreModule.Matcher.Partial["cdsec"];
+                return value:match(pattern) == "1" and  value:match(pattern2) == "30", pattern.." with capture = 1 and "..pattern2.." with capture = 30";
+            end
+        }
+    };
+
     self.Tests["Use2 1 min 30 sec match"] = {
         type = "matcher",
         itemId = 110013,
         line = 8,
+        locale = "!koKR";
         matcherName = "Use2",
         expectedArgs = {
             ["value"] = Utils.FormatNumber(1060),
@@ -644,7 +747,25 @@ function TestSuite:RunTests()
                 local _, link = GetItemInfo(test.itemId);
 
                 local locale = GetLocale();
-                if(test.locale and test.locale ~= locale) then
+                local localeIgnore = false;
+
+                if(test.locale) then
+                    local testLocales = Utils.SplitString(test.locale, "[^,]+");
+
+                    for _, testLocale in pairs(testLocales) do
+                        local neg = false;
+                        if(testLocale:sub(1, 1) == "!") then
+                            neg = true
+                            testLocale = testLocale:sub(2);
+                        end
+
+                        if((not neg and testLocale ~= locale) or (neg and testLocale == locale)) then
+                            localeIgnore = true;
+                        end
+                    end
+                end
+
+                if(localeIgnore) then
                     result.message = string.format("- test is ignored for %s", locale);
                 elseif(not link) then
                     result.message = string.format("- item with id %d is not cached. rerun tests.", test.itemId);
