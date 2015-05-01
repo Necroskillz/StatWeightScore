@@ -41,6 +41,8 @@ function ScoreModule:OnInitialize()
 
     self:RegisterMatcher("RPPM", "rppm");
     self:RegisterMatcher("RPPM2", "rppm");
+    self:RegisterMatcher("RPPM3", "rppm");
+    self:RegisterMatcher("RPPM4", "rppm");
     self:RegisterMatcher("SoliumBand", "soliumband");
     self:RegisterMatcher("ICD", "icd");
     self:RegisterMatcher("ICD2", "icd");

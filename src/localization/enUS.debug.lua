@@ -116,6 +116,12 @@ L["Matcher_RPPM_ArgOrder"] = "value stat duration ppm";
 L["Matcher_RPPM2_Pattern"] = "";
 L["Matcher_RPPM2_ArgOrder"] = "";
 
+L["Matcher_RPPM3_Pattern"] = "";
+L["Matcher_RPPM3_ArgOrder"] = "";
+
+L["Matcher_RPPM4_Pattern"] = "";
+L["Matcher_RPPM4_ArgOrder"] = "";
+
 L["Matcher_SoliumBand_Pattern"] = "^Equip: Your attacks have a chance to grant Archmage's ?(%a-) Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_SoliumBand_ArgOrder"] = "type duration ppm";
 L["Matcher_SoliumBand_BuffType_Greater"] = "Greater";
