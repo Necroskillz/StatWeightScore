@@ -284,9 +284,9 @@ function ItemModule:GetItemLinkInfo(itemLink)
     end
 
     local itemString = string.match(itemLink, "item[%-?%d:]+");
-    local _, itemId, enchantId, jewelId1, jewelId2, jewelId3, jewelId4, suffixId, uniqueId, linkLevel, reforgeId, _, _, bonus = strsplit(":", itemString)
+    local _, itemId, enchantId, jewelId1, jewelId2, jewelId3, jewelId4, suffixId, uniqueId, linkLevel, upgradeId, _, instanceDifficulty, numBonus, bonus1 = strsplit(":", itemString)
 
-    return itemId, bonus;
+    return itemId, bonus1;
 end
 
 function ItemModule:GetTierId(itemId, class)
