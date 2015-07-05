@@ -247,6 +247,11 @@ ScoreModule.Fx = {
 
         local statInfo = StatsModule:GetStatInfo(primaryStat);
 
+        if(not statInfo)
+        then
+            return;
+        end
+
         args["stat"] = statInfo.DisplayName;
         args["value"] = primaryStatValue * buff;
 
@@ -277,6 +282,11 @@ ScoreModule.Fx = {
     ["stoneoffire"] = function(result, stats, weights, args)
         local primaryStat = GetPrimaryStatForSpec(weights);
         local statInfo = StatsModule:GetStatInfo(primaryStat);
+
+        if(not statInfo)
+        then
+            return;
+        end
 
         args["chance"] = 35;
         args["cd"] = 55;
