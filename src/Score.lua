@@ -315,7 +315,7 @@ function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
     end
 
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
-        return GetStatsFromTooltip(tooltip);
+        return self:GetStatsFromTooltip(tooltip);
     end, true, false);
 end
 
