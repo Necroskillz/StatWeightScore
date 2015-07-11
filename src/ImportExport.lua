@@ -123,8 +123,13 @@ local function ImportAskMrRobotShare(input)
                     current = parsed[current.Name];
                     stage = "capc"
                 else
-                    parsed[current.Name] = current;
-                    stage = "wait";
+                    if(current.Name == "set") then
+                        stage = "set";
+                    else
+                        parsed[current.Name] = current;
+
+                        stage = "wait";
+                    end
                 end
             else
                 current.Name = current.Name..c;
@@ -170,6 +175,12 @@ local function ImportAskMrRobotShare(input)
                 f = false;
                 current.ValuePostCap = c;
                 stage = "valuepc";
+            end
+        elseif(stage == "set") then
+            -- ignore this
+            if(c == "\n") then
+                current = nil;
+                stage = "name";
             end
         end
     end
