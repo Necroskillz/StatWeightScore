@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var debug = require('gulp-debug');
 var del = require('del');
 var shell = require('shelljs');
 var bump = require('gulp-bump');
@@ -54,13 +53,12 @@ gulp.task('_bump', function(){
         .src('package.json')
         .pipe(bump(bumpOptions))
         .pipe(gulp.dest('.'));
-    
 });
 
 gulp.task('release', ['_bump'], function(){
-    var version = require('package.json').version;
+    var version = require('./package.json').version;
     
-    shell.exec(util.format('git commit -a -m Release v%s', version));
+    shell.exec(util.format('git commit -a -m "Release v%s"', version));
     shell.exec(util.format('git tag %s', version));
     shell.exec('git push origin master');
     shell.exec('git push --tags');
@@ -73,6 +71,8 @@ gulp.task('release', ['_bump'], function(){
     shell.exec('git pull github master');
     shell.exec('git push origin master');
     shell.exec('git push --tags');
+    
+    shell.rm('-rf', config.distStage);
     
     console.log(util.format('Release %s completed', version));
 });
