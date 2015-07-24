@@ -53,6 +53,7 @@ function StatsModule:OnInitialize()
     AddStat("versatility", "ITEM_MOD_VERSATILITY", { Gem = true });
 
     AddStat("avoidance", "ITEM_MOD_CR_AVOIDANCE_SHORT");
+    AddStat("leech", "ITEM_MOD_CR_LIFESTEAL_SHORT");
 
     AddAlias("socket", "EMPTY_SOCKET_PRISMATIC");
 

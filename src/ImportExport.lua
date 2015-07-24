@@ -38,8 +38,8 @@ local function CreateAmrMaps()
     map("Multistrike", "multistrike");
     map("Versatility", "versatility");
     map("Avoidance", "avoidance");
+    map("Leech", "leech");
     map("MovementSpeed", "none");
-    map("Leech", "none");
 
     return askMrRobotStatMap, reverseAskMrRobotStatMap;
 end
@@ -67,6 +67,7 @@ local function CreatePawnMap()
     map("Multistrike", "multistrike");
     map("Versatility", "versatility");
     map("Avoidance", "avoidance");
+    map("Leech", "leech");
 
     return pawnMap;
 end
