@@ -6,10 +6,7 @@ var util = require('util');
 
 var config = {
     wowAddonDir: 'C:/Program Files (x86)/World of Warcraft/Interface/AddOns/StatWeightScore',
-    src: 'src/**/*.{lua,xml,toc}',
-    sourceRemote: 'git@github.com:Necroskillz/StatWeightScore.git',
-    distRemote: 'git@git.curseforge.net:wow/stat-weight-score/mainline.git',
-    distStage: '.dist_stage'
+    src: 'src/**/*.{lua,xml,toc}'
 };
 
 gulp.task('clean-local', function(cb){
@@ -61,18 +58,11 @@ gulp.task('release', ['_bump'], function(){
     shell.exec(util.format('git commit -a -m "Release v%s"', version));
     shell.exec(util.format('git tag %s', version));
     shell.exec('git push origin master');
+    shell.exec('git checkout curse');
+    shell.exec('git pull curse master');
+    shell.exec('git merge master');
+    shell.exec('git push curse master');
     shell.exec('git push --tags');
-    
-    shell.rm('-rf', config.distStage);
-    shell.exec(util.format('git clone %s %s', config.distRemote, config.distStage));
-    
-    shell.cd(config.distStage);
-    shell.exec(util.format('git remote add github %s', config.sourceRemote));
-    shell.exec('git pull github master');
-    shell.exec('git push origin master');
-    shell.exec('git push --tags');
-    
-    shell.rm('-rf', config.distStage);
     
     console.log(util.format('Release %s completed', version));
 });
