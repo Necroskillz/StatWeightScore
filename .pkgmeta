@@ -8,6 +8,9 @@ ignore:
 	- src/localization/koKR.debug.lua
 	- src/localization/zhTW.debug.lua
 	- src/localization/frFR.debug.lua
+	- gulpfile.js
+	- package.json
+	- README.md
 
 manual-changelog:
     filename: CHANGELOG.txt
