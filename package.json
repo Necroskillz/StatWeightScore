@@ -1,0 +1,21 @@
+{
+  "name": "stat-weight-score",
+  "version": "1.10.0",
+  "description": "WoW WoD addon that calculates a score of an item based on stat weights and the item's stats.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Necroskillz/StatWeightScore.git"
+  },
+  "author": "Necroskillz",
+  "license": "MIT",
+  "bugs": {
+    "url": "http://wow.curseforge.com/addons/stat-weight-score/tickets/"
+  },
+  "homepage": "https://github.com/Necroskillz/StatWeightScore",
+  "devDependencies": {
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-bump": "^0.3.1",
+    "shelljs": "^0.5.1"
+  }
+}
