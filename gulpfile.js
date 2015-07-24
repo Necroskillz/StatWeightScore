@@ -52,12 +52,18 @@ gulp.task('_bump', function(){
         .pipe(gulp.dest('.'));
 });
 
+gulp.task('set-remotes', function(){
+    shell.exec('git remote set-url --delete --push origin .*');
+    shell.exec('git remote set-url --add --push origin git@github.com:Necroskillz/StatWeightScore.git');
+    shell.exec('git remote set-url --add --push origin git@git.curseforge.net:wow/stat-weight-score/mainline.git'); 
+});
+
 gulp.task('release', ['_bump'], function(){
     var version = require('./package.json').version;
     
-    shell.exec(util.format('git commit -a -m "Release v%s"', version));
+    shell.exec(util.format('git commit -q -a -m "Release v%s"', version));
     shell.exec(util.format('git tag -a -m "" %s', version));
-    shell.exec('git push origin master --tags');
+    shell.exec('git push -q origin master --tags');
     
     console.log(util.format('Release %s completed', version));
 });
