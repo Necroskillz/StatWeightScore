@@ -56,8 +56,8 @@ gulp.task('release', ['_bump'], function(){
     var version = require('./package.json').version;
     
     shell.exec(util.format('git commit -a -m "Release v%s"', version));
-    shell.exec(util.format('git tag %s', version));
-    shell.exec('git push origin master');
+    shell.exec(util.format('git tag -a %s', version));
+    shell.exec('git push origin master --tags');
     
     console.log(util.format('Release %s completed', version));
 });
