@@ -58,11 +58,6 @@ gulp.task('release', ['_bump'], function(){
     shell.exec(util.format('git commit -a -m "Release v%s"', version));
     shell.exec(util.format('git tag %s', version));
     shell.exec('git push origin master');
-    shell.exec('git checkout curse');
-    shell.exec('git pull curse master');
-    shell.exec('git merge master');
-    shell.exec('git push curse master');
-    shell.exec('git push --tags');
     
     console.log(util.format('Release %s completed', version));
 });
