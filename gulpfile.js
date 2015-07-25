@@ -11,7 +11,11 @@ var config = {
 
 gulp.task('clean-local', function(cb){
     del([util.format('%s/**/*', config.wowAddonDir)], { force: true }, cb);
-})
+});
+
+gulp.task('clean-dist', function(cb){
+   del(['dist/**/*'], { force: true }, cb); 
+});
 
 gulp.task('publish-local', ['clean-local'], function(){
     return gulp
@@ -19,51 +23,12 @@ gulp.task('publish-local', ['clean-local'], function(){
         .pipe(gulp.dest(config.wowAddonDir));
 });
 
+gulp.task('publish-dist', ['clean-dist'], function(){
+    return gulp
+        .src([config.src, '!src/libs/**/!(libs.xml)', '!src/localization/*.debug.lua', '.pkgmeta', 'CHANGELOG.txt'])
+        .pipe(gulp.dest('dist'));
+});
+
 gulp.task('watch', ['publish-local'], function(){
     gulp.watch(config.src, ['publish-local'])
-});
-
-gulp.task('_bump', function(){
-    var argv = require('yargs')
-        .alias('v', 'version')
-        .alias('t', 'type')
-        .check(function(argv){
-            if((!argv.version && !argv.type) || (argv.version && argv.type)){
-                throw 'Exactly one of version or type arguments is required';
-            }
-
-            return true;
-        })
-        .argv;
-        
-    var bumpOptions = {
-        preid: 'beta'
-    };
-    
-    if(argv.version){
-        bumpOptions.version = argv.version;
-    } else if(argv.type){
-        bumpOptions.type = argv.type;
-    }
-    
-    return gulp
-        .src('package.json')
-        .pipe(bump(bumpOptions))
-        .pipe(gulp.dest('.'));
-});
-
-gulp.task('set-remotes', function(){
-    shell.exec('git remote set-url --delete --push origin .*');
-    shell.exec('git remote set-url --add --push origin git@github.com:Necroskillz/StatWeightScore.git');
-    shell.exec('git remote set-url --add --push origin git@git.curseforge.net:wow/stat-weight-score/mainline.git'); 
-});
-
-gulp.task('release', ['_bump'], function(){
-    var version = require('./package.json').version;
-    
-    shell.exec(util.format('git commit -q -a -m "Release v%s"', version));
-    shell.exec(util.format('git tag -a -m "" %s', version));
-    shell.exec('git push -q origin master --tags');
-    
-    console.log(util.format('Release %s completed', version));
 });

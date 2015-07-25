@@ -1,17 +1,5 @@
 package-as: StatWeightScore
 
-move-folders:
-	StatWeightScore/src: StatWeightScore
-
-ignore:
-	- src/localization/enUS.debug.lua
-	- src/localization/koKR.debug.lua
-	- src/localization/zhTW.debug.lua
-	- src/localization/frFR.debug.lua
-	- gulpfile.js
-	- package.json
-	- README.md
-
 manual-changelog:
     filename: CHANGELOG.txt
     markup-type: creole
