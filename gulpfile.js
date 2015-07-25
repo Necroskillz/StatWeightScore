@@ -1,7 +1,5 @@
 var gulp = require('gulp');
 var del = require('del');
-var shell = require('shelljs');
-var bump = require('gulp-bump');
 var util = require('util');
 
 var config = {
