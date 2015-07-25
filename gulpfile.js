@@ -37,7 +37,7 @@ gulp.task('_bump', function(){
         .argv;
         
     var bumpOptions = {
-        preid: 'rc'
+        preid: 'beta'
     };
     
     if(argv.version){
