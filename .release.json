@@ -1,5 +1,6 @@
 {
     "non-interactive": true,
+	"verbose": true,
     "force": false,
     "pkgFiles": ["package.json"],
     "increment": "patch",
