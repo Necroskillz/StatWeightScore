@@ -12,6 +12,6 @@
     "distRepo": "git@git.curseforge.net:wow/stat-weight-score/mainline.git",
     "distStageDir": ".stage",
     "distBase": "dist",
-    "distFiles": ["**/*"],
+    "distFiles": ["**/*", ".pkgmeta"],
     "publish": false
 }
