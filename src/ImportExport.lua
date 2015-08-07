@@ -218,7 +218,7 @@ local function ExportAskMrRobotShare(spec)
         return spec.Weights[key1] > spec.Weights[key2];
     end)) do
         local stat = map[alias];
-        result = result..stat.." "..spec.Weights[alias].."\n";
+        result = result..stat.." "..Utils.FormatNumber(spec.Weights[alias], 2).."\n";
     end
 
     return result;
