@@ -106,7 +106,12 @@ function ItemModule:CreateMaps()
         ["Spellbound Runic Band of Unrelenting Slaughter"] = 1,
         ["Spellbound Runic Band of Infinite Preservation"] = 1,
         ["Spellbound Runic Band of Elemental Power"] = 1,
-        ["Spellbound Runic Band of Elemental Invincibility"] = 1
+        ["Spellbound Runic Band of Elemental Invincibility"] = 1,
+        ["Sanctus, Sigil of the Unbroken"] = 1,
+        ["Nithramus, the All-Seer"] = 1,
+        ["Etheralus, the Eternal Reward"] = 1,
+        ["Thorasus, the Stone Heart of Draenor"] = 1,
+        ["Maalus, the Blood Drinker"] = 1,
     };
 
     self.SlotMap = {
