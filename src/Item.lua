@@ -1,10 +1,13 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
 local ItemModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Item");
 
+local ItemLinkModule;
+
 local B = LibStub("LibBabble-Inventory-3.0");
 local BL = B:GetLookupTable();
 
 local Utils;
+local L;
 
 local Armor = BL["Armor"];
 local Weapon = BL["Weapon"];
@@ -235,10 +238,46 @@ function ItemModule:CreateMaps()
         ["570"] = "566", -- heroic
         ["569"] = "567" -- mythic
     };
+
+    self.CraftingUpgradeMap = {
+        ["525"] = {
+            To = "526",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 2, 6)
+        },
+        ["526"] = {
+            To = "527",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 3, 6)
+        },
+        ["527"] = {
+            To = "594",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 4, 6)
+        },
+        ["594"] = {
+            To = "617",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 5, 6)
+        },
+        ["617"] = {
+            To = "618",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 6, 6)
+        }
+    };
+
+    self.BalefulUpgradeMap = {
+        ["BASE"] = {
+            To = "651",
+            Desc =  ITEM_QUALITY4_DESC
+        },
+        ["651"] = {
+            To = "648",
+            Desc = L["Empowered_Upgrade_Label"]
+        },
+    };
 end
 
 function ItemModule:OnInitialize()
+    ItemLinkModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ItemLink");
     Utils = StatWeightScore.Utils;
+    L = StatWeightScore.L;
 
     self:CreateMaps();
 end
@@ -284,14 +323,7 @@ function ItemModule:AreUniquelyExclusive(item1, item2)
 end
 
 function ItemModule:GetItemLinkInfo(itemLink)
-    if(not itemLink) then
-        return nil;
-    end
-
-    local itemString = string.match(itemLink, "item[%-?%d:]+");
-    local _, itemId, enchantId, jewelId1, jewelId2, jewelId3, jewelId4, suffixId, uniqueId, linkLevel, upgradeId, _, instanceDifficulty, numBonus, bonus1 = strsplit(":", itemString)
-
-    return itemId, bonus1;
+    return ItemLinkModule:Parse(itemLink);
 end
 
 function ItemModule:GetTierId(itemId, class)
@@ -313,10 +345,83 @@ end
 function ItemModule:ConvertTierToken(itemId, class, bonus)
     local tierId = self:GetTierId(itemId, class);
     local name, link = GetItemInfo(tierId);
+    local parsed = ItemLinkModule:Parse(link);
+    link = parsed:ToString();
 
     if(bonus) then
-        link = link:gsub(":0|h%[", ":1:"..ItemModule:GetTierBonus(bonus).."|[");
+        local parsed = ItemLinkModule:Parse(link);
+        table.insert(parsed.bonuses, self:GetTierBonus(bonus));
+        link = parsed:ToString();
     end
 
     return tierId, link, name;
+end
+
+function ItemModule:GetCraftedUpgradeBonus(itemLink)
+    for b, _ in pairs(self.CraftingUpgradeMap) do
+        if(itemLink:HasBonus(b)) then
+            return b;
+        end
+    end
+
+    return nil;
+end
+
+function ItemModule:GetBalefulUpgradeBonus(itemLink)
+    if(not itemLink:HasBonus("652")) then
+        return nil;
+    end
+
+    for b, _ in pairs(self.BalefulUpgradeMap) do
+        if(itemLink:HasBonus(b)) then
+            return b;
+        end
+    end
+
+    if(not itemLink:HasBonus("648")) then
+        return "BASE";
+    end
+
+    return nil;
+end
+
+local function GenerateUpgrades(map, bonusFrom, link)
+    local upgrades = {};
+
+    while(true) do
+        local upgradeInfo = map[bonusFrom];
+        if(not upgradeInfo) then
+            break;
+        end
+
+        link:RemoveBonus(bonusFrom);
+        link:AddBonus(upgradeInfo.To);
+
+        local upgrade = {
+            Desc = upgradeInfo.Desc,
+            Link = link:ToString()
+        };
+
+        table.insert(upgrades, upgrade);
+
+        bonusFrom = upgradeInfo.To;
+    end
+
+    return upgrades;
+end
+
+function ItemModule:GetUpgrades(link)
+    local itemLink = ItemLinkModule:Parse(link);
+    local upgrades = {};
+
+    local craftedBonus = self:GetCraftedUpgradeBonus(itemLink);
+    local balefulBonus = self:GetBalefulUpgradeBonus(itemLink);
+
+    if(craftedBonus) then
+        return GenerateUpgrades(self.CraftingUpgradeMap, craftedBonus, itemLink);
+    elseif(balefulBonus) then
+        return GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink);
+    end
+
+    return upgrades;
 end

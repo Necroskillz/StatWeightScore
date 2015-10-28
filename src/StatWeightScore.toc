@@ -23,6 +23,7 @@ Score.lua
 Tooltip.lua
 ImportExport.lua
 Options.lua
+ItemLink.lua
 Item.lua
 Character.lua
 Test.lua

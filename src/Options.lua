@@ -31,6 +31,7 @@ OptionsModule.Defaults = {
         ScoreCompareType = "total",
         PercentageCalculationType = "change",
         ShowStatsPane = true,
+        ShowUpgrades = true,
         Specs = {}
     }
 };
@@ -110,7 +111,7 @@ function OptionsModule:CreateOptions()
                                 desc = L["Options_BlankLineMainAbove_Tooltip"],
                             },
                             BlankLineMainBelow = {
-                                order = 30,
+                                order = 31,
                                 type = "toggle",
                                 name = L["Options_BlankLineMainBelow_Label"],
                                 desc = L["Options_BlankLineMainBelow_Tooltip"],
@@ -127,7 +128,7 @@ function OptionsModule:CreateOptions()
                                 desc = L["Options_BlankLineRefAbove_Tooltip"],
                             },
                             BlankLineRefBelow = {
-                                order = 40,
+                                order = 41,
                                 type = "toggle",
                                 name = L["Options_BlankLineRefBelow_Label"],
                                 desc = L["Options_BlankLineRefBelow_Tooltip"],
@@ -143,10 +144,11 @@ function OptionsModule:CreateOptions()
                                 name = L["Options_ShowStatsPane_Label"],
                                 desc = L["Options_ShowStatsPane_Tooltip"],
                             },
-                            NewLine3 = {
-                                type= 'description',
+                            ShowUpgrades = {
                                 order = 47,
-                                name= '',
+                                type = "toggle",
+                                name = L["Options_ShowUpgrades_Label"],
+                                desc = L["Options_ShowUpgrades_Tooltip"],
                             },
                             NewLine4 = {
                                 type= 'description',
@@ -199,6 +201,18 @@ function OptionsModule:CreateOptions()
                         name = L["Options_Weights_Open"],
                         func = function()
                             self:ToggleOptions(L["Options_Weights_Section"]);
+                        end
+                    },
+                    replace_bonuses = {
+                        type = "execute",
+                        name = "Replace bonuses in item link - for debugging",
+                        func = function(args)
+                            local params = string.match(args.input, '|r .*'):sub(3);
+                            local parsed = StatWeightScore:GetModule(SWS_ADDON_NAME.."ItemLink"):Parse(args.input:sub(11));
+
+                            parsed.bonuses = Utils.SplitString(params);
+                            local link = parsed:ToString();
+                            print(link);
                         end
                     },
                     test = {

@@ -105,6 +105,116 @@ function TooltipModule:OnInitialize()
     end
 end
 
+local function calculateScore(link, loc, spec, tooltip, cmMode)
+    if(cmMode) then
+        if(not tooltip) then
+            for i = 1,2 do
+                local shoppingTooltip = getglobal("ShoppingTooltip"..i);
+                if(select(2, shoppingTooltip:GetItem()) == link) then
+                    tooltip = shoppingTooltip;
+                    break;
+                end
+            end
+        end
+        return ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec);
+    else
+        return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec);
+    end
+end
+
+local function GetScoreDiff(link, itemId, score, spec, cmMode)
+    local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
+    local slots = ItemModule.SlotMap[loc];
+    if(not slots) then
+        return 0, 0;
+    end
+
+    local diff = 0;
+    local offhandDiff = 0;
+    local minEquippedScore = -1;
+
+    local scoreTable = {};
+    local oneHand = false;
+    local isEquipped = false;
+    local locStr = getglobal(loc);
+
+    local isEquippedItem = function(comparedItemId, comparedItemLevel, comparedScore)
+        local scoreGem = score.Gem and score.Gem.Value..score.Gem.Stat or "";
+        local comparedScoreGem = comparedScore.Gem and comparedScore.Gem.Value..comparedScore.Gem.Stat or "";
+
+        return comparedItemId == itemId and comparedItemLevel == itemLevel and scoreGem == comparedScoreGem;
+    end
+
+    for _, slot in pairs(slots) do
+        local equippedLink = GetInventoryItemLink("player", slot);
+        if(equippedLink) then
+            local equippedItemName, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
+            local equippedLocStr = getglobal(equippedLoc);
+            local equippedItemId = ItemModule:GetItemLinkInfo(equippedLink).itemId;
+            oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON));
+
+            local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil, cmMode);
+            if(equippedScore) then
+                scoreTable[slot] = equippedScore;
+
+                local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
+                if(uniqueFamily == -1 and maxUniqueEquipped == 1 and ItemModule:AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
+                    minEquippedScore = equippedScore.Score;
+                    break;
+                end
+
+                if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedScore)) then
+                    if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
+                        minEquippedScore = equippedScore.Score;
+                    end
+                else
+                    isEquipped = true;
+                end
+            elseif(cmMode) then
+                isEquipped = true;
+            end
+        elseif(slot ~= 17) then
+            minEquippedScore = 0
+        end
+    end
+
+    if(isEquipped) then
+        diff = 0
+    elseif(locStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON)) then
+        local mainHandScore = GetScoreTableValue(scoreTable, 16);
+        diff = score.Score - mainHandScore;
+
+        if(score.Offhand) then
+            if(oneHand) then
+                offhandDiff = score.Offhand - GetScoreTableValue(scoreTable, 17);
+            else
+                offhandDiff = score.Offhand - mainHandScore;
+            end
+        end
+    elseif(locStr == INVTYPE_2HWEAPON) then
+        diff = score.Score - GetScoreTableValue(scoreTable, 16) - GetScoreTableValue(scoreTable, 17);
+    elseif(locStr == INVTYPE_HOLDABLE or locStr == INVTYPE_SHIELD) then
+        local offhandScore, offhandExists = GetScoreTableValue(scoreTable, 17);
+        if(offhandExists) then
+            diff = score.Score - offhandScore;
+        else
+            if(not oneHand) then
+                diff = score.Score - GetScoreTableValue(scoreTable, 16);
+            else
+                diff = score.Score;
+            end
+        end
+    else
+        if(minEquippedScore == -1) then
+            minEquippedScore = 0;
+        end
+
+        diff = score.Score - minEquippedScore;
+    end
+
+    return diff, offhandDiff;
+end
+
 function TooltipModule:AddToTooltip(tooltip, compare)
     local db = StatWeightScore.db.profile;
 
@@ -113,17 +223,20 @@ function TooltipModule:AddToTooltip(tooltip, compare)
     end
 
     local _, link = tooltip:GetItem();
-    local itemId, bonus = ItemModule:GetItemLinkInfo(link);
+    local parsedLink = ItemModule:GetItemLinkInfo(link);
+    local itemId = parsedLink.itemId;
+    local bonus1 = parsedLink.bonuses[1];
     local _, class = UnitClass("player");
     local translatedTo;
 
     if(ItemModule:IsTierToken(itemId, class)) then
-        itemId, link, translatedTo = ItemModule:ConvertTierToken(itemId, class, bonus);
+        itemId, link, translatedTo = ItemModule:ConvertTierToken(itemId, class, bonus1);
     end
 
+    local upgrades = ItemModule:GetUpgrades(link);
+
     if IsEquippableItem(link) then
-        local itemName, _, _, itemLevel, _, itemType, itemSubType, _, loc = GetItemInfo(link);
-        local uniqueFamily, maxUniqueEquipped = GetItemUniqueness(link);
+        local _, _, _, _, _, itemType, itemSubType, _, loc = GetItemInfo(link);
         local blankLineHandled = false;
         local count = 0;
         local maxCount = 0;
@@ -133,23 +246,6 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
         local locStr = getglobal(loc);
         local cmMode = db.EnableCmMode and select(3, GetInstanceInfo()) == 8;
-
-        local calculateScore = function(link, loc, spec, tooltip)
-            if(cmMode) then
-                if(not tooltip) then
-                    for i = 1,2 do
-                        local shoppingTooltip = getglobal("ShoppingTooltip"..i);
-                        if(select(2, shoppingTooltip:GetItem()) == link) then
-                            tooltip = shoppingTooltip;
-                            break;
-                        end
-                    end
-                end
-                return ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec);
-            else
-                return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec);
-            end
-        end
 
         local specs = SpecModule:GetSpecs();
         for _, specKey in ipairs(Utils.OrderKeysBy(specs, "Order")) do
@@ -161,95 +257,13 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     characterScore = CharacterModule:CalculateTotalScore(spec);
                 end
 
-                local score = calculateScore(link, loc, spec, tooltip);
-
-                local isEquippedItem = function(comparedItemId, comparedItemLevel, comparedScore)
-                    local scoreGem = score.Gem and score.Gem.Value..score.Gem.Stat or "";
-                    local comparedScoreGem = comparedScore.Gem and comparedScore.Gem.Value..comparedScore.Gem.Stat or "";
-
-                    return comparedItemId == itemId and comparedItemLevel == itemLevel and scoreGem == comparedScoreGem;
-                end
+                local score = calculateScore(link, loc, spec, tooltip, cmMode);
 
                 local diff = 0;
                 local offhandDiff = 0;
 
-                local slots = ItemModule.SlotMap[loc];
-                if(not slots) then
-                    return;
-                end
-
                 if(compare) then
-                    local minEquippedScore = -1;
-
-                    local scoreTable = {};
-                    local oneHand = false;
-                    local isEquipped = false;
-
-                    for _, slot in pairs(slots) do
-                        local equippedLink = GetInventoryItemLink("player", slot);
-                        if(equippedLink) then
-                            local equippedItemName, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
-                            local equippedLocStr = getglobal(equippedLoc);
-                            local equippedItemId = ItemModule:GetItemLinkInfo(equippedLink);
-                            oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON));
-
-                            local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil);
-                            if(equippedScore) then
-                                scoreTable[slot] = equippedScore;
-
-                                if(uniqueFamily == -1 and maxUniqueEquipped == 1 and ItemModule:AreUniquelyExclusive(itemName, GetItemInfo(equippedLink))) then
-                                    minEquippedScore = equippedScore.Score;
-                                    break;
-                                end
-
-                                if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedScore)) then
-                                    if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
-                                        minEquippedScore = equippedScore.Score;
-                                    end
-                                else
-                                    isEquipped = true;
-                                end
-                            elseif(cmMode) then
-                                isEquipped = true;
-                            end
-                        elseif(slot ~= 17) then
-                            minEquippedScore = 0
-                        end
-                    end
-
-                    if(isEquipped) then
-                        diff = 0
-                    elseif(locStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON)) then
-                        local mainHandScore = GetScoreTableValue(scoreTable, 16);
-                        diff = score.Score - mainHandScore;
-
-                        if(score.Offhand) then
-                            if(oneHand) then
-                                offhandDiff = score.Offhand - GetScoreTableValue(scoreTable, 17);
-                            else
-                                offhandDiff = score.Offhand - mainHandScore;
-                            end
-                        end
-                    elseif(locStr == INVTYPE_2HWEAPON) then
-                        diff = score.Score - GetScoreTableValue(scoreTable, 16) - GetScoreTableValue(scoreTable, 17);
-                    elseif(locStr == INVTYPE_HOLDABLE or locStr == INVTYPE_SHIELD) then
-                        local offhandScore, offhandExists = GetScoreTableValue(scoreTable, 17);
-                        if(offhandExists) then
-                            diff = score.Score - offhandScore;
-                        else
-                            if(not oneHand) then
-                                diff = score.Score - GetScoreTableValue(scoreTable, 16);
-                            else
-                                diff = score.Score;
-                            end
-                        end
-                    else
-                        if(minEquippedScore == -1) then
-                            minEquippedScore = 0;
-                        end
-
-                        diff = score.Score - minEquippedScore;
-                    end
+                    diff, offhandDiff = GetScoreDiff(link, itemId, score, spec, cmMode);
                 end
 
                 local disabled = not ItemModule:IsItemForClass(itemType, itemSubType, locStr, class);
@@ -278,6 +292,24 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 end
                 if(score.Use)then
                     tooltip:AddDoubleLine(L["TooltipMessage_WithUseAverage"], string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
+                end
+
+                if(#upgrades ~= 0 and db.ShowUpgrades and not cmMode) then
+                    for _, upgrade in ipairs(upgrades) do
+                        local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, cmMode);
+                        local upgradeDiff = 0;
+                        local upgradeOffhandDiff = 0;
+
+                        if(compare) then
+                            upgradeDiff, upgradeOffhandDiff = GetScoreDiff(upgrade.Link, itemId, upgradeScore, spec, cmMode);
+                        end
+
+                        tooltip:AddDoubleLine(upgrade.Desc, FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
+
+                        if(score.Offhand ~= nil) then
+                            tooltip:AddDoubleLine(upgrade.Desc.." (offhand)", FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
+                        end
+                    end
                 end
 
                 if(count == maxCount) then
