@@ -307,7 +307,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                         tooltip:AddDoubleLine(upgrade.Desc, FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
 
                         if(score.Offhand ~= nil) then
-                            tooltip:AddDoubleLine(upgrade.Desc.." (offhand)", FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
+                            tooltip:AddDoubleLine(string.format(L["TooltipMessage_Offhand"], upgrade.Desc), FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
                         end
                     end
                 end

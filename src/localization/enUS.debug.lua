@@ -15,6 +15,7 @@ L["TooltipMessage_StatScore"] = "Stat score";
 L["TooltipMessage_WithGem"] = "with gem";
 L["TooltipMessage_WithProcAverage"] = "with proc average";
 L["TooltipMessage_WithUseAverage"] = "with use on cd avg";
+L["TooltipMessage_Offhand"] = "%s (offhand)";
 L["Crafting_Upgrade_Label"] = "Stage %d of %d";
 L["Empowered_Upgrade_Label"] = "Empowered";
 L["Options_Open"] = "Open configuration";

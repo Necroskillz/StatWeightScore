@@ -74,7 +74,7 @@ end
 function ItemLink:HasBonuses(bonuses)
     local flag = false;
 
-    for _, b in bonuses do
+    for _, b in pairs(bonuses) do
         flag = self:HasBonus(b);
         if(not flag) then
             break;
