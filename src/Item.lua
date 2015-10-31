@@ -368,7 +368,7 @@ function ItemModule:GetCraftedUpgradeBonus(itemLink)
 end
 
 function ItemModule:GetBalefulUpgradeBonus(itemLink)
-    if(not itemLink:HasBonus("652")) then
+    if(not (itemLink:HasBonus("652") or itemLink:HasBonus("653"))) then
         return nil;
     end
 
