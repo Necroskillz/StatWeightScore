@@ -272,6 +272,17 @@ function ItemModule:CreateMaps()
             Desc = L["Empowered_Upgrade_Label"]
         },
     };
+
+    self.DreanorValorUpgradeMap = {
+        ["529"] = {
+            To = "530",
+            Desc = "Upgrade 1"
+        },
+        ["530"] = {
+            To = "531",
+            Desc = "Upgrade 2"
+        }
+    };
 end
 
 function ItemModule:OnInitialize()
@@ -385,17 +396,35 @@ function ItemModule:GetBalefulUpgradeBonus(itemLink)
     return nil;
 end
 
-local function GenerateUpgrades(map, bonusFrom, link)
+function ItemModule:GetDreanorValorUpgrade(itemLink)
+    if(itemLink.upgradeType ~= 4) then
+        return nil;
+    end
+
+    local upgrade = self.DreanorValorUpgradeMap[itemLink.upgradeId];
+
+    if(upgrade) then
+        return itemLink.upgradeId;
+    end
+
+    return nil;
+end
+
+local function GenerateUpgrades(map, from, link, type)
     local upgrades = {};
 
     while(true) do
-        local upgradeInfo = map[bonusFrom];
+        local upgradeInfo = map[from];
         if(not upgradeInfo) then
             break;
         end
 
-        link:RemoveBonus(bonusFrom);
-        link:AddBonus(upgradeInfo.To);
+        if(type == "bonus") then
+            link:RemoveBonus(from);
+            link:AddBonus(upgradeInfo.To);
+        elseif(type == "upgrade") then
+            link.upgradeId = upgradeInfo.To;
+        end
 
         local upgrade = {
             Desc = upgradeInfo.Desc,
@@ -404,7 +433,7 @@ local function GenerateUpgrades(map, bonusFrom, link)
 
         table.insert(upgrades, upgrade);
 
-        bonusFrom = upgradeInfo.To;
+        from = upgradeInfo.To;
     end
 
     return upgrades;
@@ -416,11 +445,14 @@ function ItemModule:GetUpgrades(link)
 
     local craftedBonus = self:GetCraftedUpgradeBonus(itemLink);
     local balefulBonus = self:GetBalefulUpgradeBonus(itemLink);
+    local dreanorValorUpgrade = self:GetDreanorValorUpgrade(itemLink);
 
     if(craftedBonus) then
-        return GenerateUpgrades(self.CraftingUpgradeMap, craftedBonus, itemLink);
+        return GenerateUpgrades(self.CraftingUpgradeMap, craftedBonus, itemLink, "bonus");
     elseif(balefulBonus) then
-        return GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink);
+        return GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink, "bonus");
+    elseif(dreanorValorUpgrade) then
+        return GenerateUpgrades(self.DreanorValorUpgradeMap, dreanorValorUpgrade, itemLink, "upgrade");
     end
 
     return upgrades;

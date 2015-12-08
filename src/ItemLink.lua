@@ -14,7 +14,6 @@ local function ParseLink(link)
         return nil, nil, {}, nil;
     end
 
-
     local color, linkType, itemString, text = string.match(link, "(|cff%x+)|H([^:]+):([%d:]+)|h%[?([^%[%]]+)%]?|h|r");
     return color, linkType, itemString and ParseItemString(itemString), text;
 end

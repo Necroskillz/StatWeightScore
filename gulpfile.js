@@ -3,7 +3,7 @@ var del = require('del');
 var util = require('util');
 
 var config = {
-    wowAddonDir: 'C:/Program Files (x86)/World of Warcraft/Interface/AddOns/StatWeightScore',
+    wowAddonDir: 'D:/World of Warcraft/Interface/AddOns/StatWeightScore',
     src: 'src/**/*.{lua,xml,toc}'
 };
 
