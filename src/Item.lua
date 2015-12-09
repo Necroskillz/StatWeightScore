@@ -397,12 +397,11 @@ function ItemModule:GetBalefulUpgradeBonus(itemLink)
 end
 
 function ItemModule:GetDreanorValorUpgrade(itemLink)
-    if(itemLink.upgradeType ~= 4) then
+    if(itemLink.upgradeType ~= "4") then
         return nil;
     end
 
     local upgrade = self.DreanorValorUpgradeMap[itemLink.upgradeId];
-
     if(upgrade) then
         return itemLink.upgradeId;
     end
