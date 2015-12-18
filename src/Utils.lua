@@ -16,6 +16,17 @@ Utils.SortedKeys = function(t, sortFunction)
     return keys;
 end;
 
+Utils.TableConcat = function(...)
+   local result = {}
+   for _, tbl in pairs({...}) do
+       for _, item in pairs(tbl) do
+           table.insert(result, item)
+       end
+   end
+
+   return result
+end
+
 Utils.OrderKeysBy = function(array, property)
     return Utils.SortedKeys(array, function(key1, key2)
         return array[key1][property] < array[key2][property];

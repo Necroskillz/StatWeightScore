@@ -447,11 +447,15 @@ function ItemModule:GetUpgrades(link)
     local dreanorValorUpgrade = self:GetDreanorValorUpgrade(itemLink);
 
     if(craftedBonus) then
-        return GenerateUpgrades(self.CraftingUpgradeMap, craftedBonus, itemLink, "bonus");
-    elseif(balefulBonus) then
-        return GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink, "bonus");
-    elseif(dreanorValorUpgrade) then
-        return GenerateUpgrades(self.DreanorValorUpgradeMap, dreanorValorUpgrade, itemLink, "upgrade");
+        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.CraftingUpgradeMap, craftedBonus, itemLink, "bonus"));
+    end
+
+    if(balefulBonus) then
+        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink, "bonus"));
+    end
+
+    if(dreanorValorUpgrade) then
+        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.DreanorValorUpgradeMap, dreanorValorUpgrade, itemLink, "upgrade"));
     end
 
     return upgrades;
