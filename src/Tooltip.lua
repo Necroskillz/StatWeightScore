@@ -233,8 +233,6 @@ function TooltipModule:AddToTooltip(tooltip, compare)
         itemId, link, translatedTo = ItemModule:ConvertTierToken(itemId, class, bonus1);
     end
 
-    local upgrades = ItemModule:GetUpgrades(link);
-
     if IsEquippableItem(link) then
         local _, _, _, _, _, itemType, itemSubType, _, loc = GetItemInfo(link);
         local blankLineHandled = false;
@@ -246,6 +244,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
         local locStr = getglobal(loc);
         local cmMode = db.EnableCmMode and select(3, GetInstanceInfo()) == 8;
+        local upgrades = ItemModule:GetUpgrades(itemType, itemSubType, locStr, link);
 
         local specs = SpecModule:GetSpecs();
         for _, specKey in ipairs(Utils.OrderKeysBy(specs, "Order")) do

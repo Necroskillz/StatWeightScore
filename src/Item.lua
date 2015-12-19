@@ -239,7 +239,30 @@ function ItemModule:CreateMaps()
         ["569"] = "567" -- mythic
     };
 
-    self.CraftingUpgradeMap = {
+    self.WeaponCraftingUpgradeMap = {
+        ["525"] = {
+            To = "558",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 2, 6)
+        },
+        ["558"] = {
+            To = "559",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 3, 6)
+        },
+        ["559"] = {
+            To = "594",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 4, 6)
+        },
+        ["594"] = {
+            To = "619",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 5, 6)
+        },
+        ["619"] = {
+            To = "620",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 6, 6)
+        }
+    };
+
+    self.ArmorCraftingUpgradeMap = {
         ["525"] = {
             To = "526",
             Desc = string.format(L["Crafting_Upgrade_Label"], 2, 6)
@@ -249,10 +272,10 @@ function ItemModule:CreateMaps()
             Desc = string.format(L["Crafting_Upgrade_Label"], 3, 6)
         },
         ["527"] = {
-            To = "594",
+            To = "593",
             Desc = string.format(L["Crafting_Upgrade_Label"], 4, 6)
         },
-        ["594"] = {
+        ["593"] = {
             To = "617",
             Desc = string.format(L["Crafting_Upgrade_Label"], 5, 6)
         },
@@ -276,11 +299,11 @@ function ItemModule:CreateMaps()
     self.DreanorValorUpgradeMap = {
         ["529"] = {
             To = "530",
-            Desc = "Upgrade 1"
+            Desc = L["Upgrade_1_Label"]
         },
         ["530"] = {
             To = "531",
-            Desc = "Upgrade 2"
+            Desc = L["Upgrade_2_Label"]
         }
     };
 end
@@ -368,8 +391,16 @@ function ItemModule:ConvertTierToken(itemId, class, bonus)
     return tierId, link, name;
 end
 
-function ItemModule:GetCraftedUpgradeBonus(itemLink)
-    for b, _ in pairs(self.CraftingUpgradeMap) do
+function ItemModule:GetCraftingMap(itemType, itemSubType, locStr)
+    if(itemType == Weapon or itemSubType == Shields or locStr == INVTYPE_HOLDABLE) then
+        return self.WeaponCraftingUpgradeMap;
+    else
+        return self.ArmorCraftingUpgradeMap;
+    end
+end
+
+function ItemModule:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLink)
+    for b, _ in pairs(self:GetCraftingMap(itemType, itemSubType, locStr)) do
         if(itemLink:HasBonus(b)) then
             return b;
         end
@@ -409,8 +440,9 @@ function ItemModule:GetDreanorValorUpgrade(itemLink)
     return nil;
 end
 
-local function GenerateUpgrades(map, from, link, type)
+local function GenerateUpgrades(map, from, link, type, descPrefix)
     local upgrades = {};
+    descPrefix = descPrefix or '';
 
     while(true) do
         local upgradeInfo = map[from];
@@ -426,7 +458,7 @@ local function GenerateUpgrades(map, from, link, type)
         end
 
         local upgrade = {
-            Desc = upgradeInfo.Desc,
+            Desc = descPrefix..upgradeInfo.Desc,
             Link = link:ToString()
         };
 
@@ -438,24 +470,30 @@ local function GenerateUpgrades(map, from, link, type)
     return upgrades;
 end
 
-function ItemModule:GetUpgrades(link)
+function ItemModule:GetUpgrades(itemType, itemSubType, locStr, link)
     local itemLink = ItemLinkModule:Parse(link);
     local upgrades = {};
 
-    local craftedBonus = self:GetCraftedUpgradeBonus(itemLink);
+    local craftedBonus = self:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLink);
     local balefulBonus = self:GetBalefulUpgradeBonus(itemLink);
     local dreanorValorUpgrade = self:GetDreanorValorUpgrade(itemLink);
 
     if(craftedBonus) then
-        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.CraftingUpgradeMap, craftedBonus, itemLink, "bonus"));
-    end
-
-    if(balefulBonus) then
+        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self:GetCraftingMap(itemType, itemSubType, locStr), craftedBonus, itemLink, "bonus"));
+    elseif(balefulBonus) then
         upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink, "bonus"));
     end
 
     if(dreanorValorUpgrade) then
-        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.DreanorValorUpgradeMap, dreanorValorUpgrade, itemLink, "upgrade"));
+        local descPrefix = '';
+        if(upgrades) then
+            local lastUpgrade = upgrades[#upgrades];
+            if(lastUpgrade) then
+                descPrefix = lastUpgrade.Desc..' + ';
+            end
+        end
+
+        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.DreanorValorUpgradeMap, dreanorValorUpgrade, itemLink, "upgrade", descPrefix));
     end
 
     return upgrades;
