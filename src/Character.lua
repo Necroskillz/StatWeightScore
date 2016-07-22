@@ -17,10 +17,6 @@ function CharacterModule:OnInitialize()
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
-    self:AddToStatsPane();
-
-    self:RegisterMessage(SWS_ADDON_NAME.."ConfigChanged", "UpdateStatCategory");
-
     local eventFrame = CreateFrame("Frame");
     eventFrame:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player");
     eventFrame:RegisterUnitEvent("UNIT_AURA", "player");
@@ -36,90 +32,22 @@ function CharacterModule:InvalidateScoreCache()
     table.wipe(ScoreCache);
 end
 
-function CharacterModule:UpdateStatCategory()
-    self:InvalidateScoreCache();
-
-    if(StatWeightScore.db.profile.ShowStatsPane) then
-        self:AddToStatsPane();
-    else
-        PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME] = nil;
-        for i, k in pairs(PAPERDOLL_STATCATEGORY_DEFAULTORDER) do
-            if(k == SWS_ADDON_NAME) then
-                table.remove(PAPERDOLL_STATCATEGORY_DEFAULTORDER, i);
-                break;
-            end
-        end
-
-        return;
-    end
-
-    local category = PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME];
-    table.wipe(category.stats);
-
-    for key, _ in pairs(PAPERDOLL_STATINFO) do
-        if(string.find(key, SWS_ADDON_NAME)) then
-            PAPERDOLL_STATINFO[key] = nil;
-        end
-    end
-
+function CharacterModule:GetCharacterScores()
     local specs = SpecModule:GetSpecs();
+    local scores = {};
 
     for _, specKey in ipairs(Utils.OrderKeysBy(specs, "Order")) do
         local spec = specs[specKey];
-        local key = SWS_ADDON_NAME..spec.Name;
 
-        PAPERDOLL_STATINFO[key] = {
-            updateFunc = function(statFrame, unit)
-                local score = self:CalculateTotalScore(spec);
-                local color = "";
-
-                -- not correct in CM
-                if(select(3, GetInstanceInfo()) == 8) then
-                    color = GRAY_FONT_COLOR_CODE;
-                    statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..L["Warning"];
-                    statFrame.tooltip2 = L["CharacterPane_CM_Tooltip"];
-                else
-                    statFrame.tooltip = HIGHLIGHT_FONT_COLOR_CODE..L["CharacterPane_Tooltip_Title"];
-                    statFrame.tooltip2 = string.format(L["CharacterPane_Tooltip_Title_Text"], spec.Name);
-                end
-
-                PaperDollFrame_SetLabelAndText(statFrame, L["TooltipMessage_StatScore"].." ("..spec.Name..")", color..string.format("%.2f", score), false);
-            end
+        local score = {
+            Score = self:CalculateTotalScore(spec),
+            Spec = spec.Name
         };
 
-        table.insert(category.stats, key);
-    end
-end
-
-function CharacterModule:AddToStatsPane()
-    if(not StatWeightScore.db.profile.ShowStatsPane or PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME]) then
-        return;
+        table.insert(scores, score);
     end
 
-    local lastId = -1;
-
-    for _, cat in pairs(PAPERDOLL_STATCATEGORIES) do
-        if(cat.id > lastId) then
-            lastId = cat.id;
-        end
-    end
-
-    local category = {
-        id = lastId + 1,
-        stats = {
-        }
-    };
-
-    PAPERDOLL_STATCATEGORIES[SWS_ADDON_NAME] = category;
-    table.insert(PAPERDOLL_STATCATEGORY_DEFAULTORDER, 2, SWS_ADDON_NAME);
-
-    self:UpdateStatCategory();
-
-    local frameName = "CharacterStatsPaneCategory"..category.id;
-    if(not getglobal(frameName)) then
-        _G["STAT_CATEGORY_"..SWS_ADDON_NAME] = L["StatPaneCategoryTitle"];
-        CreateFrame("Frame", frameName, CharacterStatsPaneScrollChild, "StatGroupTemplate");
-    end
+    return scores;
 end
 
 function CharacterModule:CalculateTotalScore(spec)

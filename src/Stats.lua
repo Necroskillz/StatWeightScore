@@ -38,18 +38,15 @@ function StatsModule:OnInitialize()
     AddStat("agi", "ITEM_MOD_AGILITY_SHORT", { Primary = true });
     AddStat("int", "ITEM_MOD_INTELLECT_SHORT", { Primary = true });
     AddStat("sta", "ITEM_MOD_STAMINA_SHORT", { Gem = true });
-    AddStat("spi", "ITEM_MOD_SPIRIT_SHORT");
     AddStat("str", "ITEM_MOD_STRENGTH_SHORT", { Primary = true });
     AddStat("mastery", "ITEM_MOD_MASTERY_RATING_SHORT", { Gem = true });
 
     AddStat("armor", "RESISTANCE0_NAME");
-    AddStat("bonusarmor", "BONUS_ARMOR");
 
     AddStat("ap", "ITEM_MOD_ATTACK_POWER_SHORT");
     AddStat("crit", "ITEM_MOD_CRIT_RATING_SHORT", { Gem = true, AltDisplayNames = L["AlternativeStatDisplayNames_Crit"] });
     AddStat("haste", "ITEM_MOD_HASTE_RATING_SHORT", { Gem = true });
     AddStat("sp", "ITEM_MOD_SPELL_POWER_SHORT", { AltDisplayNames = L["AlternativeStatDisplayNames_Spellpower"] });
-    AddStat("multistrike", "ITEM_MOD_CR_MULTISTRIKE_SHORT", { Gem = true });
     AddStat("versatility", "ITEM_MOD_VERSATILITY", { Gem = true });
 
     AddStat("avoidance", "ITEM_MOD_CR_AVOIDANCE_SHORT");
@@ -111,7 +108,7 @@ function StatsModule:GetBestGemStat(spec)
     if(not spec.GemStat or spec.GemStat == "best") then
         for stat, weight in pairs(weights) do
             local statInfo = self:GetStatInfo(stat);
-            if(statInfo.Gem) then
+            if(statInfo and statInfo.Gem) then
                 if(weight > bestStatWeight) then
                     bestStatWeight = weight;
                     bestStat = statInfo;

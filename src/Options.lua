@@ -10,6 +10,7 @@ local ImportExportModule;
 local GemsModule;
 local SpecModule;
 local StatsModule;
+local CharacterModule;
 
 local Utils;
 local L;
@@ -138,12 +139,6 @@ function OptionsModule:CreateOptions()
                                 order = 45,
                                 name= '',
                             },
-                            ShowStatsPane = {
-                                order = 46,
-                                type = "toggle",
-                                name = L["Options_ShowStatsPane_Label"],
-                                desc = L["Options_ShowStatsPane_Tooltip"],
-                            },
                             ShowUpgrades = {
                                 order = 47,
                                 type = "toggle",
@@ -153,6 +148,11 @@ function OptionsModule:CreateOptions()
                             NewLine4 = {
                                 type= 'description',
                                 order = 48,
+                                name= '',
+                            },
+                            NewLine5 = {
+                                type= 'description',
+                                order = 49,
                                 name= '',
                             },
                             ScoreCompareType = {
@@ -201,6 +201,23 @@ function OptionsModule:CreateOptions()
                         name = L["Options_Weights_Open"],
                         func = function()
                             self:ToggleOptions(L["Options_Weights_Section"]);
+                        end
+                    },
+                    character_score = {
+                        type = "execute",
+                        name = L["CharacterScore_Command"],
+                        func = function ()
+                            local scores = CharacterModule:GetCharacterScores();
+
+                            -- not correct in CM
+                            if(select(3, GetInstanceInfo()) == 8) then
+                                print(L["Warning"]..": "..L["CharacterPane_CM_Tooltip"]);
+                            end
+
+                            print(L["CharacterScore_Info"]);
+                            for _, score in pairs(scores) do
+                                print(NORMAL_FONT_COLOR_CODE..score.Spec.."|r"..": "..string.format("%.2f", score.Score));
+                            end
                         end
                     },
                     replace_bonuses = {
@@ -268,6 +285,7 @@ function OptionsModule:OnInitialize()
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
     SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     ImportExportModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ImportExport");
+    CharacterModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Character");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
@@ -617,7 +635,7 @@ function OptionsModule:CreateOptionsForStatWeight(spec, alias)
 
     local stat = StatsModule:GetStatInfo(alias);
 
-    if(options[alias]) then
+    if(options[alias] or not stat) then
         return;
     end
 

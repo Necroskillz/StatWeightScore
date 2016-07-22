@@ -18,8 +18,22 @@ local function ParseLink(link)
     return color, linkType, itemString and ParseItemString(itemString), text;
 end
 
+local function GetItemStringValue(source, sourceIndex)
+    if(source == nil or sourceIndex == nil) then
+        return source;
+    end
+
+    local value = source[sourceIndex];
+
+    if(not value or value == "") then
+        return nil;
+    else
+        return value;
+    end
+end
+
 local function AssignProperty(instance, property, defaultValue, source, sourceIndex)
-    local value = sourceIndex ~= nil and source ~= nil and source[sourceIndex] or source;
+    local value = GetItemStringValue(source, sourceIndex);
     instance[property] = value or defaultValue;
 end
 
@@ -45,8 +59,8 @@ local ItemLink = Utils.Class(function(instance, link)
 
     instance.bonuses = {};
 
-    local numBonus = itemStringParts and itemStringParts[13] or "0";
-    if(numBonus ~= "0") then
+    local numBonus = GetItemStringValue(itemStringParts, 13);
+    if(numBonus) then
         for i = 14, 14 + numBonus do
             table.insert(instance.bonuses, itemStringParts[i]);
         end

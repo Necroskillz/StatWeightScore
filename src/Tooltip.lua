@@ -122,7 +122,7 @@ local function calculateScore(link, loc, spec, tooltip, cmMode)
     end
 end
 
-local function GetScoreDiff(link, itemId, score, spec, cmMode)
+local function GetScoreDiff(link, itemId, score, spec, cmMode, isUpgradePath)
     local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
     local slots = ItemModule.SlotMap[loc];
     if(not slots) then
@@ -178,7 +178,7 @@ local function GetScoreDiff(link, itemId, score, spec, cmMode)
         end
     end
 
-    if(isEquipped) then
+    if(isEquipped and not isUpgradePath) then
         diff = 0
     elseif(locStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON)) then
         local mainHandScore = GetScoreTableValue(scoreTable, 16);
@@ -300,7 +300,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                         local upgradeOffhandDiff = 0;
 
                         if(compare) then
-                            upgradeDiff, upgradeOffhandDiff = GetScoreDiff(upgrade.Link, itemId, upgradeScore, spec, cmMode);
+                            upgradeDiff, upgradeOffhandDiff = GetScoreDiff(upgrade.Link, itemId, upgradeScore, spec, cmMode, true);
                         end
 
                         tooltip:AddDoubleLine(upgrade.Desc, FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
