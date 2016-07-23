@@ -67,7 +67,7 @@ local ItemLink = Utils.Class(function(instance, link)
     end
 
     if(instance.upgradeType ~= "0") then
-        AssignProperty(instance, "upgradeId", "0", itemStringParts, 14 + numBonus);
+        AssignProperty(instance, "upgradeId", "0", itemStringParts, 14 + (numBonus or 0));
     end
 end);
 
