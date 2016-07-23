@@ -116,12 +116,12 @@ Utils.Print = function(text, indent)
     end
 
     if(type(text) == "table") then
-        print(SWS_ADDON_NAME.." (table):")
+        StatWeightScore:Print("(table):")
         for i,v in pairs(text) do
             Utils.Print(i.." : "..tostring(v), indent.."  ");
         end
     else
-        print(SWS_ADDON_NAME..": "..tostring(indent..text));
+        StatWeightScore:Print(tostring(indent..text));
     end
 end;
 

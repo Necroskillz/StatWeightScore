@@ -1,5 +1,5 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
-StatWeightScore = LibStub("AceAddon-3.0"):NewAddon(StatWeightScore, SWS_ADDON_NAME, "AceEvent-3.0");
+StatWeightScore = LibStub("AceAddon-3.0"):NewAddon(StatWeightScore, SWS_ADDON_NAME, "AceEvent-3.0", "AceConsole-3.0");
 
 local OptionsModule;
 
@@ -18,7 +18,7 @@ StatWeightScore.L = L;
 function StatWeightScore:OnInitialize()
     OptionsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Options");
 
-    self.Utils.Print(string.format(L["WelcomeMessage"], self.Version));
+    self:Print(string.format(L["WelcomeMessage"], self.Version));
 
     OptionsModule:InitializeDatabase();
 end

@@ -2,11 +2,13 @@ local SWS_ADDON_NAME, StatWeightScore = ...;
 local SpecModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Spec");
 
 local StatsModule;
+local Utils;
 
 local WeightsCache = {};
 
 function SpecModule:OnInitialize()
     StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
+    Utils = StatWeightScore.Utils;
 
     self.db = StatWeightScore.db;
 
@@ -27,6 +29,23 @@ function SpecModule:SetSpec(spec)
     self.db.profile.Specs[spec.Name] = spec;
 end
 
+function SpecModule:RemoveInvalidStats()
+    local specs = self:GetSpecs();
+
+    for _, spec in pairs(specs) do
+        for stat, _ in pairs(spec.Weights) do
+            local statInfo = StatsModule:GetStatInfo(stat);
+
+            if(not statInfo) then
+                Utils.PrintError(string.format("Found invalid stat %s in spec %s, removing", stat, spec.Name))
+                spec.Weights[stat] = nil;
+            end
+        end
+
+        self:SetSpec(spec);
+    end
+end
+
 function SpecModule:BuildWeightsCache()
     local specs = self:GetSpecs();
 
@@ -39,6 +58,14 @@ function SpecModule:BuildWeightsCache()
 
             for stat, weight in pairs(spec.Weights) do
                 local statInfo = StatsModule:GetStatInfo(stat);
+
+                if(not statInfo) then
+                    self:RemoveInvalidStats();
+                    self:InvalidateWeightsCache();
+                    self:BuildWeightsCache();
+                    return;
+                end
+
                 if(statInfo.Primary) then
                     primaryStat = stat;
                     primaryWeight = weight;
