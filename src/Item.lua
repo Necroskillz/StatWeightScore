@@ -76,7 +76,7 @@ function ItemModule:CreateMaps()
     AddMapping(self.ClassWeaponMap, "ROGUE", OneHandedMaces, OneHandedSwords, OneHandedAxes, FistWeapons, Daggers);
     AddMapping(self.ClassWeaponMap, "MONK", OneHandedMaces, OneHandedSwords, OneHandedAxes, FistWeapons, Polearms, Staves);
     AddMapping(self.ClassWeaponMap, "SHAMAN", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, FistWeapons, Daggers, Staves);
-    AddMapping(self.ClassWeaponMap, "HUNTER", Bows, Guns, Crossbows);
+    AddMapping(self.ClassWeaponMap, "HUNTER", Bows, Guns, Crossbows, Polearms);
     AddMapping(self.ClassWeaponMap, "WARRIOR", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, OneHandedSwords, TwoHandedSwords, FistWeapons, Daggers, Polearms);
     AddMapping(self.ClassWeaponMap, "PALADIN", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, OneHandedSwords, TwoHandedSwords, Polearms);
     AddMapping(self.ClassWeaponMap, "DEATHKNIGHT", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, OneHandedSwords, TwoHandedSwords, Polearms);
