@@ -151,10 +151,10 @@ local function GetScoreDiff(link, itemId, score, spec, cmMode, isUpgradePath)
         if spec.EquipmentSet and spec.EquipmentSet ~= "" and not setEquipped then
             local location = GetEquipmentSetLocations(spec.EquipmentSet)[slot];
             if location then
-              local _, _, _, _, bagSlot, bag = EquipmentManager_UnpackLocation(location);
-              if bag then
-                equippedLink = GetContainerItemLink(bag, bagSlot);
-              end
+                local _, _, _, _, bagSlot, bag = EquipmentManager_UnpackLocation(location);
+                if bag then
+                    equippedLink = GetContainerItemLink(bag, bagSlot);
+                end
             end
         end
         if not equippedLink then
