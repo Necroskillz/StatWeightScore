@@ -411,6 +411,21 @@ function OptionsModule:CreateOptionsForSpec(key)
                 desc = L["Options_EnabledSpec_Tooltip"],
                 order = 13
             },
+            EquipmentSet = {
+				type = "select",
+                style = "dropdown",
+                values = function()
+                    local dropdownTable = {[""] = ""};
+                    for setIndex = 1, GetNumEquipmentSets() do
+                        local setName = GetEquipmentSetInfo(setIndex);
+                        dropdownTable[setName] = setName;
+                    end
+                    return dropdownTable;
+                end,
+                name = L["Options_AssociatedSet_Label"],
+                desc = L["Options_AssociatedSet_Tooltip"],
+                order = 14
+			},
             GemStat = {
                 type = "select",
                 name = L["Options_GemStat_Label"],
