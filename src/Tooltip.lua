@@ -163,7 +163,7 @@ local function GetScoreDiff(link, itemId, score, spec, cmMode, isUpgradePath)
                     break;
                 end
 
-                if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedScore)) then
+                if(not isEquippedItem(equippedItemId, equippedItemLevel, equippedScore) or isUpgradePath) then
                     if(equippedScore.Score < minEquippedScore or minEquippedScore == -1) then
                         minEquippedScore = equippedScore.Score;
                     end
