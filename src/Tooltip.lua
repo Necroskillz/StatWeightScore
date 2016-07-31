@@ -145,9 +145,26 @@ local function GetScoreDiff(link, itemId, score, spec, cmMode, isUpgradePath)
         return comparedItemId == itemId and comparedItemLevel == itemLevel and scoreGem == comparedScoreGem;
     end
 
+    local _, _, setEquipped = spec.EquipmentSet and GetEquipmentSetInfoByName(spec.EquipmentSet);
     for _, slot in pairs(slots) do
-        local equippedLink = GetInventoryItemLink("player", slot);
+        local equippedLink
+        if spec.EquipmentSet and spec.EquipmentSet ~= "" and not setEquipped then
+            local location = GetEquipmentSetLocations(spec.EquipmentSet)[slot];
+            if location then
+                local _, _, _, _, bagSlot, bag = EquipmentManager_UnpackLocation(location);
+                if bag then
+                    equippedLink = GetContainerItemLink(bag, bagSlot);
+                    score.EquipmentSet = spec.EquipmentSet;
+                end
+            end
+        end
+        if not equippedLink then
+            equippedLink = GetInventoryItemLink("player", slot);
+        end
+
         if(equippedLink) then
+            score.CompareLink = equippedLink;
+
             local equippedItemName, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
             local equippedLocStr = getglobal(equippedLoc);
             local equippedItemId = ItemModule:GetItemLinkInfo(equippedLink).itemId;
@@ -280,6 +297,9 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 end
 
                 tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", FormatScore(score.Score, diff, disabled, characterScore, db.PercentageCalculationType));
+                if(score.EquipmentSet) then
+                    tooltip:AddLine(string.format(L["TooltipMessage_EquipmentSetCompare"], score.CompareLink, score.EquipmentSet));
+                end
                 if(score.Offhand ~= nil) then
                     tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled, characterScore, db.PercentageCalculationType))
                 end
