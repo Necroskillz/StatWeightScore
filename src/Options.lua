@@ -412,7 +412,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                 order = 13
             },
             EquipmentSet = {
-				type = "select",
+                type = "select",
                 style = "dropdown",
                 values = function()
                     local dropdownTable = {[""] = ""};
@@ -425,7 +425,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                 name = L["Options_AssociatedSet_Label"],
                 desc = L["Options_AssociatedSet_Tooltip"],
                 order = 14
-			},
+            },
             GemStat = {
                 type = "select",
                 name = L["Options_GemStat_Label"],
