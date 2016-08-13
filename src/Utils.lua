@@ -116,9 +116,11 @@ Utils.Print = function(text, indent)
     end
 
     if(type(text) == "table") then
-        StatWeightScore:Print("(table):")
+        indent = indent.."  ";
+        StatWeightScore:Print(indent.."(table):")
         for i,v in pairs(text) do
-            Utils.Print(i.." : "..tostring(v), indent.."  ");
+            Utils.Print(indent..i..":");
+            Utils.Print(v, indent.."  ");
         end
     else
         StatWeightScore:Print(tostring(indent..text));

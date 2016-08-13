@@ -306,6 +306,29 @@ function ItemModule:CreateMaps()
             Desc = L["Upgrade_2_Label"]
         }
     };
+
+    self.InvasionUpgradeMap = {
+        ["1816"] = {
+            To = "3331",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 2, 6)
+        },
+        ["3331"] = {
+            To = "1817",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 3, 6)
+        },
+        ["1817"] = {
+            To = "1819",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 4, 6)
+        },
+        ["1819"] = {
+            To = "1818",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 5, 6)
+        },
+        ["1818"] = {
+            To = "1820",
+            Desc = string.format(L["Crafting_Upgrade_Label"], 6, 6)
+        }
+    };
 end
 
 function ItemModule:OnInitialize()
@@ -336,6 +359,7 @@ function ItemModule:IsItemForClass(itemType, itemSubType, locStr, class)
     if(itemType == Weapon) then
         return self.ClassWeaponMap[class][itemSubType] == true;
     end
+
 
     return true;
 end
@@ -399,8 +423,8 @@ function ItemModule:GetCraftingMap(itemType, itemSubType, locStr)
     end
 end
 
-function ItemModule:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLink)
-    for b, _ in pairs(self:GetCraftingMap(itemType, itemSubType, locStr)) do
+local function GetUpgradeBonus(map, itemLink)
+    for b, _ in pairs(map) do
         if(itemLink:HasBonus(b)) then
             return b;
         end
@@ -409,15 +433,18 @@ function ItemModule:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLi
     return nil;
 end
 
+function ItemModule:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLink)
+    return GetUpgradeBonus(self:GetCraftingMap(itemType, itemSubType, locStr), itemLink);
+end
+
 function ItemModule:GetBalefulUpgradeBonus(itemLink)
     if(not (itemLink:HasBonus("652") or itemLink:HasBonus("653"))) then
         return nil;
     end
 
-    for b, _ in pairs(self.BalefulUpgradeMap) do
-        if(itemLink:HasBonus(b)) then
-            return b;
-        end
+    local bonus = GetUpgradeBonus(self.BalefulUpgradeMap, itemLink);
+    if(bonus) then
+        return bonus
     end
 
     if(not itemLink:HasBonus("648")) then
@@ -438,6 +465,10 @@ function ItemModule:GetDreanorValorUpgrade(itemLink)
     end
 
     return nil;
+end
+
+function ItemModule:GetInvasionUpgradeBonus(itemLink)
+    return GetUpgradeBonus(self.InvasionUpgradeMap, itemLink);
 end
 
 local function GenerateUpgrades(map, from, link, type, descPrefix)
@@ -476,12 +507,15 @@ function ItemModule:GetUpgrades(itemType, itemSubType, locStr, link)
 
     local craftedBonus = self:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLink);
     local balefulBonus = self:GetBalefulUpgradeBonus(itemLink);
+    local invasionBonus = self:GetInvasionUpgradeBonus(itemLink);
     local dreanorValorUpgrade = self:GetDreanorValorUpgrade(itemLink);
 
     if(craftedBonus) then
         upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self:GetCraftingMap(itemType, itemSubType, locStr), craftedBonus, itemLink, "bonus"));
     elseif(balefulBonus) then
         upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink, "bonus"));
+    elseif(invasionBonus) then
+        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.InvasionUpgradeMap, invasionBonus, itemLink, "bonus"));
     end
 
     if(dreanorValorUpgrade) then

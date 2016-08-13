@@ -61,7 +61,7 @@ local ItemLink = Utils.Class(function(instance, link)
 
     local numBonus = GetItemStringValue(itemStringParts, 13);
     if(numBonus) then
-        for i = 14, 14 + numBonus do
+        for i = 14, 14 + numBonus - 1 do
             table.insert(instance.bonuses, itemStringParts[i]);
         end
     end

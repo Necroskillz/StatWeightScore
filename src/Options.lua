@@ -11,6 +11,7 @@ local GemsModule;
 local SpecModule;
 local StatsModule;
 local CharacterModule;
+local ItemLinkModule;
 
 local Utils;
 local L;
@@ -232,6 +233,14 @@ function OptionsModule:CreateOptions()
                             print(link);
                         end
                     },
+                    parse_link = {
+                        type = "execute",
+                        name = "Parse item link",
+                        func = function(args)
+                            local parsed = ItemLinkModule:Parse(args.input);
+                            Utils.Print(parsed);
+                        end
+                    },
                     test = {
                         type = "execute",
                         name = "Run test suite",
@@ -286,6 +295,7 @@ function OptionsModule:OnInitialize()
     SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
     ImportExportModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ImportExport");
     CharacterModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Character");
+    ItemLinkModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ItemLink");
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
