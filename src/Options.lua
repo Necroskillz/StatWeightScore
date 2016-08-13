@@ -458,7 +458,7 @@ function OptionsModule:CreateOptionsForSpec(key)
 
                     return v;
                 end,
-                order = 15
+                order = 17
             },
             Remove = {
                 type = "execute",
@@ -469,7 +469,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                 func = function()
                     self:RemoveSpec(key);
                 end,
-                order = 20
+                order = 15
             },
             Stats = {
                 type = "multiselect",
@@ -522,7 +522,7 @@ function OptionsModule:CreateOptionsForSpec(key)
 
                     return v;
                 end,
-                order = 25
+                order = 16
             },
             SpecOrder = {
                 type = "select",

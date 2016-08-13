@@ -33,6 +33,7 @@ local FistWeapons = BL["Fist Weapons"];
 local Staves = BL["Staves"];
 local Daggers = BL["Daggers"];
 local Wands = BL["Wands"];
+--local Warglaives = BL["Warglaives"];
 
 local function AddMapping(map, key, ...)
     map[key] = {};
@@ -68,6 +69,7 @@ function ItemModule:CreateMaps()
     AddMapping(self.ClassArmorMap, "WARRIOR", Plate, Shields);
     AddMapping(self.ClassArmorMap, "PALADIN", Plate, Shields);
     AddMapping(self.ClassArmorMap, "DEATHKNIGHT", Plate);
+    AddMapping(self.ClassArmorMap, "DEMONHUNTER", Leather);
 
     AddMapping(self.ClassWeaponMap, "WARLOCK", OneHandedSwords, Daggers, Staves, Wands);
     AddMapping(self.ClassWeaponMap, "MAGE", OneHandedSwords, Daggers, Staves, Wands);
@@ -80,6 +82,8 @@ function ItemModule:CreateMaps()
     AddMapping(self.ClassWeaponMap, "WARRIOR", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, OneHandedSwords, TwoHandedSwords, FistWeapons, Daggers, Polearms);
     AddMapping(self.ClassWeaponMap, "PALADIN", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, OneHandedSwords, TwoHandedSwords, Polearms);
     AddMapping(self.ClassWeaponMap, "DEATHKNIGHT", OneHandedMaces, TwoHandedMaces, OneHandedAxes, TwoHandedAxes, OneHandedSwords, TwoHandedSwords, Polearms);
+    -- TODO: replace warglaives when LibBabble-Inventory is updated
+    AddMapping(self.ClassWeaponMap, "DEMONHUNTER", "Warglaives", FistWeapons, Daggers, OneHandedAxes, OneHandedSwords);
 
     AddSimpleMapping(self.HeldInOffhandMap, "WARLOCK");
     AddSimpleMapping(self.HeldInOffhandMap, "MAGE");
