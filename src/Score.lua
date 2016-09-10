@@ -276,7 +276,7 @@ ScoreModule.Fx = {
     end
 };
 
-function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
+function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHasSabersEye)
     local fixBonusArmor = StatWeightScore.db.profile.GetStatsMethod == "api";
 
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
@@ -286,7 +286,7 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec)
             return GetStatsFromLink(link);
         end
 
-    end, false, fixBonusArmor);
+    end, false, fixBonusArmor, equippedItemHasSabersEye);
 end
 
 function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
@@ -299,7 +299,7 @@ function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
     end, true, false);
 end
 
-function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreCm, fixBonusArmor)
+function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreCm, fixBonusArmor, equippedItemHasSabersEye)
     local weights = SpecModule:GetWeights(spec);
     local stats = getStatsFunc() or {};
     local secondaryStat = StatsModule:GetBestGemStat(spec);
@@ -319,8 +319,9 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
             local gemStatWeight;
             local gemStat;
             local statValue;
+            local saberEyeSlot = GemsModule:GetEquippedSabersEyeSlot();
 
-            if(db.SuggestSabersEye and not GemsModule:IsSabersEyeEquipped())
+            if(db.SuggestSabersEye and (not saberEyeSlot or equippedItemHasSabersEye or GemsModule:IsSabersEye(gemLink)))
             then
                 local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
                 if(primaryStat) then
@@ -348,8 +349,9 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
             if(gemStat) then
                 result.Score = result.Score + statValue * gemStatWeight;
                 result.Gem = {
-                    Stat = gemStat.Alias;
-                    Value = statValue;
+                    Stat = gemStat.Alias,
+                    Value = statValue,
+                    HasSabersEye = not not saberEyeSlot
                 };
             end
         end

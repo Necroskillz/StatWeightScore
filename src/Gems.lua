@@ -40,20 +40,27 @@ local SabersEye = {
     ["130248"] = 1,
 };
 
-function GemsModule:IsSabersEyeEquipped()
+function GemsModule:IsSabersEye(gemLink)
+    local parsedLink = ItemLinkModule:Parse(gemLink);
+
+    return SabersEye[parsedLink.itemId];
+end
+
+function GemsModule:GetEquippedSabersEyeSlot()
     for i = 0, 19 do
         local link = GetInventoryItemLink("player", i);
         if(link) then
             local stats = GetItemStats(link);
             if(stats[StatsModule:AliasToKey("socket")]) then
                 local _, gemLink = GetItemGem(link, 1);
-                local link = ItemLinkModule:Parse(gemLink);
-                if(SabersEye[link.itemId]) then
-                    return true;
+                if(self:IsSabersEye(gemLink)) then
+                    local _, _, _, _, _, _, _, _, loc = GetItemInfo(link);
+
+                    return getglobal(loc), i;
                 end
             end
         end
     end
 
-    return false;
+    return nil;
 end

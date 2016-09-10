@@ -123,7 +123,7 @@ Utils.Print = function(text, indent)
             Utils.Print(v, indent.."  ");
         end
     else
-        StatWeightScore:Print(tostring(indent..text));
+        StatWeightScore:Print(indent..tostring(text));
     end
 end;
 

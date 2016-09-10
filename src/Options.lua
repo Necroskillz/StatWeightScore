@@ -34,7 +34,7 @@ OptionsModule.Defaults = {
         PercentageCalculationType = "change",
         ShowStatsPane = true,
         ShowUpgrades = true,
-        SuggestSabersEye = true,
+        SuggestSabersEye = false,
         Specs = {}
     }
 };
