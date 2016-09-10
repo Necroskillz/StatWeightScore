@@ -304,26 +304,19 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
 
                     if(precheck) then
                         for _, matcher in pairs(self.Matcher.Matchers) do
-                            if(matcher.Fx == "bonusarmor" and not fixBonusArmor) then
-                            else
-                                local match = Utils.Pack(line:match(matcher.Pattern));
+                            local match = Utils.Pack(line:match(matcher.Pattern));
 
-                                if(match) then
-                                    local argOrder = matcher.ArgOrder;
-                                    local args = {};
+                            if(match) then
+                                local argOrder = matcher.ArgOrder;
+                                local args = {};
 
-                                    for i = 1, match.n do
-                                        local argName = argOrder[i];
-                                        local argValue = match[i]
-                                        if(argName == "stat" and argValue:lower() == RESISTANCE0_NAME:lower()) then
-                                            -- armor procs actually add bonus armor
-                                            argValue = BONUS_ARMOR;
-                                        end
-                                        args[argName] = argValue;
-                                    end
-
-                                    self.Fx[matcher.Fx](result, stats, weights, args);
+                                for i = 1, match.n do
+                                    local argName = argOrder[i];
+                                    local argValue = match[i]
+                                    args[argName] = argValue;
                                 end
+
+                                self.Fx[matcher.Fx](result, stats, weights, args);
                             end
                         end
                     end
