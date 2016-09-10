@@ -28,7 +28,6 @@ OptionsModule.Defaults = {
         BlankLineMainBelow = false,
         BlankLineRefAbove = true,
         BlankLineRefBelow = false,
-        EnableCmMode = true,
         ForceSelectedGemStat = true,
         ScoreCompareType = "total",
         PercentageCalculationType = "change",
@@ -71,13 +70,12 @@ function OptionsModule:CreateOptions()
                         desc = L["Options_GetStats_Tooltip"],
                         values = GetStatsMethods
                     },
-                    EnableCmMode = {
-                        order = 15,
-                        type = "toggle",
-                        name = L["Options_EnableCmMode_Label"],
-                        desc = L["Options_EnableCmMode_Tooltip"],
-                    },
                     NewLine1 = {
+                        type= 'description',
+                        order = 25,
+                        name= '',
+                    },
+                    NewLine2 = {
                         type= 'description',
                         order = 20,
                         name= '',

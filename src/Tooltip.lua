@@ -105,26 +105,13 @@ function TooltipModule:OnInitialize()
     end
 end
 
-local function calculateScore(link, loc, spec, tooltip, cmMode, equippedItemHasSabersEye)
-    if(cmMode) then
-        if(not tooltip) then
-            for i = 1,2 do
-                local shoppingTooltip = getglobal("ShoppingTooltip"..i);
-                if(select(2, shoppingTooltip:GetItem()) == link) then
-                    tooltip = shoppingTooltip;
-                    break;
-                end
-            end
-        end
-        return ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec);
-    else
-        return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec, equippedItemHasSabersEye);
-    end
+local function calculateScore(link, loc, spec, tooltip, equippedItemHasSabersEye)
+    return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec, equippedItemHasSabersEye);
 end
 
 
 
-local function GetComparedItem(link, spec, cmMode)
+local function GetComparedItem(link, spec)
     local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
     local slots = ItemModule.SlotMap[loc];
     if(not slots) then
@@ -170,7 +157,7 @@ local function GetComparedItem(link, spec, cmMode)
 
             oneHand = oneHand or (equippedLocStr == INVTYPE_WEAPON or (SpecModule:IsDualWielding2h() and locStr == INVTYPE_2HWEAPON));
 
-            local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil, cmMode);
+            local equippedScore = calculateScore(equippedLink, equippedLoc, spec, nil);
             if(equippedScore) then
                 scoreTable[slot] = equippedScore;
 
@@ -269,7 +256,6 @@ function TooltipModule:AddToTooltip(tooltip, compare)
         end
 
         local locStr = getglobal(loc);
-        local cmMode = db.EnableCmMode and select(3, GetInstanceInfo()) == 8;
         local upgrades = ItemModule:GetUpgrades(itemType, itemSubType, locStr, link);
 
         local specs = SpecModule:GetSpecs();
@@ -278,13 +264,13 @@ function TooltipModule:AddToTooltip(tooltip, compare)
             local spec = specs[specKey];
             if(spec.Enabled) then
                 local characterScore;
-                if(db.ScoreCompareType == "total" and not cmMode) then
+                if(db.ScoreCompareType == "total") then
                     characterScore = CharacterModule:CalculateTotalScore(spec);
                 end
 
-                local minEquippedLink, minEquippedScore, scoreTable, equipmentSet, isEquipped, oneHand  = GetComparedItem(link, spec, cmMode, false);
+                local minEquippedLink, minEquippedScore, scoreTable, equipmentSet, isEquipped, oneHand  = GetComparedItem(link, spec);
 
-                local score = calculateScore(link, loc, spec, tooltip, cmMode, minEquippedScore and minEquippedScore.Gem and minEquippedScore.Gem.HasSabersEye);
+                local score = calculateScore(link, loc, spec, tooltip, minEquippedScore and minEquippedScore.Gem and minEquippedScore.Gem.HasSabersEye);
 
                 local diff = 0;
                 local offhandDiff = 0;
@@ -324,9 +310,9 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     tooltip:AddDoubleLine(L["TooltipMessage_WithUseAverage"], string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
                 end
 
-                if(#upgrades ~= 0 and db.ShowUpgrades and not cmMode) then
+                if(#upgrades ~= 0 and db.ShowUpgrades) then
                     for _, upgrade in ipairs(upgrades) do
-                        local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, cmMode, minEquippedScore and minEquippedScore.Gem and minEquippedScore.Gem.HasSabersEye);
+                        local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, minEquippedScore and minEquippedScore.Gem and minEquippedScore.Gem.HasSabersEye);
                         local upgradeDiff = 0;
                         local upgradeOffhandDiff = 0;
 
