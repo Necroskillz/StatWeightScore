@@ -94,31 +94,6 @@ function ItemModule:CreateMaps()
     AddSimpleMapping(self.HeldInOffhandMap, "PALADIN");
 
     self.UniqueGroups = {
-        ["Solium Band of Endurance"] = 1,
-        ["Solium Band of Wisdom"] = 1,
-        ["Solium Band of Dexterity"] = 1,
-        ["Solium Band of Mending"] = 1,
-        ["Solium Band of Might"] = 1,
-        ["Timeless Solium Band of the Archmage"] = 1,
-        ["Timeless Solium Band of the Bulwark"] = 1,
-        ["Timeless Solium Band of Brutality"] = 1,
-        ["Timeless Solium Band of Lifegiving"] = 1,
-        ["Timeless Solium Band of the Assassin"] = 1,
-        ["Spellbound Solium Band of Fatal Strikes"] = 1,
-        ["Spellbound Solium Band of the Kirin-Tor"] = 1,
-        ["Spellbound Solium Band of Sorcerous Strength"] = 1,
-        ["Spellbound Solium Band of the Immortal Spirit"] = 1,
-        ["Spellbound Solium Band of Sorcerous Invincibility"] = 1,
-        ["Spellbound Runic Band of the All-Seeing Eye"] = 1,
-        ["Spellbound Runic Band of Unrelenting Slaughter"] = 1,
-        ["Spellbound Runic Band of Infinite Preservation"] = 1,
-        ["Spellbound Runic Band of Elemental Power"] = 1,
-        ["Spellbound Runic Band of Elemental Invincibility"] = 1,
-        ["Sanctus, Sigil of the Unbroken"] = 1,
-        ["Nithramus, the All-Seer"] = 1,
-        ["Etheralus, the Eternal Reward"] = 1,
-        ["Thorasus, the Stone Heart of Draenor"] = 1,
-        ["Maalus, the Blood Drinker"] = 1,
     };
 
     self.SlotMap = {
@@ -148,99 +123,6 @@ function ItemModule:CreateMaps()
         INVTYPE_RANGEDRIGHT = {16},
         INVTYPE_RELIC = {18},
         INVTYPE_TABARD = {19},
-    };
-
-    self.Tier17Map = {
-        ["119322"] = { -- Shoulders of Iron Protector
-            ["HUNTER"] = "115547",
-            ["WARRIOR"] = "115581",
-            ["SHAMAN"] = "115576",
-            ["MONK"] = "115559"
-        },
-        ["119318"] = { -- Chest of Iron Protector
-            ["HUNTER"] = "115548",
-            ["WARRIOR"] = "115582",
-            ["SHAMAN"] = "115577",
-            ["MONK"] = "115558"
-        },
-        ["119321"] = { -- Helm of Iron Protector
-            ["HUNTER"] = "115545",
-            ["WARRIOR"] = "115584",
-            ["SHAMAN"] = "115579",
-            ["MONK"] = "115556"
-        },
-        ["119319"] = { -- Gauntlets of Iron Protector
-            ["HUNTER"] = "115549",
-            ["WARRIOR"] = "115583",
-            ["SHAMAN"] = "115578",
-            ["MONK"] = "115555"
-        },
-        ["119320"] = { -- Leggins of Iron Protector
-            ["HUNTER"] = "115546",
-            ["WARRIOR"] = "115580",
-            ["SHAMAN"] = "115575",
-            ["MONK"] = "115557"
-        },
-        ["119314"] = { -- Shoulders of Iron Vanquisher
-            ["ROGUE"] = "115574",
-            ["DEATHKNIGHT"] = "115536",
-            ["MAGE"] = "115551",
-            ["DRUID"] = "115544"
-        },
-        ["119315"] = { -- Chest of Iron Vanquisher
-            ["ROGUE"] = "115570",
-            ["DEATHKNIGHT"] = "115537",
-            ["MAGE"] = "115550",
-            ["DRUID"] = "115540"
-        },
-        ["119312"] = { -- Helm of Iron Vanquisher
-            ["ROGUE"] = "115572",
-            ["DEATHKNIGHT"] = "115539",
-            ["MAGE"] = "115553",
-            ["DRUID"] = "115542"
-        },
-        ["119311"] = { -- Gauntlets of Iron Vanquisher
-            ["ROGUE"] = "115571",
-            ["DEATHKNIGHT"] = "115538",
-            ["MAGE"] = "115552",
-            ["DRUID"] = "115541"
-        },
-        ["119313"] = { -- Leggins of Iron Vanquisher
-            ["ROGUE"] = "115573",
-            ["DEATHKNIGHT"] = "115535",
-            ["MAGE"] = "115554",
-            ["DRUID"] = "115543"
-        },
-        ["119309"] = { -- Shoulders of Iron Conqueror
-            ["PALADIN"] = "115566",
-            ["PRIEST"] = "115561",
-            ["WARLOCK"] = "115588"
-        },
-        ["119305"] = { -- Chest of Iron Conqueror
-            ["PALADIN"] = "115565",
-            ["PRIEST"] = "115560",
-            ["WARLOCK"] = "115589"
-        },
-        ["119308"] = { -- Helm of Iron Conqueror
-            ["PALADIN"] = "115568",
-            ["PRIEST"] = "115563",
-            ["WARLOCK"] = "115586"
-        },
-        ["119306"] = { -- Gauntlets of Iron Conqueror
-            ["PALADIN"] = "115567",
-            ["PRIEST"] = "115562",
-            ["WARLOCK"] = "115585"
-        },
-        ["119307"] = { -- Leggins of Iron Conqueror
-            ["PALADIN"] = "115569",
-            ["PRIEST"] = "115564",
-            ["WARLOCK"] = "115587"
-        }
-    };
-
-    self.Tier17BonusMap = {
-        ["570"] = "566", -- heroic
-        ["569"] = "567" -- mythic
     };
 
     local obliterumUpgradeMap = {
@@ -329,37 +211,6 @@ end
 
 function ItemModule:GetItemLinkInfo(itemLink)
     return ItemLinkModule:Parse(itemLink);
-end
-
-function ItemModule:GetTierId(itemId, class)
-    if(self.Tier17Map[itemId]) then
-        return self.Tier17Map[itemId][class];
-    end
-
-    return nil;
-end
-
-function ItemModule:GetTierBonus(bonus)
-    return self.Tier17BonusMap[bonus];
-end
-
-function ItemModule:IsTierToken(itemId, class)
-    return self:GetTierId(itemId, class) ~= nil;
-end
-
-function ItemModule:ConvertTierToken(itemId, class, bonus)
-    local tierId = self:GetTierId(itemId, class);
-    local name, link = GetItemInfo(tierId);
-    local parsed = ItemLinkModule:Parse(link);
-    link = parsed:ToString();
-
-    if(bonus) then
-        local parsed = ItemLinkModule:Parse(link);
-        table.insert(parsed.bonuses, self:GetTierBonus(bonus));
-        link = parsed:ToString();
-    end
-
-    return tierId, link, name;
 end
 
 local function GetUpgradeBonus(map, itemLink)

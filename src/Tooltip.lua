@@ -236,15 +236,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
     end
 
     local _, link = tooltip:GetItem();
-    local parsedLink = ItemModule:GetItemLinkInfo(link);
-    local itemId = parsedLink.itemId;
-    local bonus1 = parsedLink.bonuses[1];
     local _, class = UnitClass("player");
-    local translatedTo;
-
-    if(ItemModule:IsTierToken(itemId, class)) then
-        itemId, link, translatedTo = ItemModule:ConvertTierToken(itemId, class, bonus1);
-    end
 
     if IsEquippableItem(link) then
         local _, _, _, _, _, itemType, itemSubType, _, loc = GetItemInfo(link);
@@ -284,10 +276,6 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 if(not blankLineHandled) then
                     if((compare and db.BlankLineMainAbove) or (not compare and db.BlankLineRefAbove)) then
                         tooltip:AddLine(" ");
-                    end
-
-                    if(translatedTo) then
-                        tooltip:AddLine("|c"..select(4, GetItemQualityColor(4)).."["..translatedTo.."]");
                     end
 
                     blankLineHandled = true;
