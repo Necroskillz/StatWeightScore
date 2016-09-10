@@ -100,6 +100,8 @@ function TooltipModule:OnInitialize()
     ShoppingTooltip1:HookScript("OnTooltipSetItem", addToComapreTooltip);
     ShoppingTooltip2:HookScript("OnTooltipSetItem", addToComapreTooltip);
 
+    WorldMapTooltip.ItemTooltip.Tooltip:HookScript("OnTooltipSetItem", addToPrimaryTooltip);
+
     if IsAddOnLoaded("AtlasLoot") then
         AtlasLootTooltip:HookScript("OnTooltipSetItem", addToPrimaryTooltip);
     end
@@ -108,8 +110,6 @@ end
 local function calculateScore(link, loc, spec, tooltip, equippedItemHasSabersEye)
     return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec, equippedItemHasSabersEye);
 end
-
-
 
 local function GetComparedItem(link, spec)
     local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
