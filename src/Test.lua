@@ -31,17 +31,6 @@ function TestSuite:CreateTests()
         }
     };
 
-    self.Tests["Stat match Multistrike"] = {
-        type = "matcher",
-        itemId = 113877,
-        line = 9,
-        statMatcherName = "Stat",
-        expectedArgs = {
-            ["value"] = "89",
-            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT
-        }
-    };
-
     self.Tests["Stat match Agility"] = {
         type = "matcher",
         itemId = 113877,
@@ -67,7 +56,7 @@ function TestSuite:CreateTests()
     self.Tests["Stat match Mastery"] = {
         type = "matcher",
         itemId = 113966,
-        line = 9,
+        line = 10,
         statMatcherName = "Stat",
         expectedArgs = {
             ["value"] = "176",
@@ -103,19 +92,8 @@ function TestSuite:CreateTests()
         line = 7,
         statMatcherName = "Stat",
         expectedArgs = {
-            ["value"] = "242",
+            ["value"] = Utils.FormatNumber(1565),
             ["stat"] = ITEM_MOD_INTELLECT_SHORT
-        }
-    };
-
-    self.Tests["Stat match Spell Power"] = {
-        type = "matcher",
-        itemId = 113988,
-        line = 10,
-        statMatcherName = "Stat",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(1389),
-            ["stat"] = ITEM_MOD_SPELL_POWER_SHORT
         }
     };
 
@@ -127,28 +105,6 @@ function TestSuite:CreateTests()
         expectedArgs = {
             ["value"] = "242",
             ["stat"] = ITEM_MOD_STRENGTH_SHORT
-        }
-    };
-
-    self.Tests["Stat match Bonus Armor"] = {
-        type = "matcher",
-        itemId = 113923,
-        line = 8,
-        statMatcherName = "Stat",
-        expectedArgs = {
-            ["value"] = "91",
-            ["stat"] = BONUS_ARMOR
-        }
-    };
-
-    self.Tests["Stat match Spirit"] = {
-        type = "matcher",
-        itemId = 113957,
-        line = 9,
-        statMatcherName = "Stat",
-        expectedArgs = {
-            ["value"] = "73",
-            ["stat"] = ITEM_MOD_SPIRIT_SHORT
         }
     };
 
@@ -180,7 +136,7 @@ function TestSuite:CreateTests()
         line = 8,
         matcherName = "RPPM",
         expectedArgs = {
-            ["value"] = Utils.FormatNumber(2004),
+            ["value"] = Utils.FormatNumber(1603),
             ["stat"] = ITEM_MOD_HASTE_RATING_SHORT,
             ["duration"] = "10",
             ["ppm"] = Utils.FormatNumber(0.92, 2)
@@ -194,49 +150,8 @@ function TestSuite:CreateTests()
         locale = "frFR";
         matcherName = "RPPM2",
         expectedArgs = {
-            ["value"] = Utils.FormatNumber(1743),
+            ["value"] = Utils.FormatNumber(1395),
             ["stat"] = ITEM_MOD_CRIT_RATING_SHORT,
-            ["duration"] = "10",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["[koKR] RPPM armor proc match"] = {
-        type = "matcher",
-        itemId = 113861,
-        line = 8,
-        locale = "koKR";
-        matcherName = "RPPM2",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(1743),
-            ["stat"] = RESISTANCE0_NAME,
-            ["duration"] = "10",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["RPPM armor proc match"] = {
-        type = "matcher",
-        itemId = 113861,
-        line = 8,
-        locale = "!koKR";
-        matcherName = "RPPM",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(1743),
-            ["stat"] = RESISTANCE0_NAME,
-            ["duration"] = "10",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["RPPM multistrike proc match"] = {
-        type = "matcher",
-        itemId = 113612,
-        line = 8,
-        matcherName = "RPPM",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(1743),
-            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT,
             ["duration"] = "10",
             ["ppm"] = Utils.FormatNumber(0.92, 2)
         }
@@ -248,45 +163,8 @@ function TestSuite:CreateTests()
         line = 8,
         matcherName = "RPPM",
         expectedArgs = {
-            ["value"] = Utils.FormatNumber(2004),
-            ["stat"] = ITEM_MOD_SPIRIT_SHORT,
-            ["duration"] = "10",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["RPPM low lvl multistrike proc match"] = {
-        type = "matcher",
-        itemId = 118877,
-        line = 8,
-        matcherName = "RPPM",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(517),
-            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT,
-            ["duration"] = "10",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["Solium Band proc match"] = {
-        type = "matcher",
-        itemId = 118302,
-        line = 11,
-        matcherName = "SoliumBand",
-        expectedArgs = {
-            ["type"] = "",
-            ["duration"] = "10",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["Solium Band greater proc match"] = {
-        type = "matcher",
-        itemId = 118307,
-        line = 11,
-        matcherName = "SoliumBand",
-        expectedArgs = {
-            ["type"] = L["Matcher_SoliumBand_BuffType_Greater"],
+            ["value"] = Utils.FormatNumber(1603),
+            ["stat"] = ITEM_MOD_VERSATILITY,
             ["duration"] = "10",
             ["ppm"] = Utils.FormatNumber(0.92, 2)
         }
@@ -341,135 +219,9 @@ function TestSuite:CreateTests()
         line = 8,
         matcherName = "InsigniaOfConquest",
         expectedArgs = {
-            ["value"] = Utils.FormatNumber(867),
+            ["value"] = Utils.FormatNumber(789),
             ["stat"] = ITEM_MOD_AGILITY_SHORT,
             ["duration"] = "20"
-        }
-    };
-
-    self.Tests["[koKR] BlackhandTrinket agi proc match"] = {
-        type = "matcher",
-        itemId = 113985,
-        line = 8,
-        locale = "koKR";
-        matcherName = "BlackhandTrinket3",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_CRIT_RATING_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["BlackhandTrinket agi proc match"] = {
-        type = "matcher",
-        itemId = 113985,
-        line = 8,
-        locale = "!koKR";
-        matcherName = "BlackhandTrinket",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_CRIT_RATING_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["BlackhandTrinket str proc match"] = {
-        type = "matcher",
-        itemId = 113983,
-        line = 8,
-        matcherName = "BlackhandTrinket",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["BlackhandTrinket int proc match"] = {
-        type = "matcher",
-        itemId = 113984,
-        line = 8,
-        matcherName = "BlackhandTrinket",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["[koKR] BlackhandTrinket sta proc match"] = {
-        type = "matcher",
-        itemId = 113987,
-        line = 8,
-        locale = "koKR";
-        matcherName = "BlackhandTrinket2",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_HASTE_RATING_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["BlackhandTrinket sta proc match"] = {
-        type = "matcher",
-        itemId = 113987,
-        line = 8,
-        locale = "!koKR";
-        matcherName = "BlackhandTrinket",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_HASTE_RATING_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["[koKR] BlackhandTrinket spi proc match"] = {
-        type = "matcher",
-        itemId = 113986,
-        line = 8,
-        locale = "koKR";
-        matcherName = "BlackhandTrinket2",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_HASTE_RATING_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
-        }
-    };
-
-    self.Tests["BlackhandTrinket spi proc match"] = {
-        type = "matcher",
-        itemId = 113986,
-        line = 8,
-        locale = "!koKR";
-        matcherName = "BlackhandTrinket",
-        expectedArgs = {
-            ["duration"] = "10",
-            ["value"] = "137",
-            ["stat"] = ITEM_MOD_HASTE_RATING_SHORT,
-            ["tick"] = Utils.FormatNumber(0.5, 2),
-            ["maxstack"] = "20",
-            ["ppm"] = Utils.FormatNumber(0.92, 2)
         }
     };
 
@@ -484,57 +236,14 @@ function TestSuite:CreateTests()
         }
     };
 
-    self.Tests["ApiCorrection match Bonus Armor"] = {
-        type = "matcher",
-        itemId = 113923,
-        line = 8,
-        matcherName = "BonusArmor",
-        expectedArgs = {
-            ["value"] = "91",
-        }
-    };
-
     self.Tests["Use match agi"] = {
         type = "matcher",
         itemId = 118876,
         line = 8,
         matcherName = "Use",
         expectedArgs = {
-            ["value"] = Utils.FormatNumber(1467),
+            ["value"] = Utils.FormatNumber(1048),
             ["stat"] = ITEM_MOD_AGILITY_SHORT,
-            ["duration"] = "20",
-            ["cd"] = function(value)
-                local pattern = ScoreModule.Matcher.Partial["cdmin"];
-                return value:match(pattern) == "2", pattern.." with capture = 2";
-            end
-        }
-    };
-
-    self.Tests["Use match spellpower"] = {
-        type = "matcher",
-        itemId = 118878,
-        line = 8,
-        matcherName = "Use",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(1100),
-            ["stat"] = ITEM_MOD_SPELL_POWER_SHORT,
-            ["duration"] = "20",
-            ["cd"] = function(value)
-                local pattern = ScoreModule.Matcher.Partial["cdmin"];
-                return value:match(pattern) == "2", pattern.." with capture = 2";
-            end
-        }
-    };
-
-    self.Tests["[koKR] Use match multistrike"] = {
-        type = "matcher",
-        itemId = 113931,
-        line = 8,
-        locale = "koKR";
-        matcherName = "Use",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(1537),
-            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT,
             ["duration"] = "20",
             ["cd"] = function(value)
                 local pattern = ScoreModule.Matcher.Partial["cdmin"];
@@ -550,24 +259,8 @@ function TestSuite:CreateTests()
         locale = "!koKR";
         matcherName = "Use2",
         expectedArgs = {
-            ["value"] = Utils.FormatNumber(1537),
-            ["stat"] = ITEM_MOD_CR_MULTISTRIKE_SHORT,
-            ["duration"] = "20",
-            ["cd"] = function(value)
-                local pattern = ScoreModule.Matcher.Partial["cdmin"];
-                return value:match(pattern) == "2", pattern.." with capture = 2";
-            end
-        }
-    };
-
-    self.Tests["Use2 match armor"] = {
-        type = "matcher",
-        itemId = 113905,
-        line = 8,
-        matcherName = "Use2",
-        expectedArgs = {
-            ["value"] = Utils.FormatNumber(1537),
-            ["stat"] = RESISTANCE0_NAME,
+            ["value"] = Utils.FormatNumber(1229),
+            ["stat"] = ITEM_MOD_CRIT_RATING_SHORT,
             ["duration"] = "20",
             ["cd"] = function(value)
                 local pattern = ScoreModule.Matcher.Partial["cdmin"];
@@ -582,7 +275,7 @@ function TestSuite:CreateTests()
         line = 8,
         matcherName = "Use2",
         expectedArgs = {
-            ["value"] = Utils.FormatNumber(1337),
+            ["value"] = Utils.FormatNumber(1069),
             ["stat"] = ITEM_MOD_MASTERY_RATING_SHORT,
             ["duration"] = "20",
             ["cd"] = function(value)

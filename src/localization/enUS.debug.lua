@@ -118,7 +118,6 @@ L["Matcher_Partial_CdSec"] = "(%d+) Sec";
 -- Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by <value> for <duration> sec.  Your highest stat is always chosen.
 
 L["AlternativeStatDisplayNames_Crit"] = "";
-L["AlternativeStatDisplayNames_Spellpower"] = "spellpower";
 
 L["Matcher_RPPM_Pattern"] = "^Equip: Your [%a ]- have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
 L["Matcher_RPPM_ArgOrder"] = "value stat duration ppm";
