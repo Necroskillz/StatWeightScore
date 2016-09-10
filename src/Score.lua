@@ -43,7 +43,6 @@ function ScoreModule:OnInitialize()
     self:RegisterMatcher("RPPM2", "rppm");
     self:RegisterMatcher("RPPM3", "rppm");
     self:RegisterMatcher("RPPM4", "rppm");
-    self:RegisterMatcher("SoliumBand", "soliumband");
     self:RegisterMatcher("ICD", "icd");
     self:RegisterMatcher("ICD2", "icd");
     self:RegisterMatcher("ICD3", "icd");
@@ -53,12 +52,6 @@ function ScoreModule:OnInitialize()
     self:RegisterMatcher("Use2", "use");
     self:RegisterMatcher("Use3", "use");
     self:RegisterMatcher("Use4", "use");
-    self:RegisterMatcher("BonusArmor", "bonusarmor", function(pattern)
-        return gsub(pattern, "BONUS_ARMOR", BONUS_ARMOR);
-    end);
-    self:RegisterMatcher("BlackhandTrinket", "blackhandtrinket");
-    self:RegisterMatcher("BlackhandTrinket2", "blackhandtrinket");
-    self:RegisterMatcher("BlackhandTrinket3", "blackhandtrinket");
     self:RegisterMatcher("StoneOfFire", "stoneoffire");
 end
 
@@ -205,62 +198,14 @@ ScoreModule.Fx = {
 
         UpdateResult(result, "Use", statInfo, averageStatValue, weights[statInfo.Alias]);
     end,
-    ["bonusarmor"] = function(result, stats, weights, args)
-        local armorKey = StatsModule:AliasToKey("armor");
-        local value = tonumber(args["value"]);
-        stats[armorKey] = stats[armorKey] - value;
-        stats[StatsModule:AliasToKey("bonusarmor")] = value;
-    end,
     ["insigniaofconquest"] = function(result, stats, weights, args)
         args["chance"] = 15;
         args["cd"] = 55;
 
         ScoreModule.Fx["icd"](result, stats, weights, args);
     end,
-    ["soliumband"] = function(result, stats, weights, args)
-        local primaryStat, primaryStatValue = SpecModule:GetPrimaryStat(weights);
-
-        local buff = 0.1;
-        if(args["type"] == L["Matcher_SoliumBand_BuffType_Greater"]) then
-            buff = 0.15;
-        end
-
-        local statInfo = StatsModule:GetStatInfo(primaryStat);
-
-        if(not statInfo)
-        then
-            return;
-        end
-
-        args["stat"] = statInfo.DisplayName;
-        args["value"] = primaryStatValue * buff;
-
-        ScoreModule.Fx["rppm"](result, stats, weights, args);
-    end,
-    ["blackhandtrinket"] = function(result, stats, weights, args)
-        local overtimeValue = 0;
-        local currentTick = 0;
-
-        local duration = tonumber(args["duration"]);
-        local tick = Utils.ToNumber(args["tick"]);
-        local maxStack = tonumber(args["maxstack"]);
-        local tickValue = tonumber(args["value"]);
-
-        while(currentTick * tick < duration) do
-            currentTick = currentTick + 1;
-            if(currentTick < maxStack) then
-                overtimeValue = overtimeValue + currentTick * tickValue;
-            else
-                overtimeValue = overtimeValue + maxStack * tickValue;
-            end
-        end
-
-        args["value"] = overtimeValue / (duration / tick);
-
-        ScoreModule.Fx["rppm"](result, stats, weights, args);
-    end,
     ["stoneoffire"] = function(result, stats, weights, args)
-        local primaryStat = GetPrimaryStatForSpec(weights);
+        local primaryStat = SpecModule:GetPrimaryStat(weights);
         local statInfo = StatsModule:GetStatInfo(primaryStat);
 
         if(not statInfo)
@@ -277,8 +222,6 @@ ScoreModule.Fx = {
 };
 
 function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHasSabersEye)
-    local fixBonusArmor = StatWeightScore.db.profile.GetStatsMethod == "api";
-
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
         if(StatWeightScore.db.profile.GetStatsMethod == "tooltip") then
             return self:GetStatsFromTooltip(tooltip);
@@ -286,20 +229,10 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHa
             return GetStatsFromLink(link);
         end
 
-    end, false, fixBonusArmor, equippedItemHasSabersEye);
+    end, equippedItemHasSabersEye);
 end
 
-function ScoreModule:CalculateItemScoreCM(link, loc, tooltip, spec)
-    if(tooltip == nil) then
-        return nil
-    end
-
-    return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
-        return self:GetStatsFromTooltip(tooltip);
-    end, true, false);
-end
-
-function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, ignoreCm, fixBonusArmor, equippedItemHasSabersEye)
+function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, equippedItemHasSabersEye)
     local weights = SpecModule:GetWeights(spec);
     local stats = getStatsFunc() or {};
     local secondaryStat = StatsModule:GetBestGemStat(spec);
@@ -312,52 +245,49 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
 
     local socketStats = GetStatsFromLink(link) or {};
 
-    if(not ignoreCm) then
-        if(socketStats[StatsModule:AliasToKey("socket")]) then
-            local _, gemLink = GetItemGem(link, 1);
-            local enchantLevel;
-            local gemStatWeight;
-            local gemStat;
-            local statValue;
-            local saberEyeSlot = GemsModule:GetEquippedSabersEyeSlot();
+    if(socketStats[StatsModule:AliasToKey("socket")]) then
+        local _, gemLink = GetItemGem(link, 1);
+        local enchantLevel;
+        local gemStatWeight;
+        local gemStat;
+        local statValue;
 
-            if(db.SuggestSabersEye and (not saberEyeSlot or equippedItemHasSabersEye or GemsModule:IsSabersEye(gemLink)))
-            then
-                local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
-                if(primaryStat) then
-                    gemStat = StatsModule:GetStatInfo(primaryStat);
-                    gemStatWeight = primaryStatWeight;
-                    statValue = 200;
-                end
-            elseif(not db.ForceSelectedGemStat and gemLink) then
-                local gemStats = self:GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
-                for stat, value in pairs(gemStats) do
-                    local alias = StatsModule:KeyToAlias(stat);
-                    local weight = weights[alias];
-                    if(weight) then
-                        statValue = value;
-                        gemStat = StatsModule:GetStatInfo(alias);
-                        gemStatWeight = weight;
-                    end
-                end
-            elseif(secondaryStat) then
-                statValue = GemsModule:GetGemValue(db.EnchantLevel);
-                gemStat = secondaryStat.Stat;
-                gemStatWeight = secondaryStat.Weight;
+        if(db.SuggestSabersEye and (equippedItemHasSabersEye or GemsModule:IsSabersEye(gemLink) or not GemsModule:GetEquippedSabersEyeSlot()))
+        then
+            local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
+            if(primaryStat) then
+                gemStat = StatsModule:GetStatInfo(primaryStat);
+                gemStatWeight = primaryStatWeight;
+                statValue = 200;
             end
+        elseif(not db.ForceSelectedGemStat and gemLink) then
+            local gemStats = self:GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
+            for stat, value in pairs(gemStats) do
+                local alias = StatsModule:KeyToAlias(stat);
+                local weight = weights[alias];
+                if(weight) then
+                    statValue = value;
+                    gemStat = StatsModule:GetStatInfo(alias);
+                    gemStatWeight = weight;
+                end
+            end
+        elseif(secondaryStat) then
+            statValue = GemsModule:GetGemValue(db.EnchantLevel);
+            gemStat = secondaryStat.Stat;
+            gemStatWeight = secondaryStat.Weight;
+        end
 
-            if(gemStat) then
-                result.Score = result.Score + statValue * gemStatWeight;
-                result.Gem = {
-                    Stat = gemStat.Alias,
-                    Value = statValue,
-                    HasSabersEye = not not saberEyeSlot
-                };
-            end
+        if(gemStat) then
+            result.Score = result.Score + statValue * gemStatWeight;
+            result.Gem = {
+                Stat = gemStat.Alias,
+                Value = statValue,
+                HasSabersEye = not not saberEyeSlot
+            };
         end
     end
 
-    if((ignoreCm and locStr == INVTYPE_TRINKET) or (not ignoreCm and (locStr == INVTYPE_TRINKET or locStr == INVTYPE_FINGER or weights["bonusarmor"]))) then
+    if(locStr == INVTYPE_TRINKET or locStr == INVTYPE_FINGER) then
         if(tooltip) then
             for l = 1,tooltip:NumLines() do
                 local tooltipText = getglobal(tooltip:GetName().."TextLeft"..l);

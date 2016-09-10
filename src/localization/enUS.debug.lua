@@ -115,9 +115,6 @@ L["Matcher_Partial_CdSec"] = "(%d+) Sec";
 -- Equip: Each time your attacks hit, you have a chance to gain <value> <stat> for <dur> sec. (<chance>% chance, <cd> sec cooldown)
 -- Equip: Your attacks have a chance to grant you <value> <stat> for <dur> sec. (<chance>% chance, <cd> sec cooldown)
 -- Insignia of Conquest - Equip: When you deal damage you have a chance to gain <value> <stat> for <dur> sec.
--- Solium Band - Equip: Your attacks have a chance to grant Archmage's Incandescence for <duration> sec.  (Approximately <procs> procs per minute)
--- +<value> Bonus Armor
--- Equip: Your (attacks/melee attacks/spells) have a chance to trigger <effect> for <dur> sec. While <effect> is active, you gain <value> <stat> every <tick> sec, stacking up to <maxstack> times.  (Approximately <procs> procs per minute)
 -- Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by <value> for <duration> sec.  Your highest stat is always chosen.
 
 L["AlternativeStatDisplayNames_Crit"] = "";
@@ -134,10 +131,6 @@ L["Matcher_RPPM3_ArgOrder"] = "";
 
 L["Matcher_RPPM4_Pattern"] = "";
 L["Matcher_RPPM4_ArgOrder"] = "";
-
-L["Matcher_SoliumBand_Pattern"] = "^Equip: Your attacks have a chance to grant Archmage's ?(%a-) Incandescence for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$";
-L["Matcher_SoliumBand_ArgOrder"] = "type duration ppm";
-L["Matcher_SoliumBand_BuffType_Greater"] = "Greater";
 
 L["Matcher_ICD_Pattern"] = "^Equip: Each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$";
 L["Matcher_ICD_ArgOrder"] = "value stat duration chance cd";
@@ -165,18 +158,6 @@ L["Matcher_Use3_Pattern"] = "";
 
 L["Matcher_Use4_ArgOrder"] = "";
 L["Matcher_Use4_Pattern"] = "";
-
-L["Matcher_BonusArmor_Pattern"] = "^%+(%d+) ?BONUS_ARMOR$";
-L["Matcher_BonusArmor_ArgOrder"] = "value";
-
-L["Matcher_BlackhandTrinket_Pattern"] = "^Equip: Your [%a ]- have a chance to trigger [%a' ]- for (%d+) sec.  While [%a' ]- is active, you gain ([%d,%. ]+) ([%a ]-) every ([%d,%. ]+) sec, stacking up to ([%d,%. ]+) times%.  %(Approximately ([%d%.]+) procs per minute%)$";
-L["Matcher_BlackhandTrinket_ArgOrder"] = "duration value stat tick maxstack ppm";
-
-L["Matcher_BlackhandTrinket2_ArgOrder"] = "";
-L["Matcher_BlackhandTrinket2_Pattern"] = "";
-
-L["Matcher_BlackhandTrinket3_ArgOrder"] = "";
-L["Matcher_BlackhandTrinket3_Pattern"] = "";
 
 L["Matcher_StoneOfFire_Pattern"] = "^Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by ([%d,%. ]+) for (%d+) sec%.  Your highest stat is always chosen%.$";
 L["Matcher_StoneOfFire_ArgOrder"] = "value duration";
