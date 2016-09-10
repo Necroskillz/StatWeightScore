@@ -115,7 +115,7 @@ local function GetComparedItem(link, spec)
     local itemName, _, _, itemLevel, _, _, _, _, loc = GetItemInfo(link);
     local slots = ItemModule.SlotMap[loc];
     if(not slots) then
-        return 0, 0;
+        return nil;
     end
 
     local minEquippedScore;
