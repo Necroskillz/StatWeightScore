@@ -151,26 +151,6 @@ local function GetStatsFromLink(link)
     return GetItemStats(link);
 end
 
-local primaryStatIndex = {
-    ["str"] = 1,
-    ["agi"] = 2,
-    ["int"] = 4
-};
-
-local function GetPrimaryStatForSpec(weights)
-    local primaryStatValue, primaryStat;
-
-    for _, alias in ipairs({"str","agi","int"}) do
-        if(weights[alias]) then
-            primaryStatValue = UnitStat("player", primaryStatIndex[alias]);
-            primaryStat = alias;
-            break;
-        end
-    end
-
-    return primaryStat, primaryStatValue;
-end
-
 ScoreModule.Fx = {
     ["rppm"] = function(result, stats, weights, args)
         local statInfo = StatsModule:GetStatInfoByDisplayName(args["stat"]);
@@ -238,7 +218,7 @@ ScoreModule.Fx = {
         ScoreModule.Fx["icd"](result, stats, weights, args);
     end,
     ["soliumband"] = function(result, stats, weights, args)
-        local primaryStat, primaryStatValue = GetPrimaryStatForSpec(weights);
+        local primaryStat, primaryStatValue = SpecModule:GetPrimaryStat(weights);
 
         local buff = 0.1;
         if(args["type"] == L["Matcher_SoliumBand_BuffType_Greater"]) then
@@ -340,7 +320,15 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
             local gemStat;
             local statValue;
 
-            if(not db.ForceSelectedGemStat and gemLink) then
+            if(db.SuggestSabersEye and not GemsModule:IsSabersEyeEquipped())
+            then
+                local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
+                if(primaryStat) then
+                    gemStat = StatsModule:GetStatInfo(primaryStat);
+                    gemStatWeight = primaryStatWeight;
+                    statValue = 200;
+                end
+            elseif(not db.ForceSelectedGemStat and gemLink) then
                 local gemStats = self:GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
                 for stat, value in pairs(gemStats) do
                     local alias = StatsModule:KeyToAlias(stat);

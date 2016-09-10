@@ -97,3 +97,24 @@ end
 function SpecModule:IsDualWielding2h()
     return select(2, UnitClass("player")) == "WARRIOR" and GetSpecialization() == 2;
 end
+
+local primaryStatIndex = {
+    ["str"] = 1,
+    ["agi"] = 2,
+    ["int"] = 4
+};
+
+function SpecModule:GetPrimaryStat(weights)
+    local primaryStatValue, primaryStat, primaryStatWeight;
+
+    for _, alias in ipairs({"str","agi","int"}) do
+        if(weights[alias]) then
+            primaryStatValue = UnitStat("player", primaryStatIndex[alias]);
+            primaryStat = alias;
+            primaryStatWeight = weights[alias];
+            break;
+        end
+    end
+
+    return primaryStat, primaryStatValue, primaryStatWeight;
+end

@@ -34,6 +34,7 @@ OptionsModule.Defaults = {
         PercentageCalculationType = "change",
         ShowStatsPane = true,
         ShowUpgrades = true,
+        SuggestSabersEye = true,
         Specs = {}
     }
 };
@@ -100,6 +101,12 @@ function OptionsModule:CreateOptions()
                         type = "toggle",
                         name = L["Options_ForceSelectedGemStat_Label"],
                         desc = L["Options_ForceSelectedGemStat_Tooltip"],
+                    },
+                    SuggestSabersEye = {
+                        order = 27,
+                        type = "toggle",
+                        name = L["Options_SuggestSabersEye_Label"],
+                        desc = L["Options_SuggestSabersEye_Tooltip"],
                     },
                     Display = {
                         type = "group",

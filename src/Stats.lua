@@ -37,7 +37,7 @@ function StatsModule:OnInitialize()
 
     AddStat("agi", "ITEM_MOD_AGILITY_SHORT", { Primary = true });
     AddStat("int", "ITEM_MOD_INTELLECT_SHORT", { Primary = true });
-    AddStat("sta", "ITEM_MOD_STAMINA_SHORT", { Gem = true });
+    AddStat("sta", "ITEM_MOD_STAMINA_SHORT");
     AddStat("str", "ITEM_MOD_STRENGTH_SHORT", { Primary = true });
     AddStat("mastery", "ITEM_MOD_MASTERY_RATING_SHORT", { Gem = true });
 
