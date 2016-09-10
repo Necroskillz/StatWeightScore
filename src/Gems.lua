@@ -31,7 +31,7 @@ function GemsModule:GetGemValue(enchantLevel)
         return gem.Value;
     end
 
-    return nil;
+    return 0;
 end
 
 local SabersEye = {

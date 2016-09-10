@@ -22,8 +22,7 @@ function ScoreModule:OnInitialize()
         },
         PreCheck = {
             L["Matcher_Precheck_Equip"],
-            L["Matcher_Precheck_Use"],
-            gsub(L["Matcher_Precheck_BonusArmor"], "BONUS_ARMOR", BONUS_ARMOR)
+            L["Matcher_Precheck_Use"]
         },
         Partial = {
             ["cdmin"] = L["Matcher_Partial_CdMin"],
