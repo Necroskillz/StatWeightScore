@@ -57,6 +57,7 @@ function ItemModule:CreateMaps()
     self.ClassArmorMap = {};
     self.ClassWeaponMap = {};
     self.HeldInOffhandMap = {};
+    self.UpgradeMaps = {};
 
     AddMapping(self.ClassArmorMap, "WARLOCK", Cloth);
     AddMapping(self.ClassArmorMap, "MAGE", Cloth);
@@ -242,96 +243,40 @@ function ItemModule:CreateMaps()
         ["569"] = "567" -- mythic
     };
 
-    self.WeaponCraftingUpgradeMap = {
-        ["525"] = {
-            To = "558",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 2, 6)
-        },
-        ["558"] = {
-            To = "559",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 3, 6)
-        },
-        ["559"] = {
-            To = "594",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 4, 6)
-        },
-        ["594"] = {
-            To = "619",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 5, 6)
-        },
-        ["619"] = {
-            To = "620",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 6, 6)
+    local obliterumUpgradeMap = {
+        Path = {
+            ["596"] = {
+                To = "597",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, 7)
+            },
+            ["597"] = {
+                To = "598",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 2, 7)
+            },
+            ["598"] = {
+                To = "599",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 3, 7)
+            },
+            ["599"] = {
+                To = "666",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 4, 7)
+            },
+            ["666"] = {
+                To = "667",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 5, 7)
+            },
+            ["667"] = {
+                To = "668",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 6, 7)
+            },
+            ["668"] = {
+                To = "669",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 7, 7)
+            }
         }
     };
 
-    self.ArmorCraftingUpgradeMap = {
-        ["525"] = {
-            To = "526",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 2, 6)
-        },
-        ["526"] = {
-            To = "527",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 3, 6)
-        },
-        ["527"] = {
-            To = "593",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 4, 6)
-        },
-        ["593"] = {
-            To = "617",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 5, 6)
-        },
-        ["617"] = {
-            To = "618",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 6, 6)
-        }
-    };
-
-    self.BalefulUpgradeMap = {
-        ["BASE"] = {
-            To = "651",
-            Desc =  ITEM_QUALITY4_DESC
-        },
-        ["651"] = {
-            To = "648",
-            Desc = L["Empowered_Upgrade_Label"]
-        },
-    };
-
-    self.DreanorValorUpgradeMap = {
-        ["529"] = {
-            To = "530",
-            Desc = L["Upgrade_1_Label"]
-        },
-        ["530"] = {
-            To = "531",
-            Desc = L["Upgrade_2_Label"]
-        }
-    };
-
-    self.InvasionUpgradeMap = {
-        ["1816"] = {
-            To = "3331",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 2, 6)
-        },
-        ["3331"] = {
-            To = "1817",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 3, 6)
-        },
-        ["1817"] = {
-            To = "1819",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 4, 6)
-        },
-        ["1819"] = {
-            To = "1818",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 5, 6)
-        },
-        ["1818"] = {
-            To = "1820",
-            Desc = string.format(L["Crafting_Upgrade_Label"], 6, 6)
-        }
-    };
+    table.insert(self.UpgradeMaps, obliterumUpgradeMap);
 end
 
 function ItemModule:OnInitialize()
@@ -366,7 +311,6 @@ function ItemModule:IsItemForClass(itemType, itemSubType, locStr, class)
 
     return true;
 end
-
 
 function ItemModule:AreUniquelyExclusive(item1, item2)
     if(item1 == item2) then
@@ -418,16 +362,8 @@ function ItemModule:ConvertTierToken(itemId, class, bonus)
     return tierId, link, name;
 end
 
-function ItemModule:GetCraftingMap(itemType, itemSubType, locStr)
-    if(itemType == Weapon or itemSubType == Shields or locStr == INVTYPE_HOLDABLE) then
-        return self.WeaponCraftingUpgradeMap;
-    else
-        return self.ArmorCraftingUpgradeMap;
-    end
-end
-
 local function GetUpgradeBonus(map, itemLink)
-    for b, _ in pairs(map) do
+    for b, _ in pairs(map.Path) do
         if(itemLink:HasBonus(b)) then
             return b;
         end
@@ -436,63 +372,20 @@ local function GetUpgradeBonus(map, itemLink)
     return nil;
 end
 
-function ItemModule:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLink)
-    return GetUpgradeBonus(self:GetCraftingMap(itemType, itemSubType, locStr), itemLink);
-end
-
-function ItemModule:GetBalefulUpgradeBonus(itemLink)
-    if(not (itemLink:HasBonus("652") or itemLink:HasBonus("653"))) then
-        return nil;
-    end
-
-    local bonus = GetUpgradeBonus(self.BalefulUpgradeMap, itemLink);
-    if(bonus) then
-        return bonus
-    end
-
-    if(not itemLink:HasBonus("648")) then
-        return "BASE";
-    end
-
-    return nil;
-end
-
-function ItemModule:GetDreanorValorUpgrade(itemLink)
-    if(itemLink.upgradeType ~= "4") then
-        return nil;
-    end
-
-    local upgrade = self.DreanorValorUpgradeMap[itemLink.upgradeId];
-    if(upgrade) then
-        return itemLink.upgradeId;
-    end
-
-    return nil;
-end
-
-function ItemModule:GetInvasionUpgradeBonus(itemLink)
-    return GetUpgradeBonus(self.InvasionUpgradeMap, itemLink);
-end
-
-local function GenerateUpgrades(map, from, link, type, descPrefix)
+local function GenerateUpgrades(map, from, link)
     local upgrades = {};
-    descPrefix = descPrefix or '';
 
     while(true) do
-        local upgradeInfo = map[from];
+        local upgradeInfo = map.Path[from];
         if(not upgradeInfo) then
             break;
         end
 
-        if(type == "bonus") then
-            link:RemoveBonus(from);
-            link:AddBonus(upgradeInfo.To);
-        elseif(type == "upgrade") then
-            link.upgradeId = upgradeInfo.To;
-        end
+        link:RemoveBonus(from);
+        link:AddBonus(upgradeInfo.To);
 
         local upgrade = {
-            Desc = descPrefix..upgradeInfo.Desc,
+            Desc = upgradeInfo.Desc,
             Link = link:ToString()
         };
 
@@ -508,29 +401,12 @@ function ItemModule:GetUpgrades(itemType, itemSubType, locStr, link)
     local itemLink = ItemLinkModule:Parse(link);
     local upgrades = {};
 
-    local craftedBonus = self:GetCraftedUpgradeBonus(itemType, itemSubType, locStr, itemLink);
-    local balefulBonus = self:GetBalefulUpgradeBonus(itemLink);
-    local invasionBonus = self:GetInvasionUpgradeBonus(itemLink);
-    local dreanorValorUpgrade = self:GetDreanorValorUpgrade(itemLink);
+    for _, map in pairs(self.UpgradeMaps) do
+        local upgrade = GetUpgradeBonus(map, itemLink);
 
-    if(craftedBonus) then
-        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self:GetCraftingMap(itemType, itemSubType, locStr), craftedBonus, itemLink, "bonus"));
-    elseif(balefulBonus) then
-        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.BalefulUpgradeMap, balefulBonus, itemLink, "bonus"));
-    elseif(invasionBonus) then
-        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.InvasionUpgradeMap, invasionBonus, itemLink, "bonus"));
-    end
-
-    if(dreanorValorUpgrade) then
-        local descPrefix = '';
-        if(upgrades) then
-            local lastUpgrade = upgrades[#upgrades];
-            if(lastUpgrade) then
-                descPrefix = lastUpgrade.Desc..' + ';
-            end
+        if(upgrade) then
+            upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(map, upgrade, itemLink));
         end
-
-        upgrades = Utils.TableConcat(upgrades, GenerateUpgrades(self.DreanorValorUpgradeMap, dreanorValorUpgrade, itemLink, "upgrade", descPrefix));
     end
 
     return upgrades;
