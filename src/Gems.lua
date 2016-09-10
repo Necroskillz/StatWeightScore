@@ -7,12 +7,12 @@ local L = StatWeightScore.L;
 
 local GemRepository = {
     [1] = {
-        Value = 150,
-        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[2].hex.."+150"..FONT_COLOR_CODE_CLOSE)
+        Value = 100,
+        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[2].hex.."+100"..FONT_COLOR_CODE_CLOSE)
     },
     [2] = {
-        Value = 200,
-        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[3].hex.."+200"..FONT_COLOR_CODE_CLOSE);
+        Value = 150,
+        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[3].hex.."+150"..FONT_COLOR_CODE_CLOSE);
     }
 };
 
