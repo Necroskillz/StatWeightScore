@@ -20,6 +20,7 @@ L["TooltipMessage_EquipmentSetCompare"] = "Comparing to %s from equipment set '%
 L["Crafting_Upgrade_Label"] = "Stage %d of %d";
 L["Obliterum_Upgrade_Label"] = "Obliterum %d/%d";
 L["Empowered_Upgrade_Label"] = "Empowered";
+L["ItemLevel_Upgrade_Label"] = "ilvl %d";
 L["Upgrade_1_Label"] = "Upgrade 1";
 L["Upgrade_2_Label"] = "Upgrade 2";
 L["Options_Open"] = "Open configuration";

@@ -158,7 +158,25 @@ function ItemModule:CreateMaps()
         }
     };
 
+    local classHallUpgradeMap = {
+        Path = {
+            ["3381"] = {
+                To = "3382",
+                Desc = string.format(L["ItemLevel_Upgrade_Label"], 820)
+            },
+            ["3382"] = {
+                To = "3383",
+                Desc = string.format(L["ItemLevel_Upgrade_Label"], 830)
+            },
+            ["3383"] = {
+                To = "3384",
+                Desc = string.format(L["ItemLevel_Upgrade_Label"], 840)
+            },
+        }
+    };
+
     table.insert(self.UpgradeMaps, obliterumUpgradeMap);
+    table.insert(self.UpgradeMaps, classHallUpgradeMap);
 end
 
 function ItemModule:OnInitialize()
