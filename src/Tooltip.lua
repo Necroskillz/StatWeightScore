@@ -137,13 +137,19 @@ local function GetComparedItem(link, spec)
         local equippedLink, set;
 
         if spec.EquipmentSet and spec.EquipmentSet ~= "" and not setEquipped then
-            local location = GetEquipmentSetLocations(spec.EquipmentSet)[slot];
-            if location then
-                local _, _, _, _, bagSlot, bag = EquipmentManager_UnpackLocation(location);
-                if bag then
-                    equippedLink = GetContainerItemLink(bag, bagSlot);
-                    set = spec.EquipmentSet;
+            local locations = GetEquipmentSetLocations(spec.EquipmentSet);
+            if locations then
+                local location = locations[slot];
+                if location then
+                    local _, _, _, _, bagSlot, bag = EquipmentManager_UnpackLocation(location);
+                    if bag then
+                        equippedLink = GetContainerItemLink(bag, bagSlot);
+                        set = spec.EquipmentSet;
+                    end
                 end
+            else
+                Utils.PrintError(string.format('Warning: set \'%s\' not found. Check if you didn\'t delete or rename it and ajust Associated Equipment Set option of \'%s\' spec.', spec.EquipmentSet, spec.Name));
+                spec.EquipmentSet = nil;
             end
         end
         if not equippedLink then
@@ -171,6 +177,7 @@ local function GetComparedItem(link, spec)
 
                 if(not isEquippedItem(equippedLinkInfo, equippedItemLevel)) then
                     if(not minEquippedScore or equippedScore.Score < minEquippedScore.Score) then
+                        isEquipped = false;
                         minEquippedScore = equippedScore;
                         minEquippedLink = equippedLink;
                         equipmentSet = set;
@@ -282,7 +289,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 end
 
                 tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", FormatScore(score.Score, diff, disabled, characterScore, db.PercentageCalculationType));
-                if(score.EquipmentSet) then
+                if(equipmentSet) then
                     tooltip:AddLine(string.format(L["TooltipMessage_EquipmentSetCompare"], minEquippedLink, equipmentSet));
                 end
                 if(score.Offhand ~= nil) then
