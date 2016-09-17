@@ -304,7 +304,7 @@ function OptionsModule:OnInitialize()
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 
-    self.ImportType = "sim";
+    self.ImportType = "pawn";
     self.ExportType = "amr";
 
     ScoreCompareTypes = {
