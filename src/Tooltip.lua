@@ -177,7 +177,6 @@ local function GetComparedItem(link, spec)
 
                 if(not isEquippedItem(equippedLinkInfo, equippedItemLevel)) then
                     if(not minEquippedScore or equippedScore.Score < minEquippedScore.Score) then
-                        isEquipped = false;
                         minEquippedScore = equippedScore;
                         minEquippedLink = equippedLink;
                         equipmentSet = set;
