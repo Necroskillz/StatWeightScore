@@ -1,6 +1,6 @@
 {
   "name": "stat-weight-score",
-  "version": "7.3.1",
+  "version": "7.3.2",
   "description": "WoW WoD addon that calculates a score of an item based on stat weights and the item's stats.",
   "repository": {
     "type": "git",
