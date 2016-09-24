@@ -4,7 +4,7 @@ local ItemModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Item");
 local ItemLinkModule;
 
 local B = LibStub("LibBabble-Inventory-3.0");
-local BL = B:GetLookupTable();
+local BL = B:GetUnstrictLookupTable();
 
 local Utils;
 local L;
@@ -33,7 +33,7 @@ local FistWeapons = BL["Fist Weapons"];
 local Staves = BL["Staves"];
 local Daggers = BL["Daggers"];
 local Wands = BL["Wands"];
-local Warglaives = "Warglaives";
+local Warglaives = BL["Warglaives"] or "Warglaives";
 
 local function AddMapping(map, key, ...)
     map[key] = {};
@@ -183,11 +183,6 @@ function ItemModule:OnInitialize()
     ItemLinkModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ItemLink");
     Utils = StatWeightScore.Utils;
     L = StatWeightScore.L;
-
-    -- temp fix until translated to all languages: https://www.wowace.com/addons/libbabble-inventory-3-0/localization/
-    Utils.Try(function()
-        Warglaives = BL["Warglaives"];
-    end);
 
     self:CreateMaps();
 end
