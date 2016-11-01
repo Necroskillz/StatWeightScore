@@ -250,8 +250,9 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
         local gemStatWeight;
         local gemStat;
         local statValue;
+        local hasSabersEye = GemsModule:IsSabersEye(gemLink);
 
-        if(db.SuggestSabersEye and (equippedItemHasSabersEye or GemsModule:IsSabersEye(gemLink) or not GemsModule:GetEquippedSabersEyeSlot()))
+        if(db.SuggestSabersEye and (equippedItemHasSabersEye or hasSabersEye or not GemsModule:GetEquippedSabersEyeSlot()))
         then
             local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
             if(primaryStat) then
@@ -281,7 +282,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
             result.Gem = {
                 Stat = gemStat.Alias,
                 Value = statValue,
-                HasSabersEye = not not saberEyeSlot
+                HasSabersEye = hasSabersEye
             };
         end
     end
