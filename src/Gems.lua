@@ -51,7 +51,7 @@ function GemsModule:GetEquippedSabersEyeSlot()
         local link = GetInventoryItemLink("player", i);
         if(link) then
             local stats = GetItemStats(link);
-            if(stats[StatsModule:AliasToKey("socket")]) then
+            if(stats and stats[StatsModule:AliasToKey("socket")]) then
                 local _, gemLink = GetItemGem(link, 1);
                 if(self:IsSabersEye(gemLink)) then
                     local _, _, _, _, _, _, _, _, loc = GetItemInfo(link);
