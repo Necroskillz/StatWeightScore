@@ -129,31 +129,35 @@ function ItemModule:CreateMaps()
         Path = {
             ["596"] = {
                 To = "597",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, 7)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, 8)
             },
             ["597"] = {
                 To = "598",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 2, 7)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 2, 8)
             },
             ["598"] = {
                 To = "599",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 3, 7)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 3, 8)
             },
             ["599"] = {
                 To = "666",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 4, 7)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 4, 8)
             },
             ["666"] = {
                 To = "667",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 5, 7)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 5, 8)
             },
             ["667"] = {
                 To = "668",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 6, 7)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 6, 8)
             },
             ["668"] = {
                 To = "669",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 7, 7)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 7, 8)
+            },
+            ["669"] = {
+                To = "670",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 8, 8)
             }
         }
     };
