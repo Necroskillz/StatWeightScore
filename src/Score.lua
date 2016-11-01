@@ -129,7 +129,7 @@ function ScoreModule:GetStatsFromTooltip(tooltip)
                 if(value and stat) then
                     local statInfo = StatsModule:GetStatInfoByDisplayName(stat);
                     if(statInfo) then
-                        stats[statInfo.Key] = Utils.ToNumber(value);
+                        stats[statInfo.Key] = (stats[statInfo.Key] or 0) + Utils.ToNumber(value);
                     end
                 end
             end
@@ -237,10 +237,17 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
     local secondaryStat = StatsModule:GetBestGemStat(spec);
     local locStr = getglobal(loc);
     local db = StatWeightScore.db.profile;
+    local _, _, quality, _, _, _, _, _, slot = GetItemInfo(link);
 
     local result = {
         Score = 0;
     };
+
+    if(quality == 6 and (locStr == INVTYPE_HOLDABLE or locStr == INVTYPE_SHIELD or getglobal(slot) == INVTYPE_WEAPONOFFHAND)) then
+        result.ArtifactOffhand = true;
+
+        return result;
+    end
 
     local socketStats = GetStatsFromLink(link) or {};
 

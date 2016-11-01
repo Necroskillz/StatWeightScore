@@ -17,6 +17,7 @@ L["TooltipMessage_WithProcAverage"] = "with proc average";
 L["TooltipMessage_WithUseAverage"] = "with use on cd avg";
 L["TooltipMessage_Offhand"] = "%s (offhand)";
 L["TooltipMessage_EquipmentSetCompare"] = "Comparing to %s from equipment set '%s'";
+L["TooltipMessage_ArtifactOffhand"] = "Artifact offhand score is included in mainhand";
 L["Crafting_Upgrade_Label"] = "Stage %d of %d";
 L["Obliterum_Upgrade_Label"] = "Obliterum %d/%d";
 L["Empowered_Upgrade_Label"] = "Empowered";

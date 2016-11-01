@@ -291,6 +291,9 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 if(equipmentSet) then
                     tooltip:AddLine(string.format(L["TooltipMessage_EquipmentSetCompare"], minEquippedLink, equipmentSet));
                 end
+                if(score.ArtifactOffhand) then
+                    tooltip:AddLine(L["TooltipMessage_ArtifactOffhand"]);
+                end
                 if(score.Offhand ~= nil) then
                     tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled, characterScore, db.PercentageCalculationType))
                 end
