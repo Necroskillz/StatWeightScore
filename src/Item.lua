@@ -125,39 +125,48 @@ function ItemModule:CreateMaps()
         INVTYPE_TABARD = {19},
     };
 
+    local obliterumMax = 10;
     local obliterumUpgradeMap = {
         Path = {
             ["596"] = {
                 To = "597",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, obliterumMax)
             },
             ["597"] = {
                 To = "598",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 2, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 2, obliterumMax)
             },
             ["598"] = {
                 To = "599",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 3, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 3, obliterumMax)
             },
             ["599"] = {
                 To = "666",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 4, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 4, obliterumMax)
             },
             ["666"] = {
                 To = "667",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 5, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 5, obliterumMax)
             },
             ["667"] = {
                 To = "668",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 6, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 6, obliterumMax)
             },
             ["668"] = {
                 To = "669",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 7, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 7, obliterumMax)
             },
             ["669"] = {
                 To = "670",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 8, 8)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 8, obliterumMax)
+            },
+            ["670"] = {
+                To = "671",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 9, obliterumMax)
+            },
+            ["671"] = {
+                To = "672",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 10, obliterumMax)
             }
         }
     };
