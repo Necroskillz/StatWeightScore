@@ -268,7 +268,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
                 local minEquippedLink, minEquippedScore, scoreTable, equipmentSet, isEquipped, oneHand  = GetComparedItem(link, spec);
 
-                local score = calculateScore(link, loc, spec, tooltip, minEquippedScore and minEquippedScore.Gem and minEquippedScore.Gem.HasSabersEye);
+                local score = calculateScore(link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasSabersEye);
 
                 local diff = 0;
                 local offhandDiff = 0;
@@ -297,8 +297,10 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                 if(score.Offhand ~= nil) then
                     tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled, characterScore, db.PercentageCalculationType))
                 end
-                if(score.Gem)then
-                    tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", score.Gem.Value, score.Gem.Stat))
+                if(score.Gems)then
+                    for _, gem in ipairs(score.Gems) do
+                        tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", gem.Value, gem.Stat))
+                    end
                 end
                 if(score.Proc)then
                     tooltip:AddDoubleLine(L["TooltipMessage_WithProcAverage"], string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
@@ -309,7 +311,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
                 if(#upgrades ~= 0 and db.ShowUpgrades) then
                     for _, upgrade in ipairs(upgrades) do
-                        local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, minEquippedScore and minEquippedScore.Gem and minEquippedScore.Gem.HasSabersEye);
+                        local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasSabersEye);
                         local upgradeDiff = 0;
                         local upgradeOffhandDiff = 0;
 

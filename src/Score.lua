@@ -250,47 +250,78 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
     end
 
     local socketStats = GetStatsFromLink(link) or {};
+    local gemNo = socketStats[StatsModule:AliasToKey("socket")];
 
-    if(socketStats[StatsModule:AliasToKey("socket")]) then
-        local _, gemLink = GetItemGem(link, 1);
-        local enchantLevel;
-        local gemStatWeight;
-        local gemStat;
-        local statValue;
-        local hasSabersEye = GemsModule:IsSabersEye(gemLink);
+    if(gemNo) then
+        local gems;
+        local sabersEyeIndex;
 
-        if(db.SuggestSabersEye and (equippedItemHasSabersEye or hasSabersEye or not GemsModule:GetEquippedSabersEyeSlot()))
-        then
-            local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
-            if(primaryStat) then
-                gemStat = StatsModule:GetStatInfo(primaryStat);
-                gemStatWeight = primaryStatWeight;
-                statValue = 200;
-            end
-        elseif(not db.ForceSelectedGemStat and gemLink) then
-            local gemStats = self:GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
-            for stat, value in pairs(gemStats) do
-                local alias = StatsModule:KeyToAlias(stat);
-                local weight = weights[alias];
-                if(weight) then
-                    statValue = value;
-                    gemStat = StatsModule:GetStatInfo(alias);
-                    gemStatWeight = weight;
-                end
-            end
-        elseif(secondaryStat) then
-            statValue = GemsModule:GetGemValue(db.EnchantLevel);
-            gemStat = secondaryStat.Stat;
-            gemStatWeight = secondaryStat.Weight;
+        for i = 1,gemNo do
+            local _, gemLink = GetItemGem(link, i);
+            if(GemsModule:IsSabersEye(gemLink)) then
+                sabersEyeIndex = i;
+                break;
+            end;
         end
 
-        if(gemStat) then
-            result.Score = result.Score + statValue * gemStatWeight;
-            result.Gem = {
-                Stat = gemStat.Alias,
-                Value = statValue,
-                HasSabersEye = hasSabersEye
-            };
+        result.HasSabersEye = not not sabersEyeIndex
+
+        local sabersEyeConsidered = false;
+
+        for i = 1,gemNo do
+            local enchantLevel;
+            local gemStatWeight;
+            local gemStat;
+            local statValue;
+            local sabersEyePicked = false;
+
+            if(not sabersEyeConsidered and (not sabersEyeIndex or sabersEyeIndex == i)) then
+                if(db.SuggestSabersEye and (equippedItemHasSabersEye or sabersEyeIndex or not GemsModule:GetEquippedSabersEyeSlot())) then
+                    local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
+                    if(primaryStat) then
+                        gemStat = StatsModule:GetStatInfo(primaryStat);
+                        gemStatWeight = primaryStatWeight;
+                        statValue = 200;
+                        sabersEyePicked = true;
+                    end
+                end
+
+                sabersEyeConsidered = true;
+            end
+
+            if(not sabersEyePicked) then
+                local _, gemLink = GetItemGem(link, i);
+
+                if(not db.ForceSelectedGemStat and gemLink) then
+                    local gemStats = self:GetStatsFromTooltip(ScanningTooltipModule:ScanTooltip(gemLink));
+                    for stat, value in pairs(gemStats) do
+                        local alias = StatsModule:KeyToAlias(stat);
+                        local weight = weights[alias];
+                        if(weight) then
+                            statValue = value;
+                            gemStat = StatsModule:GetStatInfo(alias);
+                            gemStatWeight = weight;
+                        end
+                    end
+                elseif(secondaryStat) then
+                    statValue = GemsModule:GetGemValue(db.EnchantLevel);
+                    gemStat = secondaryStat.Stat;
+                    gemStatWeight = secondaryStat.Weight;
+                end
+            end
+
+            if(gemStat) then
+                result.Score = result.Score + statValue * gemStatWeight;
+
+                if(not result.Gems) then
+                    result.Gems = {}
+                end
+
+                result.Gems[i] = {
+                    Stat = gemStat.Alias,
+                    Value = statValue
+                };
+            end
         end
     end
 
