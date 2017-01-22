@@ -9,7 +9,7 @@
     "buildCommand": "gulp publish-dist",
     "prereleaseId": "beta",
     "dist": {
-        "repo": "git@git.curseforge.net:wow/stat-weight-score/mainline.git",
+        "repo": "https://repos.curseforge.com/wow/stat-weight-score",
         "stageDir": ".stage",
         "baseDir": "dist",
         "files": ["**/*", ".pkgmeta"],
