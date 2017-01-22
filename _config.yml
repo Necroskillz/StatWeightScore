@@ -1,0 +1,8 @@
+title: Stat Weight Score
+description: WoW Legion addon that calculates a score of an item based on stat weights and the item's stats.
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-slate
+
+gems:
+  - jekyll-mentions
