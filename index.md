@@ -1,5 +1,9 @@
 # Change log
 
+## 7.5.1 - 22 Jan 2017
+* Added 9th and 10th stage of Obliterum upgrade
+* Added support for multiple sockets
+
 ## 7.5.0 - 1 Nov 2016
 * Added 8th stage of Obliterum upgrade
 * Artifact weapon offhand score is now 0, and offhand score is added to mainhand score
