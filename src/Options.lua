@@ -305,7 +305,7 @@ function OptionsModule:OnInitialize()
     Utils = StatWeightScore.Utils;
 
     self.ImportType = "pawn";
-    self.ExportType = "amr";
+    self.ExportType = "text";
 
     ScoreCompareTypes = {
         ["item"] = L["Options_Compare_Item"],

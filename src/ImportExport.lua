@@ -236,19 +236,22 @@ local function ImportPawnString(input)
     local map = CreatePawnMap();
 
     for _, valuePair in pairs(values) do
-        local stat, value = valuePair:match("^%s*([%a%d]+)%s*=%s*(%-?[%d%.]+)%s*$");
+        local stat, value = valuePair:match("^%s*([%a%d]+)%s*=%s*(%-?[%d%.a-zA-Z]+)%s*$");
         if(not stat or not value) then
             error("Invalid Pawn string format");
         end
 
-        value = tonumber(value);
+        if(stat == "Class" or stat == "Spec") then
+        else
+            value = tonumber(value);
 
-        local alias = map[stat];
-        if(alias ~= "none") then
-            if(not alias) then
-                Utils.PrintError("Unknown stat "..stat);
-            else
-                result[alias] = value;
+            local alias = map[stat];
+            if(alias ~= "none") then
+                if(not alias) then
+                    Utils.PrintError("Unknown stat "..stat);
+                else
+                    result[alias] = value;
+                end
             end
         end
     end
@@ -284,8 +287,8 @@ end
 
 function ImportExportModule:RegisterDefaultImportExport()
     self:RegisterImport("sim", "SimulationCraft xml", ImportSimulationCraftXML);
-    self:RegisterImport("amr", "Ask Mr. Robot share", ImportAskMrRobotShare);
+    self:RegisterImport("text", "Text", ImportAskMrRobotShare);
     self:RegisterImport("pawn", "Pawn string", ImportPawnString)
 
-    self:RegisterExport("amr", "Ask Mr. Robot share", ExportAskMrRobotShare);
+    self:RegisterExport("text", "Text", ExportAskMrRobotShare);
 end
