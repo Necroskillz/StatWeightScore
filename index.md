@@ -1,5 +1,9 @@
 # Change log
 
+## 7.5.2 - 12 Feb 2017
+* Added support for additional Class and Spec parameters in pawn string
+* Renamed Ask Mr. Robot share to Text import and export, so it's not confusing since Ask Mr. Robot doesn't use that format any more
+
 ## 7.5.1 - 22 Jan 2017
 * Added 9th and 10th stage of Obliterum upgrade
 * Added support for multiple sockets
