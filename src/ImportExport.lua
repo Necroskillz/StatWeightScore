@@ -39,7 +39,8 @@ local function CreateAmrMaps()
     map("Versatility", "versatility");
     map("Avoidance", "avoidance");
     map("Leech", "leech");
-    map("MovementSpeed", "none");
+    map("MovementSpeed", "speed");
+    map("Indestructible", "none");
 
     return askMrRobotStatMap, reverseAskMrRobotStatMap;
 end
@@ -68,7 +69,9 @@ local function CreatePawnMap()
     map("Versatility", "versatility");
     map("Avoidance", "avoidance");
     map("Leech", "leech");
-
+    map("MovementSpeed", "speed");
+    map("Indestructible", "none");
+    
     return pawnMap;
 end
 
