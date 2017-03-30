@@ -132,7 +132,8 @@ local function GetComparedItem(link, spec)
         return linkInfo.itemId == equippedLinkInfo.itemId and linkInfo.gem1Id == equippedLinkInfo.gem1Id and itemLevel == equippedItemLevel;
     end
 
-    local _, _, setEquipped = spec.EquipmentSet and GetEquipmentSetInfoByName(spec.EquipmentSet);
+    local equipmentSetID = spec.EquipmentSet and C_EquipmentSet.GetEquipmentSetID(spec.EquipmentSet);
+    local _, _, _, setEquipped = equipmentSetID and C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID);
     for _, slot in pairs(slots) do
         local equippedLink, set;
 
