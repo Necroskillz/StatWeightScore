@@ -1,5 +1,5 @@
-﻿## Interface: 70100
-## X-Min-Interface: 70100
+﻿## Interface: 70200
+## X-Min-Interface: 70200
 ## Title:Stat Weight Score
 ## Notes:Calculates a score of an item based on stat weights and the item's stats
 ## Author: Necroskillz
