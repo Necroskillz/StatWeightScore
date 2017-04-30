@@ -153,6 +153,18 @@ Utils.SplitString = function(str, pattern)
     return parts;
 end;
 
+Utils.Join = function(list, delimiter)
+    local len = #list
+    if len == 0 then
+        return ""
+    end
+    local string = list[1]
+    for i = 2, len do
+        string = string .. delimiter .. list[i]
+    end
+    return string
+end
+
 -- workaround for curse localization generator
 Utils.UnescapeUnicode = function(s)
     local ch = {

@@ -127,7 +127,7 @@ function ItemLink:ToString()
         self.upgradeType,
         self.instanceDifficultyId);
 
-    if(self.bonuses)then
+    if(self.bonuses) then
         link = link..":"..#self.bonuses;
 
         for _, bonus in ipairs(self.bonuses) do
@@ -140,6 +140,24 @@ function ItemLink:ToString()
     end
 
     return link.."|h["..self.text.."]|h|r"
+end
+
+function ItemLink:ToSimC()
+    local link = string.format(",id=%s", self.itemId);
+
+    if(self.enchantId ~= "0") then
+        link = link..string.format(",enchant_id=%s", self.enchantId);
+    end
+
+    if(#self.bonuses > 0) then
+        link = link..string.format(",bonus_id=%s", Utils.Join(self.bonuses, "/"));
+    end
+
+    if(self.gem1Id ~= "0") then
+        link = link..string.format(",gem_id=%s", self.gem1Id);
+    end
+
+    return link;
 end
 
 function ItemLinkModule:OnInitialize()

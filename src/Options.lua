@@ -12,6 +12,8 @@ local SpecModule;
 local StatsModule;
 local CharacterModule;
 local ItemLinkModule;
+local SimcModule;
+local OutputWindowModule;
 
 local Utils;
 local L;
@@ -226,6 +228,21 @@ function OptionsModule:CreateOptions()
                             end
                         end
                     },
+                    simc_trinkets = {
+                        type = "execute",
+                        name = "Generate SimulationCraft input for all trinket combinations",
+                        func = function(args)
+                            local trinketCombos = SimcModule:GenerateTrinketCombos(args.input:sub(15));
+
+                            local s = "";
+
+                            for _, combo in pairs(trinketCombos) do
+                                s = s..string.format("%s\n%s\n%s\n\n", combo.title, combo.trinket1, combo.trinket2);
+                            end
+
+                            OutputWindowModule:Show(s:gsub("^%s*(.-)%s*$", "%1"));
+                        end
+                    },
                     replace_bonuses = {
                         type = "execute",
                         name = "Replace bonuses in item link - for debugging",
@@ -301,6 +318,9 @@ function OptionsModule:OnInitialize()
     ImportExportModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ImportExport");
     CharacterModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Character");
     ItemLinkModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ItemLink");
+    SimcModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Simc");
+    OutputWindowModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."OutputWindow");
+
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
 

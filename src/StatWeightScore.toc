@@ -25,5 +25,7 @@ ImportExport.lua
 Options.lua
 ItemLink.lua
 Item.lua
+SimulationCraft.lua
 Character.lua
 Test.lua
+OutputWindow.lua
