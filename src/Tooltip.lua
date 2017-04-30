@@ -11,12 +11,12 @@ local L;
 local Utils;
 
 local function FormatScore(score, diff, disabled, characterScore, percentageType)
-    local disabledColor = "";
+    local textColor = "";
     if(disabled) then
-        disabledColor = GRAY_FONT_COLOR_CODE;
+        textColor = GRAY_FONT_COLOR_CODE;
     end
 
-    local str = disabledColor..string.format("%.2f", score);
+    local str = textColor..string.format("%.2f", score);
     if(diff ~= 0) then
         local color;
         local sign = "";
@@ -54,7 +54,7 @@ local function FormatScore(score, diff, disabled, characterScore, percentageType
             percentDiff = (newScore - oldScore) / oldScore;
         end
 
-        str = str.." ("..color..sign..string.format("%.2f ", diff)..(((score == diff and characterScore == nil) or characterScore == 0) and "+inf%" or string.format("%s%."..precision.."f%%", sign, percentDiff * 100)).."|r"..disabledColor..")";
+        str = str.." ("..color..sign..string.format("%.2f ", diff)..(((score == diff and characterScore == nil) or characterScore == 0) and "+inf%" or string.format("%s%."..precision.."f%%", sign, percentDiff * 100)).."|r"..textColor..")";
     end
 
     return str;
@@ -158,7 +158,7 @@ local function GetComparedItem(link, spec)
         end
 
         if(equippedLink) then
-            local _, _, _, equippedItemLevel, _, _, _, _,equippedLoc = GetItemInfo(equippedLink);
+            local _, _, _, equippedItemLevel, _, _, _, _, equippedLoc = GetItemInfo(equippedLink);
             local equippedLinkInfo = ItemModule:GetItemLinkInfo(equippedLink);
             local equippedLocStr = getglobal(equippedLoc);
 
@@ -267,7 +267,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     characterScore = CharacterModule:CalculateTotalScore(spec);
                 end
 
-                local minEquippedLink, minEquippedScore, scoreTable, equipmentSet, isEquipped, oneHand  = GetComparedItem(link, spec);
+                local minEquippedLink, minEquippedScore, scoreTable, equipmentSet, isEquipped, oneHand = GetComparedItem(link, spec);
 
                 local score = calculateScore(link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasSabersEye);
 
@@ -288,44 +288,52 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                     blankLineHandled = true;
                 end
 
-                tooltip:AddDoubleLine(L["TooltipMessage_StatScore"].." ("..spec.Name..")", FormatScore(score.Score, diff, disabled, characterScore, db.PercentageCalculationType));
-                if(equipmentSet) then
-                    tooltip:AddLine(string.format(L["TooltipMessage_EquipmentSetCompare"], minEquippedLink, equipmentSet));
-                end
-                if(score.ArtifactOffhand) then
-                    tooltip:AddLine(L["TooltipMessage_ArtifactOffhand"]);
-                end
-                if(score.Offhand ~= nil) then
-                    tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled, characterScore, db.PercentageCalculationType))
-                end
-                if(score.Gems)then
-                    for _, gem in ipairs(score.Gems) do
-                        tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", gem.Value, gem.Stat))
+                local specColor = spec.ColorHex or "";
+                local scoreStr = FormatScore(score.Score, diff, disabled, characterScore, db.PercentageCalculationType);
+                local compact = db.CompactMode and not IsControlKeyDown();
+
+                if(not compact) then
+                    tooltip:AddDoubleLine(specColor..(spec.Icon and (spec.Icon.." ") or "")..L["TooltipMessage_StatScore"].." ("..spec.Name..")", scoreStr);
+                    if(equipmentSet) then
+                        tooltip:AddLine(string.format(L["TooltipMessage_EquipmentSetCompare"], minEquippedLink, equipmentSet));
                     end
-                end
-                if(score.Proc)then
-                    tooltip:AddDoubleLine(L["TooltipMessage_WithProcAverage"], string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
-                end
-                if(score.Use)then
-                    tooltip:AddDoubleLine(L["TooltipMessage_WithUseAverage"], string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
-                end
-
-                if(#upgrades ~= 0 and db.ShowUpgrades) then
-                    for _, upgrade in ipairs(upgrades) do
-                        local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasSabersEye);
-                        local upgradeDiff = 0;
-                        local upgradeOffhandDiff = 0;
-
-                        if(compare) then
-                            upgradeDiff, upgradeOffhandDiff = GetScoreDiff(upgrade.Link, upgradeScore, minEquippedScore, true, scoreTable, isEquipped);
-                        end
-
-                        tooltip:AddDoubleLine(upgrade.Desc, FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
-
-                        if(score.Offhand ~= nil) then
-                            tooltip:AddDoubleLine(string.format(L["TooltipMessage_Offhand"], upgrade.Desc), FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
+                    if(score.ArtifactOffhand) then
+                        tooltip:AddLine(L["TooltipMessage_ArtifactOffhand"]);
+                    end
+                    if(score.Offhand ~= nil) then
+                        tooltip:AddDoubleLine(L["Offhand_Score"], FormatScore(score.Offhand, offhandDiff, disabled, characterScore, db.PercentageCalculationType))
+                    end
+                    if(score.Gems) then
+                        for _, gem in ipairs(score.Gems) do
+                            tooltip:AddDoubleLine(L["TooltipMessage_WithGem"], string.format("+%i %s", gem.Value, gem.Stat))
                         end
                     end
+                    if(score.Proc) then
+                        tooltip:AddDoubleLine(L["TooltipMessage_WithProcAverage"], string.format("+%i %s", score.Proc.AverageValue, score.Proc.Stat))
+                    end
+                    if(score.Use) then
+                        tooltip:AddDoubleLine(L["TooltipMessage_WithUseAverage"], string.format("+%i %s", score.Use.AverageValue, score.Use.Stat))
+                    end
+
+                    if(#upgrades ~= 0 and db.ShowUpgrades) then
+                        for _, upgrade in ipairs(upgrades) do
+                            local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasSabersEye);
+                            local upgradeDiff = 0;
+                            local upgradeOffhandDiff = 0;
+
+                            if(compare) then
+                                upgradeDiff, upgradeOffhandDiff = GetScoreDiff(upgrade.Link, upgradeScore, minEquippedScore, true, scoreTable, isEquipped);
+                            end
+
+                            tooltip:AddDoubleLine(upgrade.Desc, FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
+
+                            if(score.Offhand ~= nil) then
+                                tooltip:AddDoubleLine(string.format(L["TooltipMessage_Offhand"], upgrade.Desc), FormatScore(upgradeScore.Score, upgradeDiff, disabled, characterScore, db.PercentageCalculationType));
+                            end
+                        end
+                    end
+                else
+                    tooltip:AddDoubleLine(specColor..(spec.Icon and (spec.Icon.." ") or "")..spec.Name, scoreStr);
                 end
 
                 if(count == maxCount) then
@@ -333,7 +341,9 @@ function TooltipModule:AddToTooltip(tooltip, compare)
                         tooltip:AddLine(" ");
                     end
                 else
-                    tooltip:AddLine(" ");
+                    if(not compact) then
+                        tooltip:AddLine(" ");
+                    end
                 end
             end
         end

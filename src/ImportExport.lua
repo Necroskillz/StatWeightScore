@@ -75,37 +75,6 @@ local function CreatePawnMap()
     return pawnMap;
 end
 
-local function ImportSimulationCraftXML(input)
-    local result = {};
-    local x = XmlModule:Parse(input);
-
-    local simulationCraftStatMap = {
-        ["Wdps"] = "dps",
-        ["Mult"] = "multistrike",
-        ["Vers"] = "versatility",
-    };
-
-    local root = x[1];
-    if(root.label ~= "weights") then
-        error("Couldn't find root element 'weights' in the xml");
-    end
-
-    for _, e in ipairs(root) do
-        if(e.label == "stat") then
-            local statName = e.xarg.name;
-            local alias = simulationCraftStatMap[statName] or statName:lower();
-
-            if(StatsModule:GetStatInfo(alias)) then
-                result[alias] = tonumber(e.xarg.value);
-            else
-                error("Unknown stat "..statName);
-            end
-        end
-    end
-
-    return result;
-end
-
 local function ImportAskMrRobotShare(input)
     local parsed = {};
     local current, stage, f;
@@ -210,7 +179,7 @@ local function ImportAskMrRobotShare(input)
         error("Found no stat to import")
     end
 
-    return result;
+    return { Weights = result };
 end
 
 local function ExportAskMrRobotShare(spec)
@@ -235,7 +204,7 @@ local function ImportPawnString(input)
     end
 
     local values = Utils.SplitString(valuesString, "[^,]+");
-    local result = {};
+    local result = { Weights = {} };
     local map = CreatePawnMap();
 
     for _, valuePair in pairs(values) do
@@ -244,7 +213,9 @@ local function ImportPawnString(input)
             error("Invalid Pawn string format");
         end
 
-        if(stat == "Class" or stat == "Spec") then
+        if(stat == "Spec") then
+            result.Spec = value;
+        elseif(stat == "Class") then
         else
             value = tonumber(value);
 
@@ -253,7 +224,7 @@ local function ImportPawnString(input)
                 if(not alias) then
                     Utils.PrintError("Unknown stat "..stat);
                 else
-                    result[alias] = value;
+                    result.Weights[alias] = value;
                 end
             end
         end
@@ -289,9 +260,8 @@ function ImportExportModule:Export(exportType, spec)
 end
 
 function ImportExportModule:RegisterDefaultImportExport()
-    self:RegisterImport("sim", "SimulationCraft xml", ImportSimulationCraftXML);
+    self:RegisterImport("pawn", "Pawn string", ImportPawnString);
     self:RegisterImport("text", "Text", ImportAskMrRobotShare);
-    self:RegisterImport("pawn", "Pawn string", ImportPawnString)
 
     self:RegisterExport("text", "Text", ExportAskMrRobotShare);
 end

@@ -1,5 +1,5 @@
 local SWS_ADDON_NAME, StatWeightScore = ...;
-local OptionsModule = StatWeightScore:NewModule(SWS_ADDON_NAME.."Options");
+local OptionsModule = StatWeightScore:NewModule(SWS_ADDON_NAME .. "Options");
 
 local AceDB = LibStub("AceDB-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
@@ -53,11 +53,11 @@ function OptionsModule:CreateOptions()
                     local field = info[#info];
                     StatWeightScore.db.profile[field] = value;
 
-                    if(field == "EnchantLevel" or field == "ForceSelectedGemStat" or field == "ShowStatsPane") then
+                    if (field == "EnchantLevel" or field == "ForceSelectedGemStat" or field == "ShowStatsPane") then
                         self:NotifyConfigChanged();
                     end
                 end,
-                name = GetAddOnMetadata(SWS_ADDON_NAME, "Title").." v"..StatWeightScore.Version,
+                name = GetAddOnMetadata(SWS_ADDON_NAME, "Title") .. " v" .. StatWeightScore.Version,
                 args = {
                     EnableTooltip = {
                         order = 10,
@@ -73,14 +73,14 @@ function OptionsModule:CreateOptions()
                         values = GetStatsMethods
                     },
                     NewLine1 = {
-                        type= 'description',
+                        type = 'description',
                         order = 25,
-                        name= '',
+                        name = '',
                     },
                     NewLine2 = {
-                        type= 'description',
+                        type = 'description',
                         order = 20,
-                        name= '',
+                        name = '',
                     },
                     EnchantLevel = {
                         order = 25,
@@ -126,9 +126,9 @@ function OptionsModule:CreateOptions()
                                 desc = L["Options_BlankLineMainBelow_Tooltip"],
                             },
                             NewLine1 = {
-                                type= 'description',
+                                type = 'description',
                                 order = 35,
-                                name= '',
+                                name = '',
                             },
                             BlankLineRefAbove = {
                                 order = 40,
@@ -143,25 +143,26 @@ function OptionsModule:CreateOptions()
                                 desc = L["Options_BlankLineRefBelow_Tooltip"],
                             },
                             NewLine2 = {
-                                type= 'description',
+                                type = 'description',
                                 order = 45,
-                                name= '',
+                                name = '',
                             },
                             ShowUpgrades = {
-                                order = 47,
+                                order = 46,
                                 type = "toggle",
                                 name = L["Options_ShowUpgrades_Label"],
                                 desc = L["Options_ShowUpgrades_Tooltip"],
                             },
-                            NewLine4 = {
-                                type= 'description',
-                                order = 48,
-                                name= '',
+                            CompactMode = {
+                                order = 47,
+                                type = "toggle",
+                                name = L["Options_CompactMode_Label"],
+                                desc = L["Options_CompactMode_Tooltip"]
                             },
                             NewLine5 = {
-                                type= 'description',
+                                type = 'description',
                                 order = 49,
-                                name= '',
+                                name = '',
                             },
                             ScoreCompareType = {
                                 order = 50,
@@ -214,17 +215,17 @@ function OptionsModule:CreateOptions()
                     character_score = {
                         type = "execute",
                         name = L["CharacterScore_Command"],
-                        func = function ()
+                        func = function()
                             local scores = CharacterModule:GetCharacterScores();
 
                             -- not correct in CM
-                            if(select(3, GetInstanceInfo()) == 8) then
-                                print(L["Warning"]..": "..L["CharacterPane_CM_Tooltip"]);
+                            if (select(3, GetInstanceInfo()) == 8) then
+                                print(L["Warning"] .. ": " .. L["CharacterPane_CM_Tooltip"]);
                             end
 
                             print(L["CharacterScore_Info"]);
                             for _, score in pairs(scores) do
-                                print(NORMAL_FONT_COLOR_CODE..score.Spec.."|r"..": "..string.format("%.2f", score.Score));
+                                print(NORMAL_FONT_COLOR_CODE .. score.Spec .. "|r" .. ": " .. string.format("%.2f", score.Score));
                             end
                         end
                     },
@@ -237,7 +238,7 @@ function OptionsModule:CreateOptions()
                             local s = "";
 
                             for _, combo in pairs(trinketCombos) do
-                                s = s..string.format("%s\n%s\n%s\n\n", combo.title, combo.trinket1, combo.trinket2);
+                                s = s .. string.format("%s\n%s\n%s\n\n", combo.title, combo.trinket1, combo.trinket2);
                             end
 
                             OutputWindowModule:Show(s:gsub("^%s*(.-)%s*$", "%1"));
@@ -248,7 +249,7 @@ function OptionsModule:CreateOptions()
                         name = "Replace bonuses in item link - for debugging",
                         func = function(args)
                             local params = string.match(args.input, '|r .*'):sub(3);
-                            local parsed = StatWeightScore:GetModule(SWS_ADDON_NAME.."ItemLink"):Parse(args.input:sub(11));
+                            local parsed = StatWeightScore:GetModule(SWS_ADDON_NAME .. "ItemLink"):Parse(args.input:sub(11));
 
                             parsed.bonuses = Utils.SplitString(params);
                             local link = parsed:ToString();
@@ -267,7 +268,7 @@ function OptionsModule:CreateOptions()
                         type = "execute",
                         name = "Run test suite",
                         func = function()
-                            local testSuite = StatWeightScore:GetModule(SWS_ADDON_NAME.."Test");
+                            local testSuite = StatWeightScore:GetModule(SWS_ADDON_NAME .. "Test");
                             Utils.Print("Running test suit...");
                             local results = testSuite:RunTests();
                             local totalOk = 0;
@@ -276,10 +277,10 @@ function OptionsModule:CreateOptions()
 
                             for _, result in pairs(results) do
                                 local color;
-                                if(result.status == "OK") then
+                                if (result.status == "OK") then
                                     totalOk = totalOk + 1;
                                     color = GREEN_FONT_COLOR_CODE;
-                                elseif(result.status == "FAIL") then
+                                elseif (result.status == "FAIL") then
                                     totalFail = totalFail + 1;
                                     color = RED_FONT_COLOR_CODE;
                                 else
@@ -293,7 +294,7 @@ function OptionsModule:CreateOptions()
 
                             local totalStatus;
                             local totalColor;
-                            if(totalFail == 0) then
+                            if (totalFail == 0) then
                                 totalStatus = "SUCCESS";
                                 totalColor = GREEN_FONT_COLOR_CODE;
                             else
@@ -312,14 +313,14 @@ function OptionsModule:CreateOptions()
 end
 
 function OptionsModule:OnInitialize()
-    GemsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Gems");
-    StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Stats");
-    SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Spec");
-    ImportExportModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ImportExport");
-    CharacterModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Character");
-    ItemLinkModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."ItemLink");
-    SimcModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."Simc");
-    OutputWindowModule = StatWeightScore:GetModule(SWS_ADDON_NAME.."OutputWindow");
+    GemsModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "Gems");
+    StatsModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "Stats");
+    SpecModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "Spec");
+    ImportExportModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "ImportExport");
+    CharacterModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "Character");
+    ItemLinkModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "ItemLink");
+    SimcModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "Simc");
+    OutputWindowModule = StatWeightScore:GetModule(SWS_ADDON_NAME .. "OutputWindow");
 
     L = StatWeightScore.L;
     Utils = StatWeightScore.Utils;
@@ -351,30 +352,30 @@ function OptionsModule:OnInitialize()
     end
 
     AceConfig:RegisterOptionsTable(SWS_ADDON_NAME, self.Options.args.General);
-    AceConfig:RegisterOptionsTable(SWS_ADDON_NAME.." Weights", self.Options.args.Weights);
-    AceConfig:RegisterOptionsTable(SWS_ADDON_NAME.." Profiles", self.Options.args.profiles);
-    AceConfig:RegisterOptionsTable(SWS_ADDON_NAME.." Commands", self.Options.args.commands, "sws");
+    AceConfig:RegisterOptionsTable(SWS_ADDON_NAME .. " Weights", self.Options.args.Weights);
+    AceConfig:RegisterOptionsTable(SWS_ADDON_NAME .. " Profiles", self.Options.args.profiles);
+    AceConfig:RegisterOptionsTable(SWS_ADDON_NAME .. " Commands", self.Options.args.commands, "sws");
 
     AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME)
-    AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME.." Weights", L["Options_Weights_Section"], SWS_ADDON_NAME);
-    AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME.." Profiles", "Profiles", SWS_ADDON_NAME);
+    AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME .. " Weights", L["Options_Weights_Section"], SWS_ADDON_NAME);
+    AceConfigDialog:AddToBlizOptions(SWS_ADDON_NAME .. " Profiles", "Profiles", SWS_ADDON_NAME);
 end
 
 function OptionsModule:InitializeDatabase()
-    if(OptionsModule.Defaults.profile.GetStatsMethod == nil) then
+    if (OptionsModule.Defaults.profile.GetStatsMethod == nil) then
         local locale = GetLocale();
-        if(locale == "enGB") then
+        if (locale == "enGB") then
             locale = "enUS";
         end
-        
-        if(StatWeightScore.L["Culture"] == locale) then
+
+        if (StatWeightScore.L["Culture"] == locale) then
             OptionsModule.Defaults.profile.GetStatsMethod = "tooltip"
         else
             OptionsModule.Defaults.profile.GetStatsMethod = "api"
         end
     end
 
-    local db = AceDB:New(SWS_ADDON_NAME.."DB", OptionsModule.Defaults);
+    local db = AceDB:New(SWS_ADDON_NAME .. "DB", OptionsModule.Defaults);
     StatWeightScore.db = db;
     db.RegisterCallback(self, "OnProfileChanged", "NotifyConfigChanged");
     db.RegisterCallback(self, "OnProfileCopied", "NotifyConfigChanged");
@@ -382,12 +383,12 @@ function OptionsModule:InitializeDatabase()
 end
 
 function OptionsModule:NotifyConfigChanged()
-    self:SendMessage(SWS_ADDON_NAME.."ConfigChanged");
+    self:SendMessage(SWS_ADDON_NAME .. "ConfigChanged");
 end
 
 function OptionsModule:ToggleOptions(subcategory)
     local panel = SWS_ADDON_NAME;
-    if(subcategory) then
+    if (subcategory) then
         panel = subcategory;
     end
 
@@ -410,12 +411,12 @@ function OptionsModule:CreateOptionsForSpec(key)
             local field = info[#info];
             spec[field] = value;
 
-            if(field == "Normalize" or field == "GemStat") then
+            if (field == "Normalize" or field == "GemStat") then
                 self:NotifyConfigChanged();
             end
         end,
-        name = function () return spec.Name end,
-        order = function () return spec.Order end,
+        name = function() return spec.Name end,
+        order = function() return spec.Order end,
         args = {
             Name = {
                 type = "input",
@@ -434,7 +435,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                     options[key] = nil;
                     key = value;
 
-                    AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", key);
+                    AceConfigDialog:SelectGroup(SWS_ADDON_NAME .. " Weights", key);
 
                     self:NotifyConfigChanged();
                 end,
@@ -450,7 +451,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                 type = "select",
                 style = "dropdown",
                 values = function()
-                    local dropdownTable = {[""] = ""};
+                    local dropdownTable = { [""] = "" };
                     for setIndex = 1, GetNumEquipmentSets() do
                         local setName = GetEquipmentSetInfo(setIndex);
                         dropdownTable[setName] = setName;
@@ -461,23 +462,73 @@ function OptionsModule:CreateOptionsForSpec(key)
                 desc = L["Options_AssociatedSet_Tooltip"],
                 order = 14
             },
+            Icon = {
+                type = "select",
+                style = "dropdown",
+                values = function()
+                    local dropdownTable = { ["0"] = "" };
+                    local _, _, classID = UnitClass("player")
+                    for specNum = 1, GetNumSpecializationsForClassID(classID) do
+                        local _, name, _, icon, _, _ = GetSpecializationInfoForClassID(classID, specNum);
+                        dropdownTable[tostring(specNum)] = "|T" .. icon .. ":0|t " .. name;
+                    end
+                    return dropdownTable;
+                end,
+                set = function(info, specNum)
+                    spec.TalentSpec = specNum;
+                    if (specNum ~= "0") then
+                        local _, _, classID = UnitClass("player");
+                        local _, _, _, icon, _, _ = GetSpecializationInfoForClassID(classID, specNum);
+                        spec.Icon = "|T" .. icon .. ":0|t";
+                    else
+                        spec.Icon = nil;
+                    end
+                end,
+                get = function()
+                    return spec.TalentSpec;
+                end,
+                name = L["Options_SpecIcon_Label"],
+                desc = L["Options_SpecIcon_Tooltip"],
+                order = 15,
+            },
+            Color = {
+                name = L["Options_SpecColor_Label"],
+                desc = L["Options_SpecColor_Tooltip"],
+                type = "color",
+                hasAlpha = false,
+                get = function()
+                    if (not spec.Color) then
+                        local _, class = UnitClass("player");
+                        local classColor = RAID_CLASS_COLORS[class];
+
+                        spec.Color = {r = classColor.r, g = classColor.g, b = classColor.b};
+                        spec.ColorHex = string.format("|c%s", classColor.colorStr);
+                    end
+                    return spec.Color.r, spec.Color.g, spec.Color.b
+                end,
+                set = function(_, r, g, b)
+                    spec.Color = { r = r, g = g, b = b };
+                    spec.ColorHex = string.format("|cff%02x%02x%02x", r * 255, g * 255, b * 255);
+                end,
+                order = 16,
+            },
             GemStat = {
                 type = "select",
                 name = L["Options_GemStat_Label"],
                 desc = L["Options_GemStat_Tooltip"],
-                values = function ()
+                values = function()
                     local v = {};
                     v["best"] = L["Options_GemStat_Best"];
                     local stats = StatsModule:GetStats();
 
                     for _, statKey in ipairs(Utils.OrderKeysBy(stats, "Order")) do
                         local stat = stats[statKey];
-                        if(stat.Gem and spec.Weights[StatsModule:KeyToAlias(statKey)]) then
+                        if (stat.Gem and spec.Weights[StatsModule:KeyToAlias(statKey)]) then
                             v[stat.Alias] = stat.DisplayName;
                         end
                     end
 
-                    if(not v[spec.GemStat]) then
+                    if (not v[spec.GemStat]) then
                         spec.GemStat = "best";
                     end
 
@@ -505,7 +556,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                     return spec.Weights[index] ~= nil;
                 end,
                 set = function(info, index, value)
-                    if(value) then
+                    if (value) then
                         spec.Weights[index] = 0;
                         self:CreateOptionsForStatWeight(spec, index);
                     else
@@ -518,17 +569,17 @@ function OptionsModule:CreateOptionsForSpec(key)
                 validate = function(options, index, value)
                     local statInfo = StatsModule:GetStatInfo(index);
 
-                    if(statInfo.Primary and value) then
+                    if (statInfo.Primary and value) then
                         local primary = {};
                         table.insert(primary, statInfo)
                         for stat, _ in pairs(spec.Weights) do
                             local info = StatsModule:GetStatInfo(stat);
-                            if(info.Primary) then
+                            if (info.Primary) then
                                 table.insert(primary, info);
                             end
                         end
 
-                        if(#primary > 1) then
+                        if (#primary > 1) then
                             Utils.PrintError(L["Error_MultiplePrimaryStatsSelected"]); -- workaround a 6yo bug in Ace
                             return L["Error_MultiplePrimaryStatsSelected"];
                         end
@@ -536,7 +587,7 @@ function OptionsModule:CreateOptionsForSpec(key)
 
                     return true;
                 end,
-                values = function ()
+                values = function()
                     local v = {};
                     local stats = StatsModule:GetStats();
 
@@ -559,11 +610,11 @@ function OptionsModule:CreateOptionsForSpec(key)
                     local original = spec.Order;
                     for _, specKey in ipairs(Utils.OrderKeysBy(db, "Order")) do
                         local s = db[specKey];
-                        if(s == spec) then
+                        if (s == spec) then
                             s.Order = value;
-                        elseif(s.Order >= value and s.Order < original) then
+                        elseif (s.Order >= value and s.Order < original) then
                             s.Order = s.Order + 1;
-                        elseif(s.Order > original and s.Order <= value) then
+                        elseif (s.Order > original and s.Order <= value) then
                             s.Order = s.Order - 1;
                         end
                     end
@@ -586,8 +637,7 @@ function OptionsModule:CreateOptionsForSpec(key)
                 type = "group",
                 inline = true,
                 name = L["Options_Weights_Section"],
-                args = {
-                },
+                args = {},
                 order = 30
             },
             Normalize = {
@@ -685,7 +735,7 @@ function OptionsModule:CreateOptionsForStatWeight(spec, alias)
 
     local stat = StatsModule:GetStatInfo(alias);
 
-    if(options[alias] or not stat) then
+    if (options[alias] or not stat) then
         return;
     end
 
@@ -704,7 +754,7 @@ function OptionsModule:CreateOptionsForStatWeight(spec, alias)
         pattern = "^[%d]+[,%.]?[%d]-$"
     };
 
-    options[alias..stat.Order] = {
+    options[alias .. stat.Order] = {
         type = "description",
         name = "",
         order = stat.Order + 1,
@@ -715,8 +765,8 @@ end
 function OptionsModule:RemoveOptionsForStatWeight(spec, alias)
     local options = self.Options.args.Weights.args[spec.Name].args.Weights.args;
     local stat = options[alias];
-    if(stat) then
-        options[alias..stat.order] = nil;
+    if (stat) then
+        options[alias .. stat.order] = nil;
         options[alias] = nil;
     end
 end
@@ -727,19 +777,22 @@ function OptionsModule:CreateNewSpec()
 
     local ordered = Utils.OrderKeysBy(db, "Order");
 
-    if(#ordered ~= 0) then
+    if (#ordered ~= 0) then
         order = db[ordered[#ordered]].Order + 1;
     end
 
     local name;
     local nameIndex = 1;
-    while(name == nil) do
-        local n = "New spec "..nameIndex;
-        if(not db[n]) then
+    while (name == nil) do
+        local n = "New spec " .. nameIndex;
+        if (not db[n]) then
             name = n;
         end
         nameIndex = nameIndex + 1;
     end
+
+    local _, class = UnitClass("player");
+    local classColor = RAID_CLASS_COLORS[class];
 
     local spec = {
         Name = name,
@@ -747,14 +800,18 @@ function OptionsModule:CreateNewSpec()
         Weights = {},
         GemStat = "best",
         Order = order,
-        Normalize = true
+        Normalize = false,
+        TalentSpec = "0",
+        Icon = nil,
+        Color = {r = classColor.r, g = classColor.g, b = classColor.b},
+        ColorHex = string.format("|c%s", classColor.colorStr)
     };
 
     SpecModule:SetSpec(spec);
 
     self:CreateOptionsForSpec(spec.Name);
     self:NotifyConfigChanged();
-    AceConfigDialog:SelectGroup(SWS_ADDON_NAME.." Weights", spec.Name);
+    AceConfigDialog:SelectGroup(SWS_ADDON_NAME .. " Weights", spec.Name);
 end
 
 function OptionsModule:RemoveSpec(key)
@@ -774,25 +831,39 @@ function OptionsModule:RemoveSpec(key)
 end
 
 function OptionsModule:Import(spec, input)
-    if(not input or input == "") then
+    if (not input or input == "") then
         return;
     end
 
     local result = Utils.Try(function()
         return ImportExportModule:Import(self.ImportType, input);
     end, function(err)
-        Utils.PrintError("Import error: "..err);
+        Utils.PrintError("Import error: " .. err);
     end)
 
-    if(not result) then
+    if (not result) then
         return;
     end
 
     spec.Weights = {};
     self.Options.args.Weights.args[spec.Name].args.Weights.args = {};
 
-    for stat, weight in pairs(result) do
+    for stat, weight in pairs(result.Weights) do
         spec.Weights[stat] = weight;
-        self:CreateOptionsForStatWeight(spec, stat);
     end
+
+    if(result.Spec) then
+        local _, _, classID = UnitClass("player")
+        for specNum = 1, GetNumSpecializationsForClassID(classID) do
+            local _, name, _, icon, _, _ = GetSpecializationInfoForClassID(classID, specNum);
+
+            if(name:gsub(" ", "") == result.Spec) then
+                spec.Icon = "|T" .. icon .. ":0|t";
+                spec.TalentSpec = tostring(specNum);
+                break;
+            end
+        end
+    end
+
+    self:CreateOptionsForSpec(spec.Name);
 end
