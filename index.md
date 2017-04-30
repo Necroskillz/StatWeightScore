@@ -1,5 +1,10 @@
 # Change log
 
+## 7.6.0 - 30 Apr 2017
+* Added compact mode and color/icon of spec ([submitted by elaundar](https://wow.curseforge.com/projects/stat-weight-score/issues/75))
+* Added command for generating SimulationCraft input for trinket pairs you own. ([documentation](https://wow.curseforge.com/projects/stat-weight-score/pages/main/simulation-craft-import))
+* Removed SimulationCraft xml import
+
 ## 7.5.3 - 1 Apr 2017
 * Updated to 7.2
 
