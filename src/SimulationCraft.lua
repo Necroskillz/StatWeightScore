@@ -10,21 +10,40 @@ function SimcModule:OnInitialize()
     Utils = StatWeightScore.Utils;
 end
 
+local function getKey(link)
+    local hasGem = link.gem1Id ~= "0" and 'g' or '';
+    local key = link.itemId..hasGem;
+
+    return key;
+end
+
 function SimcModule:GenerateTrinketCombos(fixed)
     local combos = {};
     local trinketMap = {};
+    local equippedTrinkets = {};
 
-    local insertUniqueTrinket = function (itemLink)
+
+    local function areEquipped(trinket1, trinket2)
+        local key1 = getKey(trinket1);
+        local key2 = getKey(trinket2);
+
+        return equippedTrinkets[key1] and equippedTrinkets[key2];
+    end
+
+    local insertUniqueTrinket = function (itemLink, equipped)
         if(itemLink == nil) then
             return
         end
 
         local parsedLink = ItemModule:GetItemLinkInfo(itemLink);
 
-        local hasGem = parsedLink.gem1Id ~= "0" and 'g' or '';
-        local key = parsedLink.itemId..hasGem;
+        local key = getKey(parsedLink);
 
-        if(trinketMap[key] == nil) then
+        if(equipped) then
+            equippedTrinkets[key] = true;
+        end
+
+        if(not trinketMap[key]) then
             trinketMap[key] = parsedLink;
             return;
         end
@@ -37,8 +56,8 @@ function SimcModule:GenerateTrinketCombos(fixed)
         end
     end
 
-    insertUniqueTrinket(GetInventoryItemLink("player", ItemModule.SlotMap["INVTYPE_TRINKET"][1]));
-    insertUniqueTrinket(GetInventoryItemLink("player", ItemModule.SlotMap["INVTYPE_TRINKET"][2]));
+    insertUniqueTrinket(GetInventoryItemLink("player", ItemModule.SlotMap["INVTYPE_TRINKET"][1]), true);
+    insertUniqueTrinket(GetInventoryItemLink("player", ItemModule.SlotMap["INVTYPE_TRINKET"][2]), true);
 
     for bag=0, NUM_BAG_SLOTS do
         for bagSlot=1, GetContainerNumSlots(bag) do
@@ -70,7 +89,9 @@ function SimcModule:GenerateTrinketCombos(fixed)
         for j = i + 1, #trinkets do
             local trinket2 = trinkets[j];
 
-            table.insert(combinations, { trinket1, trinket2 });
+            if(not areEquipped(trinket1, trinket2)) then
+                table.insert(combinations, { trinket1, trinket2 });
+            end
         end
     end
 
@@ -93,8 +114,8 @@ function SimcModule:GenerateTrinketCombos(fixed)
         local _, _, _, item1Ilvl = GetItemInfo(link1:ToString());
         local _, _, _, item2Ilvl = GetItemInfo(link2:ToString());
 
-        local text1 = link1.text.."("..item1Ilvl..")";
-        local text2 = link2.text.."("..item2Ilvl..")";
+        local text1 = link1.text.."("..item1Ilvl..(link1.gem1Id ~= "0" and "/gem" or "")..")";
+        local text2 = link2.text.."("..item2Ilvl..(link2.gem1Id ~= "0" and "/gem" or "")..")";
         local title;
 
         if(fixed == "") then
