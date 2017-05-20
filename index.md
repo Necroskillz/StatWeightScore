@@ -1,5 +1,9 @@
 # Change log
 
+## 7.6.1 - 20 May 2017
+* Fixed an issue where old stat weights were still used after import
+* Added checks that should prevent an equipment manager related error from happening
+
 ## 7.6.0 - 30 Apr 2017
 * Added compact mode and color/icon of spec ([submitted by elaundar](https://wow.curseforge.com/projects/stat-weight-score/issues/75))
 * Added command for generating SimulationCraft input for trinket pairs you own. ([documentation](https://wow.curseforge.com/projects/stat-weight-score/pages/main/simulation-craft-import))
