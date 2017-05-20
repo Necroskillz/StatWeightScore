@@ -451,10 +451,12 @@ function OptionsModule:CreateOptionsForSpec(key)
                 type = "select",
                 style = "dropdown",
                 values = function()
-                    local dropdownTable = { [""] = "" };
-                    for setIndex = 1, GetNumEquipmentSets() do
-                        local setName = GetEquipmentSetInfo(setIndex);
-                        dropdownTable[setName] = setName;
+                    local dropdownTable = {[""] = ""};
+                    for _, equipmentSetID in pairs(C_EquipmentSet.GetEquipmentSetIDs()) do
+                        local setName = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID);
+                        if(setName) then
+                            dropdownTable[setName] = setName;
+                        end
                     end
                     return dropdownTable;
                 end,
@@ -866,4 +868,5 @@ function OptionsModule:Import(spec, input)
     end
 
     self:CreateOptionsForSpec(spec.Name);
+    self:NotifyConfigChanged();
 end
