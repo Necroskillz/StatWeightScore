@@ -133,24 +133,26 @@ local function GetComparedItem(link, spec)
     end
 
     local equipmentSetID = spec.EquipmentSet and C_EquipmentSet.GetEquipmentSetID(spec.EquipmentSet);
+
+    if(spec.EquipmentSet and not equipmentSetID) then
+        Utils.PrintError(string.format('Warning: set \'%s\' not found. Check if you didn\'t delete or rename it and ajust Associated Equipment Set option of \'%s\' spec.', spec.EquipmentSet, spec.Name));
+        spec.EquipmentSet = nil;
+    end
+
     local _, _, _, setEquipped = equipmentSetID and C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID);
+
     for _, slot in pairs(slots) do
         local equippedLink, set;
 
-        if spec.EquipmentSet and spec.EquipmentSet ~= "" and not setEquipped then
-            local locations = GetEquipmentSetLocations(spec.EquipmentSet);
-            if locations then
-                local location = locations[slot];
-                if location then
-                    local _, _, _, _, bagSlot, bag = EquipmentManager_UnpackLocation(location);
-                    if bag then
-                        equippedLink = GetContainerItemLink(bag, bagSlot);
-                        set = spec.EquipmentSet;
-                    end
+        if equipmentSetID and spec.EquipmentSet and spec.EquipmentSet ~= "" and not setEquipped then
+            local locations = C_EquipmentSet.GetItemLocations(equipmentSetID);
+            local location = locations[slot];
+            if location then
+                local _, _, _, _, bagSlot, bag = EquipmentManager_UnpackLocation(location);
+                if bag then
+                    equippedLink = GetContainerItemLink(bag, bagSlot);
+                    set = spec.EquipmentSet;
                 end
-            else
-                Utils.PrintError(string.format('Warning: set \'%s\' not found. Check if you didn\'t delete or rename it and ajust Associated Equipment Set option of \'%s\' spec.', spec.EquipmentSet, spec.Name));
-                spec.EquipmentSet = nil;
             end
         end
         if not equippedLink then
