@@ -1,5 +1,10 @@
 # Change log
 
+## 7.6.2 - 9 Jul 2017
+* Fixed another issue with equipments sets that were renamed or removed
+* Fixed obliterum upgrade paths
+* Fixed an issue for russian language where check if a class can use plate/mail/leather/cloth item always failed (the scores of such items were always grey even if the class could use the item)
+
 ## 7.6.1 - 20 May 2017
 * Fixed an issue where old stat weights were still used after import
 * Added checks that should prevent an equipment manager related error from happening
