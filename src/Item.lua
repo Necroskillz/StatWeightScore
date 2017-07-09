@@ -8,36 +8,54 @@ local BL = B:GetUnstrictLookupTable();
 
 local Utils;
 local L;
+local GAME_LOCALE = GetLocale()
 
 local Armor = BL["Armor"];
 local Weapon = BL["Weapon"];
 
-local Miscellaneous = BL["Miscellaneous"];
-local Cloth = BL["Cloth"];
-local Leather = BL["Leather"];
-local Mail = BL["Mail"];
-local Plate = BL["Plate"];
-local Shields = BL["Shields"];
+local SpecialItemTypes = {
+    ["ruRU"] = {
+        ["Plate"] = "Латные",
+        ["Mail"] = "Кольчужные",
+        ["Leather"] = "Кожаные",
+        ["Cloth"] = "Тканевые"
+    },
+};
 
-local OneHandedAxes = BL["One-Handed Axes"];
-local OneHandedMaces = BL["One-Handed Maces"];
-local OneHandedSwords = BL["One-Handed Swords"];
-local TwoHandedAxes = BL["Two-Handed Axes"];
-local TwoHandedMaces = BL["Two-Handed Maces"];
-local TwoHandedSwords = BL["Two-Handed Swords"];
-local Bows = BL["Bows"];
-local Guns = BL["Guns"];
-local Crossbows = BL["Crossbows"];
-local Polearms = BL["Polearms"];
-local FistWeapons = BL["Fist Weapons"];
-local Staves = BL["Staves"];
-local Daggers = BL["Daggers"];
-local Wands = BL["Wands"];
-local Warglaives = BL["Warglaives"] or "Warglaives";
+local function GetItemType(type)
+    local special = SpecialItemTypes[GAME_LOCALE];
+    if(special and special[type]) then
+        return special[type];
+    else
+        return BL[type];
+    end
+end
+
+local Miscellaneous;
+local Cloth;
+local Leather;
+local Mail;
+local Plate;
+local Shields;
+
+local OneHandedAxes;
+local OneHandedMaces;
+local OneHandedSwords;
+local TwoHandedAxes;
+local TwoHandedMaces;
+local TwoHandedSwords;
+local Bows;
+local Guns;
+local Crossbows;
+local Polearms;
+local FistWeapons;
+local Staves;
+local Daggers;
+local Wands;
+local Warglaives;
 
 local function AddMapping(map, key, ...)
     map[key] = {};
-
     local items = Utils.Pack(...);
 
     for i = 1, items.n do
@@ -58,6 +76,29 @@ function ItemModule:CreateMaps()
     self.ClassWeaponMap = {};
     self.HeldInOffhandMap = {};
     self.UpgradeMaps = {};
+
+    Miscellaneous = GetItemType("Miscellaneous");
+    Cloth = GetItemType("Cloth");
+    Leather = GetItemType("Leather");
+    Mail = GetItemType("Mail");
+    Plate = GetItemType("Plate");
+    Shields = GetItemType("Shields");
+
+    OneHandedAxes = GetItemType("One-Handed Axes");
+    OneHandedMaces = GetItemType("One-Handed Maces");
+    OneHandedSwords = GetItemType("One-Handed Swords");
+    TwoHandedAxes = GetItemType("Two-Handed Axes");
+    TwoHandedMaces = GetItemType("Two-Handed Maces");
+    TwoHandedSwords = GetItemType("Two-Handed Swords");
+    Bows = GetItemType("Bows");
+    Guns = GetItemType("Guns");
+    Crossbows = GetItemType("Crossbows");
+    Polearms = GetItemType("Polearms");
+    FistWeapons = GetItemType("Fist Weapons");
+    Staves = GetItemType("Staves");
+    Daggers = GetItemType("Daggers");
+    Wands = GetItemType("Wands");
+    Warglaives = GetItemType("Warglaives");
 
     AddMapping(self.ClassArmorMap, "WARLOCK", Cloth);
     AddMapping(self.ClassArmorMap, "MAGE", Cloth);
@@ -128,44 +169,48 @@ function ItemModule:CreateMaps()
     local obliterumMax = 10;
     local obliterumUpgradeMap = {
         Path = {
-            ["596"] = {
-                To = "597",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, obliterumMax)
-            },
-            ["597"] = {
-                To = "598",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 2, obliterumMax)
-            },
-            ["598"] = {
-                To = "599",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 3, obliterumMax)
-            },
-            ["599"] = {
-                To = "666",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 4, obliterumMax)
-            },
             ["666"] = {
-                To = "667",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 5, obliterumMax)
-            },
-            ["667"] = {
-                To = "668",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 6, obliterumMax)
-            },
-            ["668"] = {
-                To = "669",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 7, obliterumMax)
+                To = "670",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, obliterumMax)
             },
             ["669"] = {
                 To = "670",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 8, obliterumMax)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 1, obliterumMax)
             },
             ["670"] = {
                 To = "671",
-                Desc = string.format(L["Obliterum_Upgrade_Label"], 9, obliterumMax)
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 2, obliterumMax)
             },
             ["671"] = {
                 To = "672",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 3, obliterumMax)
+            },
+            ["672"] = {
+                To = "673",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 4, obliterumMax)
+            },
+            ["673"] = {
+                To = "674",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 5, obliterumMax)
+            },
+            ["674"] = {
+                To = "675",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 6, obliterumMax)
+            },
+            ["675"] = {
+                To = "676",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 7, obliterumMax)
+            },
+            ["676"] = {
+                To = "677",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 8, obliterumMax)
+            },
+            ["677"] = {
+                To = "678",
+                Desc = string.format(L["Obliterum_Upgrade_Label"], 9, obliterumMax)
+            },
+            ["678"] = {
+                To = "679",
                 Desc = string.format(L["Obliterum_Upgrade_Label"], 10, obliterumMax)
             }
         }
