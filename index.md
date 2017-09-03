@@ -1,5 +1,8 @@
 # Change log
 
+## 7.6.3 - 3 Sep 2017
+* Updated Interface number to be compatible with 7.3 patch
+
 ## 7.6.2 - 9 Jul 2017
 * Fixed another issue with equipments sets that were renamed or removed
 * Fixed obliterum upgrade paths
