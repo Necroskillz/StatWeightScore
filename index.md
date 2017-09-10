@@ -1,5 +1,8 @@
 # Change log
 
+## 7.6.4 - 10 Sep 2017
+* Added +200 gems
+
 ## 7.6.3 - 3 Sep 2017
 * Updated Interface number to be compatible with 7.3 patch
 
