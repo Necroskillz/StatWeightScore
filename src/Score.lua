@@ -281,7 +281,7 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
                     if(primaryStat) then
                         gemStat = StatsModule:GetStatInfo(primaryStat);
                         gemStatWeight = primaryStatWeight;
-                        statValue = 200;
+                        statValue = 9;
                         sabersEyePicked = true;
                     end
                 end
