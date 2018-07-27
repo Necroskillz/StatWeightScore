@@ -1,5 +1,9 @@
 # Change log
 
+## 8.0.0 - 27 Jul 2018
+* Updated for BfA (prepatch)
+* Fix gem values after stat squish
+
 ## 7.6.4 - 10 Sep 2017
 * Added +200 gems
 
