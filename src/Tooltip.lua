@@ -107,8 +107,8 @@ function TooltipModule:OnInitialize()
     end
 end
 
-local function calculateScore(link, loc, spec, tooltip, equippedItemHasSabersEye)
-    return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec, equippedItemHasSabersEye);
+local function calculateScore(link, loc, spec, tooltip, equippedItemHasKrakensEye)
+    return ScoreModule:CalculateItemScore(link, loc, ScanningTooltipModule:ScanTooltip(link), spec, equippedItemHasKrakensEye);
 end
 
 local function GetComparedItem(link, spec)
@@ -271,7 +271,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
                 local minEquippedLink, minEquippedScore, scoreTable, equipmentSet, isEquipped, oneHand = GetComparedItem(link, spec);
 
-                local score = calculateScore(link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasSabersEye);
+                local score = calculateScore(link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasKrakensEye);
 
                 local diff = 0;
                 local offhandDiff = 0;
@@ -319,7 +319,7 @@ function TooltipModule:AddToTooltip(tooltip, compare)
 
                     if(#upgrades ~= 0 and db.ShowUpgrades) then
                         for _, upgrade in ipairs(upgrades) do
-                            local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasSabersEye);
+                            local upgradeScore = calculateScore(upgrade.Link, loc, spec, tooltip, minEquippedScore and minEquippedScore.HasKrakensEye);
                             local upgradeDiff = 0;
                             local upgradeOffhandDiff = 0;
 
