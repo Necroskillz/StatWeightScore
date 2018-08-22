@@ -220,7 +220,7 @@ ScoreModule.Fx = {
     end
 };
 
-function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHasSabersEye)
+function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHasKrakensEye)
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
         if(StatWeightScore.db.profile.GetStatsMethod == "tooltip") then
             return self:GetStatsFromTooltip(tooltip);
@@ -228,10 +228,10 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHa
             return GetStatsFromLink(link);
         end
 
-    end, equippedItemHasSabersEye);
+    end, equippedItemHasKrakensEye);
 end
 
-function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, equippedItemHasSabersEye)
+function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, equippedItemHasKrakensEye)
     local weights = SpecModule:GetWeights(spec);
     local stats = getStatsFunc() or {};
     local secondaryStat = StatsModule:GetBestGemStat(spec);
@@ -254,42 +254,42 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
 
     if(gemNo) then
         local gems;
-        local sabersEyeIndex;
+        local KrakensEyeIndex;
 
         for i = 1,gemNo do
             local _, gemLink = GetItemGem(link, i);
-            if(GemsModule:IsSabersEye(gemLink)) then
-                sabersEyeIndex = i;
+            if(GemsModule:IsKrakensEye(gemLink)) then
+                KrakensEyeIndex = i;
                 break;
             end;
         end
 
-        result.HasSabersEye = not not sabersEyeIndex
+        result.HasKrakensEye = not not KrakensEyeIndex
 
-        local sabersEyeConsidered = false;
+        local KrakensEyeConsidered = false;
 
         for i = 1,gemNo do
             local enchantLevel;
             local gemStatWeight;
             local gemStat;
             local statValue;
-            local sabersEyePicked = false;
+            local KrakensEyePicked = false;
 
-            if(not sabersEyeConsidered and (not sabersEyeIndex or sabersEyeIndex == i)) then
-                if(db.SuggestSabersEye and (equippedItemHasSabersEye or sabersEyeIndex or not GemsModule:GetEquippedSabersEyeSlot())) then
+            if(not KrakensEyeConsidered and (not KrakensEyeIndex or KrakensEyeIndex == i)) then
+                if(db.SuggestKrakensEye and (equippedItemHasKrakensEye or KrakensEyeIndex or not GemsModule:GetEquippedKrakensEyeSlot())) then
                     local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
                     if(primaryStat) then
                         gemStat = StatsModule:GetStatInfo(primaryStat);
                         gemStatWeight = primaryStatWeight;
-                        statValue = 9;
-                        sabersEyePicked = true;
+                        statValue = 40;
+                        KrakensEyePicked = true;
                     end
                 end
 
-                sabersEyeConsidered = true;
+                KrakensEyeConsidered = true;
             end
 
-            if(not sabersEyePicked) then
+            if(not KrakensEyePicked) then
                 local _, gemLink = GetItemGem(link, i);
 
                 if(not db.ForceSelectedGemStat and gemLink) then

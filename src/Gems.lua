@@ -38,26 +38,26 @@ function GemsModule:GetGemValue(enchantLevel)
     return 0;
 end
 
-local SabersEye = {
-    ["130246"] = 1,
-    ["130247"] = 1,
-    ["130248"] = 1,
+local KrakensEye = {
+    ["153707"] = 1,
+    ["153708"] = 1,
+    ["153709"] = 1,
 };
 
-function GemsModule:IsSabersEye(gemLink)
+function GemsModule:IsKrakensEye(gemLink)
     local parsedLink = ItemLinkModule:Parse(gemLink);
 
-    return SabersEye[parsedLink.itemId];
+    return KrakensEye[parsedLink.itemId];
 end
 
-function GemsModule:GetEquippedSabersEyeSlot()
+function GemsModule:GetEquippedKrakensEyeSlot()
     for i = 0, 19 do
         local link = GetInventoryItemLink("player", i);
         if(link) then
             local stats = GetItemStats(link);
             if(stats and stats[StatsModule:AliasToKey("socket")]) then
                 local _, gemLink = GetItemGem(link, 1);
-                if(self:IsSabersEye(gemLink)) then
+                if(self:IsKrakensEye(gemLink)) then
                     local _, _, _, _, _, _, _, _, loc = GetItemInfo(link);
 
                     return getglobal(loc), i;

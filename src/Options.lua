@@ -35,7 +35,7 @@ OptionsModule.Defaults = {
         PercentageCalculationType = "change",
         ShowStatsPane = true,
         ShowUpgrades = true,
-        SuggestSabersEye = false,
+        SuggestKrakensEye = false,
         Specs = {}
     }
 };
@@ -102,11 +102,11 @@ function OptionsModule:CreateOptions()
                         name = L["Options_ForceSelectedGemStat_Label"],
                         desc = L["Options_ForceSelectedGemStat_Tooltip"],
                     },
-                    SuggestSabersEye = {
+                    SuggestKrakensEye = {
                         order = 27,
                         type = "toggle",
-                        name = L["Options_SuggestSabersEye_Label"],
-                        desc = L["Options_SuggestSabersEye_Tooltip"],
+                        name = L["Options_SuggestKrakensEye_Label"],
+                        desc = L["Options_SuggestKrakensEye_Tooltip"],
                     },
                     Display = {
                         type = "group",
