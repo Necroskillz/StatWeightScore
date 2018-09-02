@@ -1,6 +1,6 @@
 # Change log
 
-## 8.1.0
+## 8.1.0 - 2 Sep 2018
 * Updated gem values
 
 ## 8.0.0 - 27 Jul 2018
