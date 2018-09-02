@@ -1,5 +1,8 @@
 # Change log
 
+## 8.1.0
+* Updated gem values
+
 ## 8.0.0 - 27 Jul 2018
 * Updated for BfA (prepatch)
 * Fix gem values after stat squish
