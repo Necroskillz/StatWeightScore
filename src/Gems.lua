@@ -7,17 +7,17 @@ local L = StatWeightScore.L;
 
 local GemRepository = {
     [1] = {
-        Value = 7,
-        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[2].hex.."+7"..FONT_COLOR_CODE_CLOSE)
+        Value = 30,
+        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[2].hex.."+30"..FONT_COLOR_CODE_CLOSE)
     },
     [2] = {
-        Value = 9,
-        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[3].hex.."+9"..FONT_COLOR_CODE_CLOSE);
-    },
-    [3] = {
-        Value = 11,
-        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[4].hex.."+11"..FONT_COLOR_CODE_CLOSE);
+        Value = 40,
+        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[3].hex.."+40"..FONT_COLOR_CODE_CLOSE);
     }
+--    [3] = {
+--        Value = 50,
+--        Name = string.format(L["GemsDisplayFormat"], ITEM_QUALITY_COLORS[4].hex.."+50"..FONT_COLOR_CODE_CLOSE);
+--    }
 };
 
 function GemsModule:OnInitialize()
@@ -38,26 +38,26 @@ function GemsModule:GetGemValue(enchantLevel)
     return 0;
 end
 
-local SabersEye = {
-    ["130246"] = 1,
-    ["130247"] = 1,
-    ["130248"] = 1,
+local UniqueGemIds = {
+    ["153707"] = 1,
+    ["153708"] = 1,
+    ["153709"] = 1,
 };
 
-function GemsModule:IsSabersEye(gemLink)
+function GemsModule:IsUniqueGem(gemLink)
     local parsedLink = ItemLinkModule:Parse(gemLink);
 
-    return SabersEye[parsedLink.itemId];
+    return UniqueGemIds[parsedLink.itemId];
 end
 
-function GemsModule:GetEquippedSabersEyeSlot()
+function GemsModule:GetEquippedUniqueGemSlot()
     for i = 0, 19 do
         local link = GetInventoryItemLink("player", i);
         if(link) then
             local stats = GetItemStats(link);
             if(stats and stats[StatsModule:AliasToKey("socket")]) then
                 local _, gemLink = GetItemGem(link, 1);
-                if(self:IsSabersEye(gemLink)) then
+                if(self:IsUniqueGem(gemLink)) then
                     local _, _, _, _, _, _, _, _, loc = GetItemInfo(link);
 
                     return getglobal(loc), i;

@@ -220,7 +220,7 @@ ScoreModule.Fx = {
     end
 };
 
-function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHasSabersEye)
+function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHasUniqueGem)
     return self:CalculateItemScoreCore(link, loc, tooltip, spec, function()
         if(StatWeightScore.db.profile.GetStatsMethod == "tooltip") then
             return self:GetStatsFromTooltip(tooltip);
@@ -228,10 +228,10 @@ function ScoreModule:CalculateItemScore(link, loc, tooltip, spec, equippedItemHa
             return GetStatsFromLink(link);
         end
 
-    end, equippedItemHasSabersEye);
+    end, equippedItemHasUniqueGem);
 end
 
-function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, equippedItemHasSabersEye)
+function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFunc, equippedItemHasUniqueGem)
     local weights = SpecModule:GetWeights(spec);
     local stats = getStatsFunc() or {};
     local secondaryStat = StatsModule:GetBestGemStat(spec);
@@ -254,42 +254,42 @@ function ScoreModule:CalculateItemScoreCore(link, loc, tooltip, spec, getStatsFu
 
     if(gemNo) then
         local gems;
-        local sabersEyeIndex;
+        local uniqueGemIndex;
 
         for i = 1,gemNo do
             local _, gemLink = GetItemGem(link, i);
-            if(GemsModule:IsSabersEye(gemLink)) then
-                sabersEyeIndex = i;
+            if(GemsModule:IsUniqueGem(gemLink)) then
+                uniqueGemIndex = i;
                 break;
             end;
         end
 
-        result.HasSabersEye = not not sabersEyeIndex
+        result.HasUniqueGem = not not uniqueGemIndex;
 
-        local sabersEyeConsidered = false;
+        local uniqueGemConsidered = false;
 
         for i = 1,gemNo do
             local enchantLevel;
             local gemStatWeight;
             local gemStat;
             local statValue;
-            local sabersEyePicked = false;
+            local uniqueGemPicked = false;
 
-            if(not sabersEyeConsidered and (not sabersEyeIndex or sabersEyeIndex == i)) then
-                if(db.SuggestSabersEye and (equippedItemHasSabersEye or sabersEyeIndex or not GemsModule:GetEquippedSabersEyeSlot())) then
+            if(not uniqueGemConsidered and (not uniqueGemIndex or uniqueGemIndex == i)) then
+                if(db.SuggestUniqueGem and (equippedItemHasUniqueGem or uniqueGemIndex or not GemsModule:GetEquippedUniqueGemSlot())) then
                     local primaryStat, _, primaryStatWeight = SpecModule:GetPrimaryStat(weights);
                     if(primaryStat) then
                         gemStat = StatsModule:GetStatInfo(primaryStat);
                         gemStatWeight = primaryStatWeight;
-                        statValue = 9;
-                        sabersEyePicked = true;
+                        statValue = 40;
+                        uniqueGemPicked = true;
                     end
                 end
 
-                sabersEyeConsidered = true;
+                uniqueGemConsidered = true;
             end
 
-            if(not sabersEyePicked) then
+            if(not uniqueGemPicked) then
                 local _, gemLink = GetItemGem(link, i);
 
                 if(not db.ForceSelectedGemStat and gemLink) then

@@ -25,7 +25,7 @@ local GetStatsMethods;
 OptionsModule.Defaults = {
     profile = {
         EnableTooltip = true,
-        EnchantLevel = 1,
+        EnchantLevel = 2,
         BlankLineMainAbove = true,
         BlankLineMainBelow = false,
         BlankLineRefAbove = true,
@@ -35,7 +35,7 @@ OptionsModule.Defaults = {
         PercentageCalculationType = "change",
         ShowStatsPane = true,
         ShowUpgrades = true,
-        SuggestSabersEye = false,
+        SuggestUniqueGem = true,
         Specs = {}
     }
 };
@@ -102,11 +102,11 @@ function OptionsModule:CreateOptions()
                         name = L["Options_ForceSelectedGemStat_Label"],
                         desc = L["Options_ForceSelectedGemStat_Tooltip"],
                     },
-                    SuggestSabersEye = {
+                    SuggestUniqueGem = {
                         order = 27,
                         type = "toggle",
-                        name = L["Options_SuggestSabersEye_Label"],
-                        desc = L["Options_SuggestSabersEye_Tooltip"],
+                        name = L["Options_SuggestUniqueGem_Label"],
+                        desc = L["Options_SuggestUniqueGem_Tooltip"],
                     },
                     Display = {
                         type = "group",
@@ -380,6 +380,16 @@ function OptionsModule:InitializeDatabase()
     db.RegisterCallback(self, "OnProfileChanged", "NotifyConfigChanged");
     db.RegisterCallback(self, "OnProfileCopied", "NotifyConfigChanged");
     db.RegisterCallback(self, "OnProfileReset", "NotifyConfigChanged");
+
+    -- migration
+    if(db.profile.SuggestSabersEye ~= nil) then
+        db.profile.SuggestUniqueGem = db.profile.SuggestSabersEye;
+        db.profile.SuggestSabersEye = nil;
+    end
+
+    if(db.profile.EnchantLevel > 2) then
+        db.profile.EnchantLevel = 2;
+    end
 end
 
 function OptionsModule:NotifyConfigChanged()
