@@ -1,5 +1,8 @@
 # Change log
 
+## 8.1.1 - 9 Sep 2018
+* Added offhand dps mapping for pawn import
+
 ## 8.1.0 - 2 Sep 2018
 * Updated gem values
 
