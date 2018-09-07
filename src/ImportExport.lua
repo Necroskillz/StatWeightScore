@@ -53,6 +53,7 @@ local function CreatePawnMap()
     end
 
     map("Dps", "dps");
+    map("OffHandDps", "wohdps");
     map("Agility", "agi");
     map("Intellect", "int");
     map("Stamina", "sta");
